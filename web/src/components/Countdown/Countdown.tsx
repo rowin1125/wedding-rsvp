@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { Box, Container, Grid, GridItem, Heading } from '@chakra-ui/react';
+import {
+    Box,
+    Container,
+    Flex,
+    Grid,
+    GridItem,
+    Heading,
+} from '@chakra-ui/react';
 
 type CountdownProps = {
     targetDate: string;
@@ -63,6 +70,45 @@ const Countdown = ({ targetDate }: CountdownProps) => {
                     }}
                     gap={4}
                 >
+                    <GridItem colSpan={4} mb={10}>
+                        <Flex justifyContent="center">
+                            <Heading
+                                fontSize={{
+                                    base: '2xl',
+                                    lg: '4xl',
+                                }}
+                                borderRightWidth={2}
+                                borderColor="tertairy.900"
+                                py={4}
+                                px={8}
+                            >
+                                16
+                            </Heading>
+
+                            <Heading
+                                fontSize={{
+                                    base: '2xl',
+                                    lg: '4xl',
+                                }}
+                                borderRightWidth={2}
+                                borderColor="tertairy.900"
+                                py={4}
+                                px={8}
+                            >
+                                mei
+                            </Heading>
+                            <Heading
+                                fontSize={{
+                                    base: '2xl',
+                                    lg: '4xl',
+                                }}
+                                py={4}
+                                px={8}
+                            >
+                                2023
+                            </Heading>
+                        </Flex>
+                    </GridItem>
                     {timeMap.map((key) => {
                         return (
                             <GridItem colSpan={{ base: 2, lg: 1 }} key={key}>

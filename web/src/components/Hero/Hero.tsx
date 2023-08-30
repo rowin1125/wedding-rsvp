@@ -9,7 +9,7 @@ const Hero = () => {
             w="full"
             h={{
                 base: '50vh',
-                lg: 'calc(100vh - 93px)',
+                lg: 'calc(80vh - 93px)',
             }}
             position="relative"
         >
@@ -19,7 +19,7 @@ const Hero = () => {
                 src={coverImage}
                 alt="Demi & Rowin"
                 objectFit={'cover'}
-                objectPosition={'bottom'}
+                objectPosition={'center'}
                 filter="brightness(0.7)"
             />
             <Flex

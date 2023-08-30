@@ -140,11 +140,15 @@ const Mvps = () => {
                         Wil je iets vragen of doorgeven? Ze zijn te bereiken op:
                     </Text>
                     <Text>
-                        Tirza Voss:{' '}
+                        <Box fontWeight="semibold" as="span">
+                            Tirza Voss:
+                        </Box>{' '}
                         <Link href="tel:+31654308330">+31654308330</Link> <br />{' '}
                     </Text>
                     <Text mb={4}>
-                        Xander Greuter:{' '}
+                        <Box fontWeight="semibold" as="span">
+                            Xander Greuter:
+                        </Box>{' '}
                         <Link href="tel:+31638190312">+31638190312</Link>
                     </Text>
                     <Text>
