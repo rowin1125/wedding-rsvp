@@ -3,7 +3,7 @@ import { Box, Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
 import ImageTextBlock from '../ImageTextBlock';
 
 import colors from './images/colors.png';
-import locatie from './images/locatie.webp';
+import locatie from './images/locatie.jpg';
 
 const PartyInformation = () => {
     return (
