@@ -63,13 +63,9 @@ const Countdown = ({ targetDate }: CountdownProps) => {
                     }}
                     gap={4}
                 >
-                    {timeMap.map((key, index) => {
-                        const isLast = index === timeMap.length - 1;
+                    {timeMap.map((key) => {
                         return (
-                            <GridItem
-                                colSpan={{ base: isLast ? 4 : 2, lg: 1 }}
-                                key={key}
-                            >
+                            <GridItem colSpan={{ base: 2, lg: 1 }} key={key}>
                                 <Box>
                                     <Heading
                                         fontSize={{

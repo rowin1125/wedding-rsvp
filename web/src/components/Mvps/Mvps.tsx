@@ -104,7 +104,7 @@ const Mvps = () => {
                                         {mvp.name}
                                     </Heading>
                                     <Heading
-                                        fontSize="xs"
+                                        fontSize="sm"
                                         textTransform="uppercase"
                                     >
                                         {mvp.type}
