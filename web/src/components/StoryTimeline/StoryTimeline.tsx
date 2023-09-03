@@ -25,7 +25,7 @@ const StoryTimeline = () => {
         {
             image: start,
             heading: 'Onze ontmoeting',
-            text: 'Het begon allemaal begin 2015. We kenden elkaar al een tijdje door het samenwerken bij Spurd, maar op die zekere dag, 5 februari 2015 wisten we het zeker: wij zijn verliefd.',
+            text: 'Het begon allemaal begin 2015. We kenden elkaar al een tijdje door het samenwerken bij Spurd, maar op die zekere dag, 5 februari 2015 wisten we het zeker: wij zijn verliefd. ',
             year: '2015',
             icon: like,
         },
@@ -51,7 +51,7 @@ const StoryTimeline = () => {
                     <Heading fontFamily="butler" fontSize="md">
                         OUR STORY{' '}
                     </Heading>
-                    <Heading fontSize="6xl">With love </Heading>
+                    <Heading fontSize="4xl">With love </Heading>
                 </Center>
                 {items.map((item, index) => {
                     const isTextFirst = index % 2 === 0;
@@ -68,7 +68,7 @@ const StoryTimeline = () => {
                                 order={{ base: 1, lg: isTextFirst ? 1 : 2 }}
                                 position="relative"
                                 px={8}
-                                pr={isTextFirst ? 20 : 'unset'}
+                                pr={isTextFirst ? { base: 0, lg: 20 } : 'unset'}
                                 pl={{
                                     base: 12,
                                     lg: isTextFirst ? 'unset' : 20,
@@ -102,7 +102,7 @@ const StoryTimeline = () => {
                                         lg: isTextFirst ? 'unset' : '-45px',
                                     }}
                                     top={0}
-                                    bg="tertairy.500"
+                                    bg="#F1E7DB"
                                     w={{ base: '60px', lg: '90px' }}
                                     h={{ base: '60px', lg: '90px' }}
                                     borderRadius="full"
@@ -125,7 +125,7 @@ const StoryTimeline = () => {
                                 pl={isTextFirst ? { base: 0, lg: 10 } : 0}
                                 pr={isTextFirst ? 0 : { base: 0, lg: 10 }}
                                 borderLeftWidth={{ base: 1, lg: 0 }}
-                                borderColor="tertairy.500"
+                                borderColor="#F1E7DB"
                                 py={10}
                                 position="relative"
                             >
@@ -153,7 +153,7 @@ const StoryTimeline = () => {
                                                 : '-45px',
                                         }}
                                         bottom={0}
-                                        bg="tertairy.500"
+                                        bg="#F1E7DB"
                                         w={{ base: '60px', lg: '90px' }}
                                         h={{ base: '60px', lg: '90px' }}
                                         borderRadius="full"

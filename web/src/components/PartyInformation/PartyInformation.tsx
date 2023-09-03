@@ -1,43 +1,52 @@
 import { Box, Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
 
+import banner from '../Banner/images/banner.jpg';
 import ImageTextBlock from '../ImageTextBlock';
 
 import colors from './images/colors.png';
-import locatie from './images/locatie.jpg';
+import locatie from './images/locatie.png';
 
 const PartyInformation = () => {
     return (
         <>
-            <ImageTextBlock image={locatie}>
-                <Heading>Onze locatie</Heading>
-                <Text mb={4}>
-                    In de buurt van Utrecht ligt Buitenplaats Amerongen. Met een
-                    mooi landgoed, de kasteeltuinen, en historische bijgebouwen,
-                    het koetshuis en het poortgebouw, voelde het voor ons als
-                    een bijzondere locatie, de locatie waar wij willen trouwen!
-                </Text>
-                <Text mb={4}>
-                    <Box as="span" fontWeight="bold">
-                        <Link
-                            href="https://swijnenburg.com/locatie/buitenplaats-amerongen/"
-                            isExternal
-                        >
-                            Buitenplaats Amerongen
-                        </Link>
-                    </Box>{' '}
-                    <br />
-                    Drostestraat 12, <br /> 3958 BK Amerongen
-                </Text>
-                <Text mb={4}>
-                    In de buurt zijn veel {"B&B's"}, hotels en vakantieparken.
-                    Voor wie het wil, boek alvast een heerlijke overnachting
-                    want wij beloven: er staan genoeg drankjes klaar deze avond!
-                    En hoe fijn (en leuk) is het dan als je niet naar huis hoeft
-                    te rijden. {"Taxi's"} en OV zijn natuurlijk ook opties!
-                </Text>
-            </ImageTextBlock>
-            <ImageTextBlock image={colors} imageFirst>
-                <Heading>Dresscode</Heading>
+            <Box bgImage={`url(${banner})`}>
+                <ImageTextBlock title="Onze locatie" image={locatie}>
+                    <Heading display={{ base: 'none', lg: 'block' }}>
+                        Onze locatie
+                    </Heading>
+                    <Text mb={4}>
+                        In de buurt van Utrecht ligt Buitenplaats Amerongen. Met
+                        een mooi landgoed, de kasteeltuinen, en historische
+                        bijgebouwen, het koetshuis en het poortgebouw, voelde
+                        het voor ons als een bijzondere locatie, de locatie waar
+                        wij willen trouwen!
+                    </Text>
+                    <Text mb={4}>
+                        <Box as="span" fontWeight="bold">
+                            <Link
+                                href="https://swijnenburg.com/locatie/buitenplaats-amerongen/"
+                                isExternal
+                            >
+                                Buitenplaats Amerongen
+                            </Link>
+                        </Box>{' '}
+                        <br />
+                        Drostestraat 12, <br /> 3958 BK Amerongen
+                    </Text>
+                    <Text mb={4}>
+                        In de buurt zijn veel {"B&B's"}, hotels en
+                        vakantieparken. Voor wie het wil, boek alvast een
+                        heerlijke overnachting want wij beloven: er staan genoeg
+                        drankjes klaar deze avond! En hoe fijn (en leuk) is het
+                        dan als je niet naar huis hoeft te rijden. {"Taxi's"} en
+                        OV zijn natuurlijk ook opties!
+                    </Text>
+                </ImageTextBlock>
+            </Box>
+            <ImageTextBlock title="Dresscode" image={colors} imageFirst>
+                <Heading display={{ base: 'none', lg: 'block' }}>
+                    Dresscode
+                </Heading>
                 <Text mb={4}>
                     {` Zoals de meeste van jullie weten is Demi gék op beige, beige
                     en nog is beige. Nou dat gaan we niet van jullie vragen

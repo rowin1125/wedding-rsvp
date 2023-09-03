@@ -55,7 +55,7 @@ const DayProgram = () => {
                     }}
                     textAlign="center"
                 >
-                    Dag programma
+                    Dagprogramma
                 </Heading>
                 <Flex justifyContent="center" w="full">
                     <Grid

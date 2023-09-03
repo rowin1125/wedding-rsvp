@@ -94,6 +94,7 @@ const Rsvp = () => {
                 <GridItem
                     colSpan={{ base: 3, lg: 2 }}
                     display={{ base: 'none', lg: 'unset' }}
+                    w="full"
                 >
                     <Image
                         w="full"
@@ -105,7 +106,11 @@ const Rsvp = () => {
                     />
                 </GridItem>
                 <GridItem colSpan={{ base: 3, lg: 2 }}>
-                    <Box h={{ base: '150px', lg: '360px' }} overflow="hidden">
+                    <Box
+                        h={{ base: '150px', lg: '360px' }}
+                        overflow="hidden"
+                        w="full"
+                    >
                         <Image
                             w="full"
                             h="full"
@@ -113,11 +118,14 @@ const Rsvp = () => {
                             objectFit="cover"
                             objectPosition="top"
                             filter="grayscale(1)"
-                            transform="scale(1.4) translateX(-50px)"
+                            transform={{
+                                base: 'scale(1.4) translateX(-20px)',
+                                lg: 'scale(1.4) translateX(-50px)',
+                            }}
                         />
                     </Box>
                 </GridItem>
-                <GridItem colSpan={{ base: 3, lg: 2 }}>
+                <GridItem colSpan={{ base: 3, lg: 2 }} w="full">
                     <Image
                         w="full"
                         src={image1}

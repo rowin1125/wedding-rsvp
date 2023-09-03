@@ -1,16 +1,25 @@
 import React from 'react';
 
-import { Box, Container, Grid, GridItem, Image } from '@chakra-ui/react';
+import {
+    Box,
+    Container,
+    Grid,
+    GridItem,
+    Heading,
+    Image,
+} from '@chakra-ui/react';
 
 type ImageTextBlockProps = {
     image: string;
     children: React.ReactNode;
     imageFirst?: boolean;
+    title: string;
 };
 
 const ImageTextBlock = ({
     children,
     image,
+    title,
     imageFirst,
 }: ImageTextBlockProps) => {
     return (
@@ -38,6 +47,14 @@ const ImageTextBlock = ({
                         order={{ base: -1, lg: imageFirst ? 0 : 1 }}
                         minH="300px"
                     >
+                        <Heading
+                            textAlign="center"
+                            fontSize="3xl"
+                            mb={4}
+                            display={{ base: 'block', lg: 'none' }}
+                        >
+                            {title}
+                        </Heading>
                         <Image
                             src={image}
                             objectFit={'contain'}

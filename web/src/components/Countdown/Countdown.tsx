@@ -124,11 +124,7 @@ const Countdown = ({ targetDate }: CountdownProps) => {
                                     >
                                         {timeLeft[key as keyof typeof timeLeft]}
                                     </Heading>
-                                    <Heading
-                                        fontStyle="italic"
-                                        fontSize="3xl"
-                                        textAlign="center"
-                                    >
+                                    <Heading fontSize="3xl" textAlign="center">
                                         {key.split('')[0].toUpperCase() +
                                             key.slice(1)}
                                     </Heading>
