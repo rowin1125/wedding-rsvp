@@ -75,74 +75,108 @@ const Mvps = () => {
                             Maak kennis met onze:
                         </Heading>
                         <Heading fontSize={{ base: '4xl', lg: '5xl' }}>
-                            Getuigen & Ceremoniemeesters
+                            Getuigen{' '}
                         </Heading>
                     </GridItem>
-                    {mvps.map((mvp) => (
-                        <GridItem
-                            colSpan={{
-                                base: 4,
-                                lg: mvp.type === 'Ceremoniemeester' ? 4 : 2,
-                            }}
-                            key={mvp.name}
-                            position="relative"
-                            overflow="hidden"
-                        >
-                            <Flex justifyContent="center">
-                                <Box
-                                    style={{
-                                        textOrientation: 'mixed',
-                                        writingMode: 'vertical-lr',
-                                        transform: 'rotate(180deg)',
-                                        whiteSpace: 'nowrap',
-                                    }}
-                                    textAlign="center"
-                                    p={{
-                                        base: 4,
-                                        lg: 2,
-                                    }}
-                                    pl={0}
-                                >
-                                    <Flex
-                                        alignItems="center"
-                                        justifyContent="center"
+                    {mvps.map((mvp, index) => {
+                        return (
+                            <>
+                                {index === 4 && (
+                                    <GridItem
+                                        colSpan={8}
+                                        textAlign="center"
+                                        mb={4}
                                     >
                                         <Heading
-                                            fontSize="sm"
-                                            textTransform="uppercase"
+                                            fontSize={{
+                                                base: '4xl',
+                                                lg: '5xl',
+                                            }}
                                         >
-                                            {mvp.type}
+                                            Ceremoniemeesters
                                         </Heading>
+                                    </GridItem>
+                                )}
+                                <GridItem
+                                    colSpan={{
+                                        base: 4,
+                                        lg:
+                                            mvp.type === 'Ceremoniemeester'
+                                                ? 4
+                                                : 2,
+                                    }}
+                                    key={mvp.name}
+                                    position="relative"
+                                    overflow="hidden"
+                                >
+                                    <Flex
+                                        justifyContent={
+                                            index > 3 ? 'center' : 'unset'
+                                        }
+                                    >
+                                        <Box
+                                            style={{
+                                                textOrientation: 'mixed',
+                                                writingMode: 'vertical-lr',
+                                                transform: 'rotate(180deg)',
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                            textAlign="center"
+                                            p={{
+                                                base: 4,
+                                                lg: 2,
+                                            }}
+                                            pl={0}
+                                        >
+                                            <Flex
+                                                alignItems="center"
+                                                justifyContent="center"
+                                            >
+                                                <Heading
+                                                    fontSize="sm"
+                                                    textTransform="uppercase"
+                                                >
+                                                    {mvp.type}
+                                                </Heading>
+                                            </Flex>
+                                        </Box>
+                                        <Image
+                                            w={{
+                                                base: '100%',
+                                                lg:
+                                                    mvp.type ===
+                                                    'Ceremoniemeester'
+                                                        ? '300px'
+                                                        : '200%',
+                                            }}
+                                            h={{
+                                                base: '200px',
+                                                lg:
+                                                    mvp.type ===
+                                                    'Ceremoniemeester'
+                                                        ? '300px'
+                                                        : '200px',
+                                            }}
+                                            src={mvp.image}
+                                            objectFit="cover"
+                                            objectPosition={
+                                                mvp?.objectPosition ?? 'center'
+                                            }
+                                            filter="grayscale(50%)"
+                                        />
                                     </Flex>
-                                </Box>
-                                <Image
-                                    w={{
-                                        base: '100%',
-                                        lg:
-                                            mvp.type === 'Ceremoniemeester'
-                                                ? '400px'
-                                                : '200%',
-                                    }}
-                                    h={{
-                                        base: '200px',
-                                        lg:
-                                            mvp.type === 'Ceremoniemeester'
-                                                ? '400px'
-                                                : '200px',
-                                    }}
-                                    src={mvp.image}
-                                    objectFit="cover"
-                                    objectPosition={
-                                        mvp?.objectPosition ?? 'center'
-                                    }
-                                />
-                            </Flex>
 
-                            <Heading fontSize="3xl" mb={4} textAlign="center">
-                                {mvp.name}
-                            </Heading>
-                        </GridItem>
-                    ))}
+                                    <Heading
+                                        fontSize="3xl"
+                                        mb={4}
+                                        textAlign="center"
+                                    >
+                                        {mvp.name}
+                                    </Heading>
+                                </GridItem>
+                            </>
+                        );
+                    })}
                 </Grid>
                 <Box
                     textAlign="center"
