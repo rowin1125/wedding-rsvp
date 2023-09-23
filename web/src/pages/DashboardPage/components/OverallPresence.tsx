@@ -2,7 +2,7 @@ import React from 'react';
 
 import { GridItem, Heading } from '@chakra-ui/react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Chart } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import { GetWeddingQuery } from 'types/graphql';
 
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
@@ -94,8 +94,7 @@ const OverallPresence = () => {
             >
                 Totaal aantal gasten
             </Heading>
-            <Chart
-                type="pie"
+            <Pie
                 data={{
                     ...data,
                 }}
