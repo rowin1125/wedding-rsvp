@@ -20,15 +20,22 @@ import { db } from './db';
  * fields to the `select` object below once you've decided they are safe to be
  * seen if someone were to open the Web Inspector in their browser.
  */
+
 export const getCurrentUser = async (session: Decoded) => {
     if (!session || typeof session.id !== 'string') {
         throw new Error('Invalid session');
     }
 
-    return await db.user.findUnique({
+    const user = await db.user.findUnique({
         where: { id: session.id },
         select: { id: true, wedding: true, weddingId: true },
     });
+
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    return user;
 };
 
 /**

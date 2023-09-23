@@ -5,7 +5,6 @@ import { Form, Formik } from 'formik';
 import { CreateWeddingMutationVariables } from 'types/graphql';
 import { number, object, string } from 'yup';
 
-import { navigate, routes } from '@redwoodjs/router';
 import { MetaTags } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/dist/toast';
 
@@ -45,8 +44,6 @@ const CreateWeddingForm = () => {
                     },
                 },
             });
-            toast.success('Bruiloft aangemaakt!');
-            navigate(routes.dashboard());
         } catch (error: any) {
             toast.error(error.message);
         }

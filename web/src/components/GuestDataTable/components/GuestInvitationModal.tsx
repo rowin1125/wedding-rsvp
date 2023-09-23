@@ -9,10 +9,13 @@ import {
     ModalBody,
     ModalFooter,
     Button,
+    Text,
 } from '@chakra-ui/react';
 
 import DataDisplay from 'src/components/DataDisplay/DataDisplay';
+import DeleteDialog from 'src/components/DeleteDialog/DeleteDialog';
 
+import { useDeleteWeddingInvitationById } from '../hooks/useDeleteWeddingInvitationById';
 import { useGetGuestInvitationById } from '../hooks/useGetGuestInvitationById';
 
 type GuestInvitationModalProps = {
@@ -26,9 +29,10 @@ const GuestInvitationModal = ({
     onClose,
     invitationId,
 }: GuestInvitationModalProps) => {
-    const { weddingInvitation, loading } = useGetGuestInvitationById(
-        invitationId || ''
-    );
+    const { weddingInvitation, loading: deleteLoading } =
+        useGetGuestInvitationById(invitationId || '');
+    const { deleteWeddingInvitationById, loading } =
+        useDeleteWeddingInvitationById();
     if (!weddingInvitation || loading) return null;
 
     const mainGuest = weddingInvitation?.weddingGuests?.[0];
@@ -52,6 +56,23 @@ const GuestInvitationModal = ({
                 </ModalBody>
 
                 <ModalFooter>
+                    <DeleteDialog
+                        onDelete={async (id) => {
+                            await deleteWeddingInvitationById(id);
+                            onClose();
+                        }}
+                        title="Verwijder Uitnodiging"
+                        buttonLabel="Verwijder uitnodiging"
+                        buttonProps={{ ml: 0, mr: 4 }}
+                        id={weddingInvitation.id}
+                        loading={deleteLoading}
+                    >
+                        <Text>
+                            Weet je zeker dat je de Uitnodiging wilt
+                            verwijderen? Dit kan niet ongedaan worden.
+                        </Text>
+                    </DeleteDialog>
+
                     <Button colorScheme="body" onClick={onClose}>
                         Sluiten
                     </Button>

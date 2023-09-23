@@ -1,12 +1,15 @@
+import { useEffect } from 'react';
+
 import { Box, Flex, Grid, GridItem, Heading, Image } from '@chakra-ui/react';
 
 import { navigate, routes, useLocation } from '@redwoodjs/router';
 import { Toaster, toast } from '@redwoodjs/web/dist/toast';
 
+import { useAuth } from 'src/auth';
 import Footer from 'src/components/Footer/Footer';
 import FooterMenu from 'src/components/FooterMenu/FooterMenu';
 import Sidebar from 'src/components/Sidebar/Sidebar';
-import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
+import { capitalizeText } from 'src/helpers/textHelpers/capitalizeText/capitalizeText';
 
 import heroImage from '../../components/Hero/images/Screenshot from 2023-08-25 17-41-23.png';
 
@@ -14,29 +17,27 @@ type AdminLayoutProps = {
     children?: React.ReactNode;
 };
 
+const unSlugify = (slug: string) => {
+    return slug.replace(/-/g, ' ');
+};
+
 const AdminLayout = ({ children }: AdminLayoutProps) => {
+    const { currentUser, loading } = useAuth();
     const { pathname } = useLocation();
-    const unSlugify = (slug: string) => {
-        return slug.replace(/-/g, ' ');
-    };
+
     const segmentedPathname = pathname.split('/');
     const pageTitle = unSlugify(
         segmentedPathname[segmentedPathname.length - 1]
     );
-    const capitalize = (s: string) => {
-        if (typeof s !== 'string') return '';
-        return s.charAt(0).toUpperCase() + s.slice(1);
-    };
-
-    const { wedding, loading, networkStatus } = useGetWeddingById();
 
     const isSettingsPage = pathname === routes.weddingSettings();
-    const isFetched = networkStatus === 7;
 
-    if (isFetched && !loading && !isSettingsPage && !wedding?.id) {
+    useEffect(() => {
+        if (loading || isSettingsPage || currentUser?.weddingId) return;
+
         navigate(routes.weddingSettings());
         toast.error('Je hebt nog geen bruiloft aangemaakt');
-    }
+    }, [currentUser, loading, pathname, isSettingsPage]);
 
     return (
         <Box>
@@ -58,7 +59,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                             alignItems="center"
                         >
                             <Heading color="white" fontSize="6xl">
-                                {capitalize(pageTitle)}
+                                {capitalizeText(pageTitle)}
                             </Heading>
                         </Flex>
                     </GridItem>

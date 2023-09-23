@@ -60,7 +60,7 @@ const UpdateRsvpForm = ({
                         mt={4}
                         isLoading={loading}
                     >
-                        Versturen
+                        Opslaan
                     </Button>
                 </Flex>
             </Box>
