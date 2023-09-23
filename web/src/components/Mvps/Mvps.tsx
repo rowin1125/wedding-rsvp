@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 import {
     Box,
     Container,
@@ -80,7 +82,7 @@ const Mvps = () => {
                     </GridItem>
                     {mvps.map((mvp, index) => {
                         return (
-                            <>
+                            <Fragment key={mvp.name}>
                                 {index === 4 && (
                                     <GridItem
                                         colSpan={8}
@@ -105,7 +107,6 @@ const Mvps = () => {
                                                 ? 4
                                                 : 2,
                                     }}
-                                    key={mvp.name}
                                     position="relative"
                                     overflow="hidden"
                                 >
@@ -174,7 +175,7 @@ const Mvps = () => {
                                         {mvp.name}
                                     </Heading>
                                 </GridItem>
-                            </>
+                            </Fragment>
                         );
                     })}
                 </Grid>

@@ -9,21 +9,21 @@ export const Button = defineStyleConfig({
     },
     variants: {
         outline: {
-            borderColor: 'secondary.500',
-            color: 'secondary.500',
+            borderColor: 'body.500',
+            color: 'body.500',
             fontWeight: 'normal',
             _hover: {
-                backgroundColor: 'secondary.500',
+                backgroundColor: 'body.500',
                 color: 'white',
             },
             _disabled: {
                 _hover: {
-                    color: 'secondary.500',
+                    color: 'body.500',
                 },
             },
         },
         ghost: {
-            color: 'secondary.500',
+            color: 'body.500',
             fontWeight: 'normal',
         },
     },

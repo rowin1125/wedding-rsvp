@@ -8,6 +8,7 @@ import {
     DrawerBody,
     DrawerCloseButton,
     DrawerContent,
+    DrawerFooter,
     DrawerHeader,
     DrawerOverlay,
     Flex,
@@ -20,8 +21,15 @@ import {
 } from '@chakra-ui/react';
 import { CiMail, CiPhone } from 'react-icons/ci';
 import { SlMenu } from 'react-icons/sl';
+import { InvitationType } from 'types/graphql';
 
+import { navigate, routes, useParams } from '@redwoodjs/router';
+import { toast } from '@redwoodjs/web/dist/toast';
+
+import { useAuth } from 'src/auth';
+import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
 import RedwoodLink from 'src/components/RedwoodLink/RedwoodLink';
+import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
 import logo from '../../Logo-wedding.png';
 import {
@@ -30,8 +38,36 @@ import {
 } from '../MobileMenuDrawer/MobileMenuDrawer';
 
 const DesktopHeader = () => {
+    const { logOut, currentUser } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { weddingId, weddingInvitationId } = useParams();
+    const { wedding } = useGetWeddingById(weddingId);
+    const { weddingInvitation } =
+        useGetGuestInvitationById(weddingInvitationId);
     const btnRef = React.useRef(null);
+
+    const handleLogout = () => {
+        toast.success('Je bent uitgelogd');
+        logOut();
+        onClose();
+    };
+
+    const handleLoginRoute = () => {
+        navigate(routes.login());
+        onClose();
+    };
+    let invitationType: InvitationType;
+
+    if (
+        !weddingInvitation?.invitationType ||
+        window.location.pathname.includes('bruiloft')
+    ) {
+        invitationType = window.location.pathname.includes('F')
+            ? 'DAY'
+            : 'EVENING';
+    } else {
+        invitationType = weddingInvitation?.invitationType || 'DAY';
+    }
 
     return (
         <Center
@@ -43,19 +79,30 @@ const DesktopHeader = () => {
             w="full"
             py={{ base: 2, lg: 0 }}
         >
-            <RedwoodLink
-                to="/"
-                title="Naar home"
-                display={'flex'}
-                alignItems="center"
-                _hover={{ textDecoration: 'none' }}
-            >
-                <Image src={logo} width={28} alt="Demi & Rowin" />
-            </RedwoodLink>
+            {wedding && (
+                <RedwoodLink
+                    to={routes.weddingRsvp({
+                        weddingId: wedding?.id || '',
+                        invitationType: invitationType === 'DAY' ? 'F' : 'E',
+                    })}
+                    title="Naar home"
+                    display={'flex'}
+                    alignItems="center"
+                    _hover={{ textDecoration: 'none' }}
+                >
+                    <Image src={logo} width={28} alt="Demi & Rowin" />
+                </RedwoodLink>
+            )}
             <Flex justifyContent="space" alignItems="center">
                 {fakeLinks.map((link) => (
                     <Link
-                        onClick={() => handleLinkClick(link.link)}
+                        onClick={() =>
+                            handleLinkClick(
+                                link.link,
+                                weddingId,
+                                invitationType === 'DAY' ? 'F' : 'E'
+                            )
+                        }
                         key={link.label}
                         mx={4}
                     >
@@ -165,6 +212,34 @@ const DesktopHeader = () => {
                                 </Flex>
                             </Box>
                         </DrawerBody>
+                        <DrawerFooter>
+                            {currentUser ? (
+                                <Flex>
+                                    <Button
+                                        colorScheme="gray"
+                                        onClick={handleLogout}
+                                        mr={8}
+                                    >
+                                        Uitloggen
+                                    </Button>
+                                    <Button
+                                        as={RedwoodLink}
+                                        to={routes.dashboard()}
+                                        _hover={{ textDecoration: 'none' }}
+                                        colorScheme="body"
+                                    >
+                                        Dashboard
+                                    </Button>
+                                </Flex>
+                            ) : (
+                                <Button
+                                    colorScheme="body"
+                                    onClick={handleLoginRoute}
+                                >
+                                    Inloggen
+                                </Button>
+                            )}
+                        </DrawerFooter>
                     </DrawerContent>
                 </Drawer>
             </Box>

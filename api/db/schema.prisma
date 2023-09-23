@@ -1,18 +1,65 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = "native"
+    provider      = "prisma-client-js"
+    binaryTargets = "native"
+}
+
+enum InvitationType {
+    DAY
+    EVENING
 }
 
 model User {
-  id                  Int       @id @default(autoincrement())
-  email               String    @unique
-  hashedPassword      String
-  salt                String
-  resetToken          String?
-  resetTokenExpiresAt DateTime?
+    id                  String    @id @default(cuid())
+    email               String    @unique
+    hashedPassword      String
+    salt                String
+    resetToken          String?
+    resetTokenExpiresAt DateTime?
+    wedding             Wedding?  @relation(fields: [weddingId], references: [id])
+    weddingId           String?   @unique
+    createdAt           DateTime  @default(now())
+    updatedAt           DateTime  @updatedAt
+}
+
+model Wedding {
+    id                      String              @id @default(cuid())
+    date                    DateTime
+    name                    String
+    dayInvitationAmount     Int                 @default(0)
+    eveningInvitationAmount Int                 @default(0)
+    weddingInvitation       WeddingInvitation[]
+    weddingGuests           WeddingGuest[]
+    user                    User?
+    createdAt               DateTime            @default(now())
+    updatedAt               DateTime            @updatedAt
+}
+
+model WeddingInvitation {
+    id             String         @id @default(cuid())
+    weddingId      String
+    presence       Boolean        @default(false)
+    dietaryWishes  String?
+    remarks        String?
+    weddingGuests  WeddingGuest[]
+    invitationType InvitationType
+    email          String
+    wedding        Wedding        @relation(fields: [weddingId], references: [id])
+    createdAt      DateTime       @default(now())
+    updatedAt      DateTime       @updatedAt
+}
+
+model WeddingGuest {
+    id                  String             @id @default(cuid())
+    weddingId           String
+    name                String
+    weddingInvitation   WeddingInvitation? @relation(fields: [weddingInvitationId], references: [id])
+    weddingInvitationId String?
+    wedding             Wedding            @relation(fields: [weddingId], references: [id])
+    createdAt           DateTime           @default(now())
+    updatedAt           DateTime           @updatedAt
 }

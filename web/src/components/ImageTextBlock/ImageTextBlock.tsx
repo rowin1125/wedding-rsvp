@@ -23,7 +23,7 @@ const ImageTextBlock = ({
     imageFirst,
 }: ImageTextBlockProps) => {
     return (
-        <Box py={{ base: 10, lg: 20 }}>
+        <Box py={{ base: 6, lg: 20 }}>
             <Container>
                 <Grid
                     templateColumns="repeat(2, 1fr)"
@@ -59,7 +59,8 @@ const ImageTextBlock = ({
                             src={image}
                             objectFit={'contain'}
                             w="full"
-                            height={{ base: '300px', lg: '500px' }}
+                            height={{ base: '300px', lg: 'auto' }}
+                            maxH="500px"
                         />
                     </GridItem>
                 </Grid>

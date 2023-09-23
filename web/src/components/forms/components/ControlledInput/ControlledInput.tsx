@@ -23,7 +23,7 @@ type ControlledInputProps = {
     helperText?: string;
     id: string;
     labelProps?: FormLabelProps;
-    inputRightAddonText?: string;
+    inputRightAddonText?: () => JSX.Element;
     inputLeftAddonText?: string;
     formControlProps?: FormControlProps;
     isHidden?: boolean;
@@ -45,6 +45,7 @@ const ControlledInput = ({
     const isInvalid = !!meta.error && meta.touched;
     const isValid = !meta.error && meta.touched;
 
+    const InputRightAddonText = inputRightAddonText;
     return (
         <FormControl
             isInvalid={isInvalid}
@@ -70,12 +71,14 @@ const ControlledInput = ({
                     {...props}
                 />
                 {isValid && (
-                    <InputRightElement>
+                    <InputRightElement mr={InputRightAddonText ? 14 : 'unset'}>
                         <Icon as={FaCheck} color="success.500" />
                     </InputRightElement>
                 )}
-                {inputRightAddonText && (
-                    <InputRightAddon>{inputRightAddonText}</InputRightAddon>
+                {InputRightAddonText && (
+                    <InputRightAddon px={0}>
+                        {inputRightAddonText()}
+                    </InputRightAddon>
                 )}
             </InputGroup>
             {helperText && <FormHelperText>{helperText}</FormHelperText>}

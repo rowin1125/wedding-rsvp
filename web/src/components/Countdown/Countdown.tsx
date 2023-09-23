@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
     Box,
     Container,
+    ContainerProps,
     Flex,
     Grid,
     GridItem,
@@ -11,9 +12,10 @@ import {
 
 type CountdownProps = {
     targetDate: string;
-};
+    hideDate?: boolean;
+} & ContainerProps;
 
-const Countdown = ({ targetDate }: CountdownProps) => {
+const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
     const calculateTimeLeft = useCallback(() => {
         const now = new Date().getTime();
         const targetTime = new Date(targetDate).getTime();
@@ -30,10 +32,9 @@ const Countdown = ({ targetDate }: CountdownProps) => {
         }
 
         const seconden = Math.floor((timeDifference / 1000) % 60);
-        const minuten = Math.floor((seconden / 60) % 60);
-        const uren = Math.floor((timeDifference / (1000 * 60 * 60)) % 24) - 1;
+        const uren = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+        const minuten = Math.floor((timeDifference / 1000 / 60) % 60);
         const dagen = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        // const maanden = Math.floor(dagen / 30); // Approximate maanden, not precise
 
         return {
             seconden,
@@ -61,8 +62,8 @@ const Countdown = ({ targetDate }: CountdownProps) => {
         .reverse();
 
     return (
-        <Container as="section" my={20} w="full">
-            <Box maxW="1000px">
+        <Container as="section" my={20} w="full" {...props}>
+            <Box maxW="1000px" mx="auto">
                 <Grid
                     templateColumns={{
                         base: 'repeat(4, 1fr)',
@@ -70,45 +71,48 @@ const Countdown = ({ targetDate }: CountdownProps) => {
                     }}
                     gap={4}
                 >
-                    <GridItem colSpan={4} mb={10}>
-                        <Flex justifyContent="center">
-                            <Heading
-                                fontSize={{
-                                    base: '2xl',
-                                    lg: '4xl',
-                                }}
-                                borderRightWidth={2}
-                                borderColor="tertairy.900"
-                                py={4}
-                                px={8}
-                            >
-                                16
-                            </Heading>
+                    {!hideDate && (
+                        <GridItem colSpan={4} mb={10}>
+                            <Flex justifyContent="center">
+                                <Heading
+                                    fontSize={{
+                                        base: '2xl',
+                                        lg: '4xl',
+                                    }}
+                                    borderRightWidth={2}
+                                    borderColor="tertairy.900"
+                                    py={4}
+                                    px={8}
+                                >
+                                    16
+                                </Heading>
 
-                            <Heading
-                                fontSize={{
-                                    base: '2xl',
-                                    lg: '4xl',
-                                }}
-                                borderRightWidth={2}
-                                borderColor="tertairy.900"
-                                py={4}
-                                px={8}
-                            >
-                                mei
-                            </Heading>
-                            <Heading
-                                fontSize={{
-                                    base: '2xl',
-                                    lg: '4xl',
-                                }}
-                                py={4}
-                                px={8}
-                            >
-                                2023
-                            </Heading>
-                        </Flex>
-                    </GridItem>
+                                <Heading
+                                    fontSize={{
+                                        base: '2xl',
+                                        lg: '4xl',
+                                    }}
+                                    borderRightWidth={2}
+                                    borderColor="tertairy.900"
+                                    py={4}
+                                    px={8}
+                                >
+                                    mei
+                                </Heading>
+                                <Heading
+                                    fontSize={{
+                                        base: '2xl',
+                                        lg: '4xl',
+                                    }}
+                                    py={4}
+                                    px={8}
+                                >
+                                    2023
+                                </Heading>
+                            </Flex>
+                        </GridItem>
+                    )}
+
                     {timeMap.map((key) => {
                         return (
                             <GridItem colSpan={{ base: 2, lg: 1 }} key={key}>

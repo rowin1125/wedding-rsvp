@@ -9,41 +9,84 @@ import {
 import { GiBigDiamondRing, GiPartyFlags } from 'react-icons/gi';
 import { HiOutlineUserGroup } from 'react-icons/hi';
 import { LuPartyPopper } from 'react-icons/lu';
+import { MdOutlineSentimentVeryDissatisfied } from 'react-icons/md';
 import { PiChampagneBold, PiForkKnifeBold } from 'react-icons/pi';
+import { InvitationType } from 'types/graphql';
 
-const DayProgram = () => {
-    const program = [
-        {
-            icon: HiOutlineUserGroup,
-            title: 'Ontvangst',
-            time: '14:00',
+type DayProgramProps = {
+    invitationType: InvitationType;
+};
+
+const DayProgram = ({ invitationType }: DayProgramProps) => {
+    const programData = {
+        DAY: {
+            title: 'Dagprogramma',
+            items: [
+                {
+                    icon: HiOutlineUserGroup,
+                    title: 'Ontvangst',
+                    time: '14:00',
+                },
+                {
+                    icon: GiBigDiamondRing,
+                    title: 'Ceremonie',
+                    time: '14:30',
+                },
+                {
+                    icon: LuPartyPopper,
+                    title: 'Toost',
+                    time: '15:15',
+                },
+                {
+                    icon: PiChampagneBold,
+                    title: 'Borrel',
+                    time: '15:45',
+                },
+                {
+                    icon: PiForkKnifeBold,
+                    title: 'Diner',
+                    time: '17:30',
+                },
+                {
+                    icon: GiPartyFlags,
+                    title: 'Feest',
+                    time: '20:30',
+                },
+                {
+                    icon: MdOutlineSentimentVeryDissatisfied,
+                    title: 'Einde feest',
+                    time: '01:00',
+                },
+            ],
         },
-        {
-            icon: GiBigDiamondRing,
-            title: 'Ceremonie',
-            time: '14:30',
+        EVENING: {
+            title: 'Avondprogramma',
+            items: [
+                {
+                    icon: HiOutlineUserGroup,
+                    title: 'Ontvangst',
+                    time: '20:00',
+                },
+                {
+                    icon: GiPartyFlags,
+                    title: 'Feest',
+                    time: '20:30',
+                },
+                {
+                    icon: PiChampagneBold,
+                    title: 'Compleet losgaan',
+                    time: '22:00',
+                },
+                {
+                    icon: MdOutlineSentimentVeryDissatisfied,
+                    title: 'Einde feest',
+                    time: '01:00',
+                },
+            ],
         },
-        {
-            icon: LuPartyPopper,
-            title: 'Toost',
-            time: '15:15',
-        },
-        {
-            icon: PiChampagneBold,
-            title: 'Borrel',
-            time: '15:45',
-        },
-        {
-            icon: PiForkKnifeBold,
-            title: 'Diner',
-            time: '17:30',
-        },
-        {
-            icon: GiPartyFlags,
-            title: 'Feest',
-            time: '20:30',
-        },
-    ];
+    };
+
+    const program = programData[invitationType];
     return (
         <Box py={{ base: 10, lg: 20 }} id="program">
             <Container>
@@ -55,7 +98,7 @@ const DayProgram = () => {
                     }}
                     textAlign="center"
                 >
-                    Dagprogramma
+                    {program.title}
                 </Heading>
                 <Flex justifyContent="center" w="full">
                     <Grid
@@ -63,8 +106,9 @@ const DayProgram = () => {
                         maxW="800px"
                         w="full"
                     >
-                        {program.map((item, index) => {
+                        {program.items.map((item, index) => {
                             const isOdd = index % 2 !== 0;
+
                             return (
                                 <GridItem
                                     colSpan={1}
@@ -77,16 +121,16 @@ const DayProgram = () => {
                                         borderRadius: '5px',
                                         backgroundColor: '#f1e8db',
                                         position: 'absolute',
-                                        top: isOdd ? '10%' : '65%',
-                                        right: isOdd ? 'unset' : '-40px',
-                                        left: isOdd ? '-40px' : 'unset',
+                                        top: isOdd ? '65%' : '10%',
+                                        right: isOdd ? 'unset' : '4px',
+                                        left: isOdd ? '6px' : 'unset',
                                         zIndex: 4,
                                     }}
                                 >
                                     <Box
-                                        borderLeftWidth={isOdd ? 3 : 0}
+                                        borderRightWidth={isOdd ? 0 : 3}
                                         borderColor="#f1e8db"
-                                        h="250px"
+                                        h={'250px'}
                                         display="flex"
                                         alignItems="center"
                                         justifyContent={

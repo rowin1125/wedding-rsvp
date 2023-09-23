@@ -1,9 +1,13 @@
-import { Box, Flex, Heading, Image, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Heading, Image, Text } from '@chakra-ui/react';
 
-import RsvpLinkButton from './components/RsvpLinkButton/RsvpLinkButton';
 import coverImage from './images/Screenshot from 2023-08-25 17-41-23.png';
 
-const Hero = () => {
+type HeroProps = {
+    title: string;
+    subtitle: string;
+} & BoxProps;
+
+const Hero = ({ subtitle, title, ...props }: HeroProps) => {
     return (
         <Box
             w="full"
@@ -12,6 +16,7 @@ const Hero = () => {
                 lg: 'calc(80vh - 93px)',
             }}
             position="relative"
+            {...props}
         >
             <Image
                 w="full"
@@ -35,17 +40,16 @@ const Hero = () => {
                     textTransform="uppercase"
                     fontFamily="butler"
                 >
-                    Demi & Rowin
+                    {title}
                 </Text>
                 <Heading
                     fontWeight="normal"
                     fontSize={{ base: '40px', lg: '80px' }}
                     color="white"
                 >
-                    Wij gaan trouwen!
+                    {subtitle}
                 </Heading>
             </Flex>
-            <RsvpLinkButton />
         </Box>
     );
 };

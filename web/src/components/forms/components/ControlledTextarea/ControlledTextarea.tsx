@@ -22,6 +22,7 @@ type ControlledTextareaProps = {
     id: string;
     inputRightAddonText?: string;
     inputLeftAddonText?: string;
+    isHidden?: boolean;
 } & TextareaProps;
 
 const ControlledTextarea = ({
@@ -30,6 +31,7 @@ const ControlledTextarea = ({
     id,
     inputRightAddonText,
     inputLeftAddonText,
+    isHidden,
     ...props
 }: ControlledTextareaProps) => {
     const [field, meta] = useField(id);
@@ -37,7 +39,7 @@ const ControlledTextarea = ({
     const isValid = !meta.error && meta.touched;
 
     return (
-        <FormControl isInvalid={isInvalid} mb={4}>
+        <FormControl hidden={isHidden} isInvalid={isInvalid} mb={4}>
             <FormLabel fontWeight="bold" htmlFor={id}>
                 {label}
             </FormLabel>

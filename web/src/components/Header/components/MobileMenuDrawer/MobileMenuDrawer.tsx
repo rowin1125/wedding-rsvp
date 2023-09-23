@@ -8,6 +8,7 @@ import {
     DrawerBody,
     DrawerCloseButton,
     DrawerContent,
+    DrawerFooter,
     DrawerHeader,
     DrawerOverlay,
     Flex,
@@ -20,7 +21,13 @@ import {
 } from '@chakra-ui/react';
 import { CiMail, CiPhone } from 'react-icons/ci';
 import { SlMenu } from 'react-icons/sl';
+import { InvitationType } from 'types/graphql';
 
+import { navigate, routes, useParams } from '@redwoodjs/router';
+import { toast } from '@redwoodjs/web/dist/toast';
+
+import { useAuth } from 'src/auth';
+import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
 import RedwoodLink from 'src/components/RedwoodLink';
 
 import logo from '../../Logo-wedding.png';
@@ -41,9 +48,27 @@ export const fakeLinks = [
     },
 ];
 
-export const handleLinkClick = async (link: string, callBack?: () => void) => {
-    const element = document.getElementById(link);
+export const waitFor = (time = 1000) =>
+    new Promise((resolve) => {
+        setTimeout(() => {
+            resolve('');
+        }, time);
+    });
 
+export const handleLinkClick = async (
+    link: string,
+    weddingId: string,
+    invitationType: 'F' | 'E',
+    callBack?: () => void
+) => {
+    const element = document.getElementById(link);
+    const pathname = window.location.pathname;
+
+    if (!pathname.includes('bruiloft')) {
+        navigate(routes.weddingRsvp({ weddingId, invitationType }));
+        await waitFor(1000);
+        handleLinkClick(link, weddingId, invitationType, callBack);
+    }
     if (element) {
         const offset = 85;
         const bodyRect = document.body.getBoundingClientRect().top;
@@ -56,19 +81,41 @@ export const handleLinkClick = async (link: string, callBack?: () => void) => {
             behavior: 'smooth',
         });
     }
-    const waitForScroll = () =>
-        new Promise((resolve) => {
-            setTimeout(() => {
-                resolve('');
-            }, 1000);
-        });
-    await waitForScroll();
+
+    await waitFor();
     callBack?.();
 };
 
 const MobileMenuDrawer = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const btnRef = React.useRef(null);
+    const { logOut, currentUser } = useAuth();
+    const handleLogut = () => {
+        logOut();
+        toast.success('Je bent uitgelogd');
+    };
+
+    const handleLoginNavigation = () => {
+        navigate(routes.login());
+        onClose();
+    };
+
+    const { weddingId, weddingInvitationId } = useParams();
+    const { weddingInvitation } =
+        useGetGuestInvitationById(weddingInvitationId);
+
+    let invitationType: InvitationType;
+
+    if (
+        !weddingInvitation?.invitationType ||
+        window.location.pathname.includes('bruiloft')
+    ) {
+        invitationType = window.location.pathname.includes('F')
+            ? 'DAY'
+            : 'EVENING';
+    } else {
+        invitationType = weddingInvitation?.invitationType || 'DAY';
+    }
 
     return (
         <>
@@ -93,8 +140,7 @@ const MobileMenuDrawer = () => {
                     ref={btnRef}
                     display={{ base: 'block', lg: 'none' }}
                     variant="ghost"
-                    colorScheme="primary"
-                    _hover={{ bg: 'primary.700' }}
+                    colorScheme="body"
                     onClick={onOpen}
                 >
                     <Icon as={SlMenu} color="black" fontSize="2xl" />
@@ -107,7 +153,7 @@ const MobileMenuDrawer = () => {
                 >
                     <DrawerOverlay />
                     <DrawerContent bg="white" color="white">
-                        <DrawerCloseButton color="white" />
+                        <DrawerCloseButton color="white" bg="body.500" />
                         <DrawerHeader
                             display="flex"
                             justifyContent="center"
@@ -131,7 +177,14 @@ const MobileMenuDrawer = () => {
                                 <Box key={`${link}-${index}`} w={'full'}>
                                     <Button
                                         onClick={() =>
-                                            handleLinkClick(link.link, onClose)
+                                            handleLinkClick(
+                                                link.link,
+                                                weddingId,
+                                                invitationType === 'DAY'
+                                                    ? 'F'
+                                                    : 'E',
+                                                onClose
+                                            )
                                         }
                                         variant="link"
                                         py={4}
@@ -146,6 +199,25 @@ const MobileMenuDrawer = () => {
                                     </Button>
                                 </Box>
                             ))}
+                            <Box w={'full'}>
+                                {currentUser && (
+                                    <Button
+                                        onClick={() =>
+                                            navigate(routes.dashboard())
+                                        }
+                                        variant="link"
+                                        py={4}
+                                    >
+                                        <Heading
+                                            as="span"
+                                            fontSize="lg"
+                                            textAlign="left"
+                                        >
+                                            - Admin Dashboard
+                                        </Heading>
+                                    </Button>
+                                )}
+                            </Box>
                             <Heading mt={6}>Ceremoniemeesters</Heading>
                             <Text>
                                 Mocht je ons willen verrassen met een dansje,
@@ -205,6 +277,32 @@ const MobileMenuDrawer = () => {
                                 </Flex>
                             </Box>
                         </DrawerBody>
+                        <DrawerFooter zIndex={4}>
+                            <Flex>
+                                {currentUser ? (
+                                    <Button
+                                        colorScheme="body"
+                                        mr={6}
+                                        variant="outline"
+                                        onClick={handleLogut}
+                                    >
+                                        Log uit
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        colorScheme="body"
+                                        mr={6}
+                                        variant="outline"
+                                        onClick={handleLoginNavigation}
+                                    >
+                                        Login
+                                    </Button>
+                                )}
+                                <Button colorScheme="body" onClick={onClose}>
+                                    Sluiten
+                                </Button>
+                            </Flex>
+                        </DrawerFooter>
                     </DrawerContent>
                 </Drawer>
             </Center>

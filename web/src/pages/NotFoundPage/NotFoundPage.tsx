@@ -1,44 +1,70 @@
+import { Heading, Flex, Box, Image, Text } from '@chakra-ui/react';
+
+import { MetaTags } from '@redwoodjs/web';
+
+import Hero from 'src/components/Hero';
+
+import brokenHeart from '../WeddingRsvpPage/components/images/broken hart.png';
+
 export default () => (
-    <main>
-        <style
-            dangerouslySetInnerHTML={{
-                __html: `
-              html, body {
-                margin: 0;
-              }
-              html * {
-                box-sizing: border-box;
-              }
-              main {
-                display: flex;
-                align-items: center;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-                text-align: center;
-                background-color: #E2E8F0;
-                height: 100vh;
-              }
-              section {
-                background-color: white;
-                border-radius: 0.25rem;
-                width: 32rem;
-                padding: 1rem;
-                margin: 0 auto;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-              }
-              h1 {
-                font-size: 2rem;
-                margin: 0;
-                font-weight: 500;
-                line-height: 1;
-                color: #2D3748;
-              }
-            `,
+    <Box as="main">
+        <MetaTags
+            title="Pagina niet gevonden"
+            description="Pagina niet gevonden"
+        />
+        <Hero
+            title="Pagina niet gevonden"
+            subtitle="Check de url en probeer het opnieuw"
+            height={{
+                base: '30vh',
+                lg: '30vh',
             }}
         />
-        <section>
-            <h1>
-                <span>404 Page Not Found</span>
-            </h1>
-        </section>
-    </main>
+        <Box h="calc(100vh - 30vh - 92px - 57px)" position="relative">
+            <Box
+                inset={0}
+                position="absolute"
+                justifyContent="center"
+                alignItems="center"
+                display="flex"
+            >
+                <Box>
+                    <Heading
+                        textAlign="center"
+                        fontSize={{
+                            base: '4xl',
+                            lg: '8xl',
+                        }}
+                        color="#FF0404"
+                    >
+                        Oeps
+                    </Heading>
+                    <Flex alignItems="center" justifyContent="center">
+                        <Heading
+                            fontSize={{
+                                base: '4xl',
+                                lg: '8xl',
+                            }}
+                            color="black"
+                        >
+                            4
+                        </Heading>
+                        <Image src={brokenHeart} alt="broken heart" h="70px" />
+                        <Heading
+                            fontSize={{
+                                base: '4xl',
+                                lg: '8xl',
+                            }}
+                            color="black"
+                        >
+                            4
+                        </Heading>
+                    </Flex>
+                    <Text>
+                        De pagina die je probeert te bezoeken bestaat niet
+                    </Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
 );

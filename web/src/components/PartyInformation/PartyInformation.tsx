@@ -3,7 +3,7 @@ import { Box, Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
 import banner from '../Banner/images/banner.jpg';
 import ImageTextBlock from '../ImageTextBlock';
 
-import colors from './images/colors.png';
+import colors from './images/colors.jpg';
 import locatie from './images/locatie.png';
 
 const PartyInformation = () => {
@@ -33,6 +33,15 @@ const PartyInformation = () => {
                         <br />
                         Drostestraat 12, <br /> 3958 BK Amerongen
                     </Text>
+                </ImageTextBlock>
+                <ImageTextBlock
+                    title="Overnachting"
+                    image={'https://shorturl.at/ipsxC'}
+                    imageFirst
+                >
+                    <Heading display={{ base: 'none', lg: 'block' }}>
+                        Overnachting
+                    </Heading>
                     <Text mb={4}>
                         In de buurt zijn veel {"B&B's"}, hotels en
                         vakantieparken. Voor wie het wil, boek alvast een
@@ -41,9 +50,41 @@ const PartyInformation = () => {
                         dan als je niet naar huis hoeft te rijden. {"Taxi's"} en
                         OV zijn natuurlijk ook opties!
                     </Text>
+                    <Text mb={4}>
+                        Bij Van der Valk Veenendaal hebben wij een korting
+                        kunnen regelen. Dit hotel ligt op +/- 15 minuten rijden
+                        van de locatie. Boek via de onderstaande knop en gebruik
+                        de kortingscode: <br />
+                        <Box as="span" fontWeight="bold" mt={4}>
+                            VEE-GF24322
+                        </Box>
+                    </Text>
+                    <Button
+                        colorScheme="body"
+                        as={Link}
+                        _hover={{
+                            textDecoration: 'none',
+                        }}
+                        href="http://www.hotelveenendaal.com/acties?voucher=VEE-GF24322"
+                        isExternal
+                        mb={4}
+                    >
+                        Boek via de link
+                    </Button>
+                    <Text>
+                        Of bekijk de mogelijkheden via{' '}
+                        <Link
+                            href="https://swijnenburg.com/trouwen/ontzorgen/overnachten/"
+                            isExternal
+                        >
+                            deze
+                        </Link>{' '}
+                        link van Buitenplaats Amerongen
+                    </Text>
                 </ImageTextBlock>
             </Box>
-            <ImageTextBlock title="Dresscode" image={colors} imageFirst>
+
+            <ImageTextBlock title="Dresscode" image={colors}>
                 <Heading display={{ base: 'none', lg: 'block' }}>
                     Dresscode
                 </Heading>
