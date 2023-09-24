@@ -112,6 +112,7 @@ const PartyInformation = () => {
                         href={
                             'https://www.google.com/search?q=pastelkleuren+bruiloft+kleding+vrouwen&tbm=isch&ved=2ahUKEwjz_4PkgIWBAxW5h_0HHUdaAlgQ2-cCegQIABAA&oq=pastelkleuren+bruiloft+kleding+vrouwen&gs_lcp=CgNpbWcQAzoGCAAQCBAeUNkBWPcVYIwXaAJwAHgAgAGiAYgBpQuSAQQwLjEwmAEAoAEBqgELZ3dzLXdpei1pbWfAAQE&sclient=img&ei=i4nvZLOOD7mP9u8Px7SJwAU&bih=972&biw=1400'
                         }
+                        isExternal
                         as={Link}
                         mb={{ base: 4, lg: 0 }}
                         mr={{ base: 0, lg: 4 }}
@@ -128,6 +129,7 @@ const PartyInformation = () => {
                             'https://www.google.com/search?q=pastelkleuren+bruiloft+kleding+mannen&tbm=isch&ved=2ahUKEwjD-ZabgYWBAxWwi_0HHYmhDcUQ2-cCegQIABAA&oq=pastelkleuren+bruiloft+kleding+mannen&gs_lcp=CgNpbWcQA1DZBViXCmDYC2gAcAB4AIABlAGIAe8HkgEDMC43mAEAoAEBqgELZ3dzLXdpei1pbWfAAQE&sclient=img&ei=_onvZMOCN7CX9u8PicO2qAw&bih=972&biw=1400'
                         }
                         as={Link}
+                        isExternal
                         _hover={{
                             textDecoration: 'none',
                         }}
