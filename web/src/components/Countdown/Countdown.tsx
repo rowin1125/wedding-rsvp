@@ -107,7 +107,7 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
                                     py={4}
                                     px={8}
                                 >
-                                    2023
+                                    2024
                                 </Heading>
                             </Flex>
                         </GridItem>
