@@ -1,4 +1,5 @@
-import { Box, Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Icon, Link, Text } from '@chakra-ui/react';
+import { BsEnvelopePaperHeart } from 'react-icons/bs';
 
 import banner from '../Banner/images/banner.jpg';
 import ImageTextBlock from '../ImageTextBlock';
@@ -33,6 +34,40 @@ const PartyInformation = () => {
                         <br />
                         Drostestraat 12, <br /> 3958 BK Amerongen
                     </Text>
+                    <Heading mt={8} mb={4}>
+                        Cadeautip
+                    </Heading>
+                    <Text mb={4}>
+                        Wij zouden graag deze onvergetelijke dag afsluiten met
+                        een mooie huwelijksreis. Mocht je ons een cadeau willen
+                        geven, dan is een bijdrage aan onze huwelijksreis meer
+                        dan welkom.
+                    </Text>
+
+                    <Flex justifyContent="center">
+                        <Box
+                            _hover={{
+                                transform: 'scale(1.1)',
+                            }}
+                            isExternal
+                            transition="all 0.2s ease-in-out"
+                            as={Link}
+                            href="https://giphy.com/gifs/baby-money-little-rascals-l0HFkA6omUyjVYqw8/fullscreen"
+                            bg="tertairy.200"
+                            w="90px"
+                            h="90px"
+                            rounded="full"
+                            display="flex"
+                            justifyContent="center"
+                            alignItems={'center'}
+                        >
+                            <Icon
+                                as={BsEnvelopePaperHeart}
+                                color="body.500"
+                                fontSize="3xl"
+                            />
+                        </Box>
+                    </Flex>
                 </ImageTextBlock>
                 <ImageTextBlock
                     title="Overnachting"
@@ -103,7 +138,7 @@ const PartyInformation = () => {
                     pastelblauw, pastelroze, beige We zouden het kunnen
                     waarderen als je niet in het zwart of wit (of rood?) komt.`}
                 </Text>
-                <Text>
+                <Text mt={4}>
                     Heb je inspiratie nodig, bekijk dan hier voorbeelden:
                 </Text>
 
