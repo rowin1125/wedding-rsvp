@@ -47,15 +47,15 @@ const PartyInformation = () => {
                     <Flex justifyContent="center">
                         <Box
                             _hover={{
-                                transform: 'scale(1.1)',
+                                transform: 'scale(1.05)',
                             }}
                             isExternal
                             transition="all 0.2s ease-in-out"
                             as={Link}
                             href="https://giphy.com/gifs/baby-money-little-rascals-l0HFkA6omUyjVYqw8/fullscreen"
-                            bg="tertairy.200"
-                            w="90px"
-                            h="90px"
+                            bg="body.500"
+                            w="70px"
+                            h="70px"
                             rounded="full"
                             display="flex"
                             justifyContent="center"
@@ -63,7 +63,7 @@ const PartyInformation = () => {
                         >
                             <Icon
                                 as={BsEnvelopePaperHeart}
-                                color="body.500"
+                                color="tertairy.50"
                                 fontSize="3xl"
                             />
                         </Box>
