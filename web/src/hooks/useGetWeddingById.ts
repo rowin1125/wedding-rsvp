@@ -15,6 +15,7 @@ export const GET_WEDDING_BY_ID = gql`
             eveningInvitationAmount
             weddingInvitation {
                 dietaryWishes
+                useCouponCode
                 email
                 id
                 invitationType

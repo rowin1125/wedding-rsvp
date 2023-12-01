@@ -18,6 +18,7 @@ export const UPDATE_WEDDING_INVITATION = gql`
             email
             id
             invitationType
+            useCouponCode
             presence
             remarks
             wedding {
@@ -60,20 +61,23 @@ export const useUpdateWeddingInvitation = ({
     });
 
     const initialWeddingInvitationValues = {
-        name: weddingInvitation?.weddingGuests[0]?.name ?? '',
         email: weddingInvitation?.email ?? '',
         presence: weddingInvitation?.presence.toString() ?? '',
+        useCouponCode: weddingInvitation?.useCouponCode.toString() ?? '',
         weddingGuests: weddingInvitation?.weddingGuests ?? [],
         dietaryWishes: weddingInvitation?.dietaryWishes ?? '',
         remarks: weddingInvitation?.remarks ?? '',
     };
 
     const validationSchema = object({
-        name: string().required('Verplicht veld'),
         email: string()
             .email('Niet geldig emailadres')
             .required('Verplicht veld'),
         presence: boolean().required('Verplicht veld'),
+        useCouponCode: boolean().when('presence', {
+            is: (presence: boolean) => presence,
+            then: (schema) => schema.required('Verplicht veld'),
+        }),
         weddingGuests: array().when('presence', {
             is: (presence: boolean) => presence,
             then: (schema) =>
@@ -94,7 +98,7 @@ export const useUpdateWeddingInvitation = ({
     const handleUpdateWeddingInvitation = async (
         values: typeof initialWeddingInvitationValues
     ) => {
-        const { weddingGuests, name, ...rest } = values;
+        const { weddingGuests, ...rest } = values;
 
         const weddingGuestsInput = weddingGuests.map((guest) => ({
             weddingId: weddingInvitation.weddingId,
@@ -107,15 +111,10 @@ export const useUpdateWeddingInvitation = ({
                 input: {
                     ...rest,
                     presence: values.presence === 'true',
+                    useCouponCode: values.useCouponCode === 'true',
                     invitationType: weddingInvitation.invitationType,
                     weddingId: weddingInvitation.weddingId,
-                    weddingGuests: [
-                        ...weddingGuestsInput,
-                        {
-                            name,
-                            weddingId: weddingInvitation.weddingId,
-                        },
-                    ],
+                    weddingGuests: [...weddingGuestsInput],
                 },
             },
         });

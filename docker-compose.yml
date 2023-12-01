@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: rowin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: wedding-rsvp_development
+
+networks:
+  default:
+    name: wedding-rsvp
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.59.0/24

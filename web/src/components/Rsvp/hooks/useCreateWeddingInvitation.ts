@@ -24,15 +24,15 @@ type UseCreateWeddingInvitation = {
 };
 
 export const initialWeddingInvitationValues = {
-    name: '',
     email: '',
-    presence: 'false',
+    presence: 'true',
     weddingGuests: [
         {
             name: '',
         },
     ],
     dietaryWishes: '',
+    useCouponCode: 'false',
     remarks: '',
 };
 
@@ -58,7 +58,6 @@ export const useCreateWeddingInvitation = ({
     });
 
     const validationSchema = object({
-        name: string().required('Verplicht veld'),
         email: string()
             .email('Niet geldig emailadres')
             .required('Verplicht veld'),
@@ -76,13 +75,17 @@ export const useCreateWeddingInvitation = ({
             is: (presence: boolean) => presence && invitationType === 'DAY',
             then: (schema) => schema.required('Verplicht veld'),
         }),
+        useCouponCode: boolean().when('presence', {
+            is: (presence: boolean) => presence,
+            then: (schema) => schema.required('Verplicht veld'),
+        }),
         remarks: string(),
     });
 
     const handleCreateWeddingInvitation = async (
         values: typeof initialWeddingInvitationValues
     ) => {
-        const { weddingGuests, name, ...rest } = values;
+        const { weddingGuests, ...rest } = values;
 
         const weddingGuestsInput = weddingGuests.map((guest) => ({
             weddingId: weddingId,
@@ -94,15 +97,10 @@ export const useCreateWeddingInvitation = ({
                 input: {
                     ...rest,
                     presence: values.presence === 'true',
+                    useCouponCode: values.useCouponCode === 'true',
                     invitationType,
                     weddingId,
-                    weddingGuests: [
-                        {
-                            name,
-                            weddingId,
-                        },
-                        ...weddingGuestsInput,
-                    ],
+                    weddingGuests: [...weddingGuestsInput],
                 },
             },
         });

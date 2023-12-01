@@ -26,7 +26,7 @@ const WeddingGuestsField = () => {
                             >
                                 <ControlledInput
                                     id={`weddingGuests.${index}.name`}
-                                    label={`Naam ${index + 2}`}
+                                    label={`Naam persoon ${index + 1}`}
                                     placeholder="Naam"
                                     inputRightAddonText={() => (
                                         <Button

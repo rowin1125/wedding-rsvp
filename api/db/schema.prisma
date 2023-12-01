@@ -43,6 +43,7 @@ model WeddingInvitation {
     id             String         @id @default(cuid())
     weddingId      String
     presence       Boolean        @default(false)
+    useCouponCode  Boolean        @default(false)
     dietaryWishes  String?
     remarks        String?
     weddingGuests  WeddingGuest[]

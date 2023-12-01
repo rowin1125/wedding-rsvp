@@ -38,6 +38,7 @@ export const createWeddingInvitation: MutationResolvers['createWeddingInvitation
                 data: {
                     email: input.email,
                     presence: input.presence,
+                    useCouponCode: input.useCouponCode,
                     dietaryWishes: input.dietaryWishes,
                     invitationType: input.invitationType,
                     remarks: input.remarks,
@@ -92,6 +93,7 @@ export const updateWeddingInvitation: MutationResolvers['updateWeddingInvitation
                     presence: input.presence ?? undefined,
                     dietaryWishes: input.dietaryWishes,
                     invitationType: input.invitationType ?? undefined,
+                    useCouponCode: input.useCouponCode ?? undefined,
                     remarks: input.remarks,
                     wedding: {
                         connect: { id: input.weddingId ?? undefined },

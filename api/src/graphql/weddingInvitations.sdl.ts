@@ -4,6 +4,7 @@ export const schema = gql`
         weddingId: String!
         presence: Boolean!
         dietaryWishes: String
+        useCouponCode: Boolean!
         remarks: String
         wedding: Wedding!
         weddingGuests: [WeddingGuest]!
@@ -26,6 +27,7 @@ export const schema = gql`
     input CreateWeddingInvitationInput {
         weddingId: String!
         presence: Boolean!
+        useCouponCode: Boolean!
         weddingGuests: [CreateWeddingGuestInput!]!
         dietaryWishes: String
         remarks: String
@@ -36,6 +38,7 @@ export const schema = gql`
     input UpdateWeddingInvitationInput {
         weddingId: String
         presence: Boolean
+        useCouponCode: Boolean!
         weddingGuests: [CreateWeddingGuestInput!]
         dietaryWishes: String
         remarks: String

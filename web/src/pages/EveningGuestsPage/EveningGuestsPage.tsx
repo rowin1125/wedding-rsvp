@@ -74,13 +74,13 @@ const EveningGuestsPage = () => {
 
             <Box>
                 <Heading mb={8}>
-                    Daggasten{' '}
+                    Avondgasten{' '}
                     <Box as="span" fontWeight="black">
                         {presentGuests}
                     </Box>{' '}
                     aanwezig van de geschatte{' '}
                     <Box as="span" fontWeight="black">
-                        {wedding?.dayInvitationAmount}
+                        {wedding?.eveningInvitationAmount}
                     </Box>{' '}
                     genodigden
                 </Heading>

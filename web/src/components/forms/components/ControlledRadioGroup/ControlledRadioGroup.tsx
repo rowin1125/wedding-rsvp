@@ -20,6 +20,7 @@ type ControlledRadioGroupProps = {
     stackProps?: StackProps;
     children: ReactNode;
     onChangeCallBack?: (value: string) => void;
+    isHidden?: boolean;
 } & InputProps;
 
 const ControlledRadioGroup = ({
@@ -28,6 +29,7 @@ const ControlledRadioGroup = ({
     radioGroupProps,
     stackProps,
     children,
+    isHidden,
     ...props
 }: ControlledRadioGroupProps) => {
     const [meta, , { setValue }] = useField(id);
@@ -37,7 +39,7 @@ const ControlledRadioGroup = ({
     };
 
     return (
-        <FormControl id={id} label={label} mb={4} {...props}>
+        <FormControl hidden={isHidden} id={id} label={label} mb={4} {...props}>
             <Box>
                 {label && (
                     <FormLabel fontWeight="bold" htmlFor={id}>

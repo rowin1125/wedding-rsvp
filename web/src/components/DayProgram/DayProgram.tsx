@@ -9,7 +9,7 @@ import {
 import { GiBigDiamondRing, GiPartyFlags } from 'react-icons/gi';
 import { HiOutlineUserGroup } from 'react-icons/hi';
 import { LuPartyPopper } from 'react-icons/lu';
-import { MdOutlineSentimentVeryDissatisfied } from 'react-icons/md';
+import { MdOutlineWavingHand } from 'react-icons/md';
 import { PiChampagneBold, PiForkKnifeBold } from 'react-icons/pi';
 import { InvitationType } from 'types/graphql';
 
@@ -39,7 +39,7 @@ const DayProgram = ({ invitationType }: DayProgramProps) => {
                 },
                 {
                     icon: PiChampagneBold,
-                    title: 'Borrel',
+                    title: "Borrel & Foto's",
                     time: '15:45',
                 },
                 {
@@ -53,8 +53,8 @@ const DayProgram = ({ invitationType }: DayProgramProps) => {
                     time: '20:30',
                 },
                 {
-                    icon: MdOutlineSentimentVeryDissatisfied,
-                    title: 'Einde feest',
+                    icon: MdOutlineWavingHand,
+                    title: 'Uitzwaaien',
                     time: '01:00',
                 },
             ],
@@ -68,18 +68,18 @@ const DayProgram = ({ invitationType }: DayProgramProps) => {
                     time: '20:00',
                 },
                 {
-                    icon: GiPartyFlags,
+                    icon: PiChampagneBold,
                     title: 'Feest',
                     time: '20:30',
                 },
                 {
-                    icon: PiChampagneBold,
-                    title: 'Compleet losgaan',
+                    icon: GiPartyFlags,
+                    title: 'Voetjes van de vloer',
                     time: '22:00',
                 },
                 {
-                    icon: MdOutlineSentimentVeryDissatisfied,
-                    title: 'Einde feest',
+                    icon: MdOutlineWavingHand,
+                    title: 'Uitzwaaien',
                     time: '01:00',
                 },
             ],
@@ -142,14 +142,18 @@ const DayProgram = ({ invitationType }: DayProgramProps) => {
                                         <Box
                                             as={item.icon}
                                             fontSize="3xl"
-                                            color="primary.500"
+                                            color="body.500"
                                             pos={'relative'}
                                         />
 
-                                        <Heading fontSize="xl" my={2}>
+                                        <Heading
+                                            fontSize="xl"
+                                            my={2}
+                                            color="body.500"
+                                        >
                                             {item.title}
                                         </Heading>
-                                        <Heading fontSize="md">
+                                        <Heading fontSize="md" color="body.500">
                                             {item.time}
                                         </Heading>
                                     </Box>

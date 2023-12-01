@@ -12,6 +12,7 @@ export const GET_GUEST_INVITATION_BY_ID = gql`
             email
             id
             invitationType
+            useCouponCode
             presence
             remarks
             wedding {
