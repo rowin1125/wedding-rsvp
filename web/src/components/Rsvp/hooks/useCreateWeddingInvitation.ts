@@ -47,7 +47,10 @@ export const useCreateWeddingInvitation = ({
     >(CREATE_WEDDING_INVITATION, {
         onCompleted: () => {
             toast.success(
-                'Bedankt voor het doorgeven van jullie aanwezigheid!'
+                'Bedankt voor het doorgeven van jullie aanwezigheid! Bekijk de bevestiging in je mailbox (check ook je spamfolder)!',
+                {
+                    duration: 10000,
+                }
             );
         },
         onError: () => {

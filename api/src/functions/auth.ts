@@ -7,24 +7,27 @@ import {
 
 import { db } from 'src/lib/db';
 
+import { mailUser } from '../lib/email';
+
 export const handler = async (
     event: APIGatewayProxyEvent,
     context: Context
 ) => {
     const forgotPasswordOptions: DbAuthHandlerOptions['forgotPassword'] = {
-        // handler() is invoked after verifying that a user was found with the given
-        // username. This is where you can send the user an email with a link to
-        // reset their password. With the default dbAuth routes and field names, the
-        // URL to reset the password will be:
-        //
-        // https://example.com/reset-password?resetToken=${user.resetToken}
-        //
-        // Whatever is returned from this function will be returned from
-        // the `forgotPassword()` function that is destructured from `useAuth()`
-        // You could use this return value to, for example, show the email
-        // address in a toast message so the user will know it worked and where
-        // to look for the email.
-        handler: (user) => {
+        handler: async (user) => {
+            await mailUser({
+                to: [
+                    {
+                        name: user.email,
+                        email: user.email,
+                    },
+                ],
+                templateId: 2,
+                params: {
+                    recoverUrl: `${process.env.REDWOOD_ENV_VERCEL_URL}/reset-password?resetToken=${user.resetToken}`,
+                },
+            });
+
             return user;
         },
 
