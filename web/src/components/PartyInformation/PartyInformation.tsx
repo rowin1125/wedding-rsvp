@@ -133,7 +133,7 @@ const PartyInformation = () => {
                 </Text>
                 <Text>
                     {`Nou gewoon iets moois wat je draagt naar een
-                    bruiloft in het kleurenpallet zoals hieronder. Kleurenpallet
+                    bruiloft in het kleurenpallet zoals hierboven. Kleurenpallet
                     zoeken met pastelgroen, pastelgeel, pastelroze, lila,
                     pastelblauw, pastelroze, beige We zouden het kunnen
                     waarderen als je niet in het zwart of wit (of rood?) komt.`}
