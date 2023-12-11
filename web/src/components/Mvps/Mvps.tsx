@@ -32,6 +32,7 @@ const Mvps = () => {
             type: 'Getuige',
             name: 'Cheyenne de Vink',
             image: cheyenne,
+            objectPosition: 'center 20%',
         },
         {
             type: 'Getuige',
