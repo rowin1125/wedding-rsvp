@@ -132,11 +132,7 @@ const PartyInformation = () => {
                     dat dan?`}
                 </Text>
                 <Text>
-                    {`Nou gewoon iets moois wat je draagt naar een
-                    bruiloft in het kleurenpallet zoals hierboven. Kleurenpallet
-                    zoeken met pastelgroen, pastelgeel, pastelroze, lila,
-                    pastelblauw, pastelroze, beige We zouden het kunnen
-                    waarderen als je niet in het zwart of wit (of rood?) komt.`}
+                    {`Nou gewoon iets moois wat je draagt naar een bruiloft in het kleurenpallet zoals hierboven. We zouden het kunnen waarderen als je niet in het zwart, wit of rood komt.`}
                 </Text>
                 <Text mt={4}>
                     Heb je inspiratie nodig, bekijk dan hier voorbeelden:
