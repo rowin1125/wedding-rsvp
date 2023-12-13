@@ -1,4 +1,14 @@
-import { Box, Button, Flex, Heading, Icon, Link, Text } from '@chakra-ui/react';
+import {
+    Alert,
+    AlertIcon,
+    Box,
+    Button,
+    Flex,
+    Heading,
+    Icon,
+    Link,
+    Text,
+} from '@chakra-ui/react';
 import { BsEnvelopePaperHeart } from 'react-icons/bs';
 
 import banner from '../Banner/images/banner.jpg';
@@ -94,6 +104,15 @@ const PartyInformation = () => {
                             VEE-GF24322
                         </Box>
                     </Text>
+
+                    <Alert status="info" mb={4}>
+                        <AlertIcon />
+
+                        <Text>
+                            Deze korting is exclusief voor de optie kamer met
+                            ontbijt & annulering
+                        </Text>
+                    </Alert>
                     <Button
                         colorScheme="body"
                         as={Link}
