@@ -90,20 +90,11 @@ const PartyInformation = () => {
                         kunnen regelen. Dit hotel ligt op +/- 15 minuten rijden
                         van de locatie. Boek via de onderstaande knop en gebruik
                         de kortingscode: <br />
-                        <Box fontStyle="italic" fontWeight="bold" mt={4}>
-                            kortingscode volgt z.s.m.
-                        </Box>
-                    </Text>
-                    {/* <Text mb={4}>
-                        Bij Van der Valk Veenendaal hebben wij een korting
-                        kunnen regelen. Dit hotel ligt op +/- 15 minuten rijden
-                        van de locatie. Boek via de onderstaande knop en gebruik
-                        de kortingscode: <br />
                         <Box as="span" fontWeight="bold" mt={4}>
                             VEE-GF24322
                         </Box>
-                    </Text> */}
-                    {/* <Button
+                    </Text>
+                    <Button
                         colorScheme="body"
                         as={Link}
                         _hover={{
@@ -114,7 +105,7 @@ const PartyInformation = () => {
                         mb={4}
                     >
                         Boek via de link
-                    </Button> */}
+                    </Button>
                     <Text>
                         Of bekijk de mogelijkheden via{' '}
                         <Link
