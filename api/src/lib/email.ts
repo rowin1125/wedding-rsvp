@@ -30,6 +30,12 @@ export async function mailUser(options: MailUserOptions) {
             name: 'Demi & Rowin',
             email: 'demi.rowin@gmail.com',
         },
+        bcc: [
+            {
+                name: 'Demi & Rowin',
+                email: 'demi.rowin@gmail.com',
+            },
+        ],
     };
 
     return (
