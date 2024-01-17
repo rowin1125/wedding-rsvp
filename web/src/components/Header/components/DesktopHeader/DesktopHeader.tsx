@@ -171,8 +171,11 @@ const DesktopHeader = () => {
                                         color="black"
                                         fontSize="2xl"
                                     />
-                                    <Link ml={4} href="mailto:xander@gmail.com">
-                                        tirza@gmail.com
+                                    <Link
+                                        ml={4}
+                                        href="mailto:tirzavoss@hotmail.com"
+                                    >
+                                        tirzavoss@hotmail.com
                                     </Link>
                                 </Flex>
                                 <Flex mt={2} alignItems="center">
@@ -196,8 +199,11 @@ const DesktopHeader = () => {
                                         color="black"
                                         fontSize="2xl"
                                     />
-                                    <Link ml={4} href="mailto:xander@gmail.com">
-                                        xander@gmail.com
+                                    <Link
+                                        ml={4}
+                                        href="mailto:asgreuter@gmail.com"
+                                    >
+                                        asgreuter@gmail.com
                                     </Link>
                                 </Flex>
                                 <Flex mt={2} alignItems="center">
