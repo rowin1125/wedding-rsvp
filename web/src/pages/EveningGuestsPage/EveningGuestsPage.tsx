@@ -89,16 +89,16 @@ const EveningGuestsPage = () => {
             ? new Date(weddingInvitation.createdAt).toLocaleDateString('nl-NL')
             : 'Unknown',
         Genodigde:
-            `${weddingInvitation.weddingGuests[0]?.firstName} ${weddingInvitation.weddingGuests[0]?.lastName}` ||
             weddingInvitation.weddingGuests[0]?.name ||
+            `${weddingInvitation.weddingGuests[0]?.firstName} ${weddingInvitation.weddingGuests[0]?.lastName}` ||
             'Unknown',
         Aantal: weddingInvitation.weddingGuests.length,
         Aanwezig: weddingInvitation.presence ? 'Ja' : 'Nee',
         id: weddingInvitation.id,
         subRows: weddingInvitation.weddingGuests.map((weddingGuest) => ({
             Genodigde:
-                `${weddingGuest?.firstName} ${weddingGuest?.lastName}` ||
-                weddingGuest?.name,
+                weddingGuest?.name ||
+                `${weddingGuest?.firstName} ${weddingGuest?.lastName}`,
             Aanwezig: weddingInvitation?.presence ? 'Ja' : 'Nee',
         })),
     }));
