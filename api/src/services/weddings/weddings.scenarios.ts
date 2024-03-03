@@ -1,4 +1,5 @@
 import type { Prisma, Wedding } from '@prisma/client';
+
 import type { ScenarioData } from '@redwoodjs/testing/api';
 
 export const standard = defineScenario<Prisma.WeddingCreateArgs>({

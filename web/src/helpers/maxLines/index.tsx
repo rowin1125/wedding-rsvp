@@ -1,1 +1,1 @@
-export { default } from "./maxLines";
+export { default } from './maxLines';

@@ -31,6 +31,8 @@ export const GET_WEDDING_BY_ID = gql`
                     name
                     weddingId
                     weddingInvitationId
+                    firstName
+                    lastName
                 }
                 weddingId
                 createdAt

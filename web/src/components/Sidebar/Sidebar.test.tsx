@@ -6,9 +6,9 @@ import Sidebar from './Sidebar';
 //    https://redwoodjs.com/docs/testing#testing-components
 
 describe('Sidebar', () => {
-  it('renders successfully', () => {
-    expect(() => {
-      render(<Sidebar />);
-    }).not.toThrow();
-  });
+    it('renders successfully', () => {
+        expect(() => {
+            render(<Sidebar />);
+        }).not.toThrow();
+    });
 });

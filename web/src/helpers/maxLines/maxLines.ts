@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties } from 'react';
 
 /**
  * @description This function is used to limit the number of lines of a long text
@@ -12,9 +12,9 @@ import type { CSSProperties } from "react";
 const maxLines = (max: number): CSSProperties => {
     return {
         // Max 3 lines
-        overflow: "hidden",
-        display: "-webkit-box",
-        WebkitBoxOrient: "vertical",
+        overflow: 'hidden',
+        display: '-webkit-box',
+        WebkitBoxOrient: 'vertical',
         WebkitLineClamp: max,
     };
 };

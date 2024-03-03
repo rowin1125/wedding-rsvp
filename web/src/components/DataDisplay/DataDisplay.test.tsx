@@ -6,9 +6,9 @@ import DataDisplay from './DataDisplay';
 //    https://redwoodjs.com/docs/testing#testing-components
 
 describe('DataDisplay', () => {
-  it('renders successfully', () => {
-    expect(() => {
-      render(<DataDisplay />);
-    }).not.toThrow();
-  });
+    it('renders successfully', () => {
+        expect(() => {
+            render(<DataDisplay />);
+        }).not.toThrow();
+    });
 });

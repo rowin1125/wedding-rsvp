@@ -28,7 +28,8 @@ export const initialWeddingInvitationValues = {
     presence: 'true',
     weddingGuests: [
         {
-            name: '',
+            firstName: '',
+            lastName: '',
         },
     ],
     dietaryWishes: '',
@@ -70,7 +71,8 @@ export const useCreateWeddingInvitation = ({
             then: (schema) =>
                 schema.of(
                     object({
-                        name: string().required('Verplicht veld'),
+                        firstName: string().required('Verplicht veld'),
+                        lastName: string().required('Verplicht veld'),
                     })
                 ),
         }),
@@ -92,7 +94,8 @@ export const useCreateWeddingInvitation = ({
 
         const weddingGuestsInput = weddingGuests.map((guest) => ({
             weddingId: weddingId,
-            name: guest.name,
+            firstName: guest.firstName,
+            lastName: guest.lastName,
         }));
 
         return createWeddingInvitation({

@@ -6,9 +6,9 @@ import DeleteDialog from './DeleteDialog';
 //    https://redwoodjs.com/docs/testing#testing-components
 
 describe('DeleteDialog', () => {
-  it('renders successfully', () => {
-    expect(() => {
-      render(<DeleteDialog />);
-    }).not.toThrow();
-  });
+    it('renders successfully', () => {
+        expect(() => {
+            render(<DeleteDialog />);
+        }).not.toThrow();
+    });
 });

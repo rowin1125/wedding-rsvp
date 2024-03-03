@@ -38,6 +38,8 @@ export async function mailUser(options: MailUserOptions) {
         ],
     };
 
+    if (process.env.DISABLE_SENDINBLUE) return;
+
     return (
         transEmailApi
             .sendTransacEmail(emailOptions)

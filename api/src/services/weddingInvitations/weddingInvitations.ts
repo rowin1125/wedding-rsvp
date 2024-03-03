@@ -48,8 +48,12 @@ export const createWeddingInvitation: MutationResolvers['createWeddingInvitation
                     weddingGuests: {
                         createMany: {
                             data: input.weddingGuests?.map((guest) => ({
-                                name: guest.name,
+                                name:
+                                    guest.name ??
+                                    `${guest.firstName} ${guest.lastName}`,
                                 weddingId: input.weddingId,
+                                firstName: guest.firstName ?? '',
+                                lastName: guest.lastName ?? '',
                             })),
                         },
                     },
@@ -59,13 +63,17 @@ export const createWeddingInvitation: MutationResolvers['createWeddingInvitation
             await mailUser({
                 to: [
                     {
-                        name: input.weddingGuests[0].name,
+                        name:
+                            input.weddingGuests[0].name ??
+                            `${input.weddingGuests[0].firstName} ${input.weddingGuests[0].lastName}`,
                         email: input.email,
                     },
                 ],
                 templateId: 1,
                 params: {
-                    name: input.weddingGuests[0].name,
+                    name:
+                        input.weddingGuests[0].name ??
+                        `${input.weddingGuests[0].firstName} ${input.weddingGuests[0].lastName}`,
                     invitationUrl: `${process.env.REDWOOD_ENV_VERCEL_URL}/${weddingInvitation.weddingId}/uitnodiging/${weddingInvitation.id}`,
                     weddingUrl: `${
                         process.env.REDWOOD_ENV_VERCEL_URL
@@ -102,8 +110,12 @@ export const updateWeddingInvitation: MutationResolvers['updateWeddingInvitation
                         createMany: {
                             data:
                                 input.weddingGuests?.map((guest) => ({
-                                    name: guest.name,
+                                    name:
+                                        guest.name ??
+                                        `${guest.firstName} ${guest.lastName}`,
                                     weddingId: input.weddingId ?? '',
+                                    firstName: guest.firstName ?? '',
+                                    lastName: guest.lastName ?? '',
                                 })) ?? [],
                         },
                     },

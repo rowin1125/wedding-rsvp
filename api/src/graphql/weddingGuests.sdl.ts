@@ -3,7 +3,9 @@ export const schema = gql`
         id: String!
         weddingId: String!
         wedding: Wedding!
-        name: String!
+        name: String
+        firstName: String
+        lastName: String
         weddingInvitation: WeddingInvitation
         weddingInvitationId: String
         createdAt: DateTime!
@@ -17,14 +19,18 @@ export const schema = gql`
 
     input CreateWeddingGuestInput {
         weddingId: String!
-        name: String!
+        name: String
         weddingInvitationId: String
+        firstName: String
+        lastName: String
     }
 
     input UpdateWeddingGuestInput {
         weddingId: String!
-        name: String!
+        name: String
         weddingInvitationId: String!
+        firstName: String
+        lastName: String
     }
 
     type Mutation {

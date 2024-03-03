@@ -20,16 +20,25 @@ export const createWeddingGuest: MutationResolvers['createWeddingGuest'] = ({
     input,
 }) => {
     return db.weddingGuest.create({
-        data: input,
+        data: {
+            ...input,
+            name: input.name || `${input.firstName} ${input.lastName}`,
+            firstName: input.firstName || '',
+            lastName: input.lastName || '',
+        },
     });
 };
 
 export const updateWeddingGuest: MutationResolvers['updateWeddingGuest'] = ({
     id,
-    input: { name },
+    input: { name, firstName, lastName },
 }) => {
     return db.weddingGuest.update({
-        data: { name },
+        data: {
+            name: name || `${firstName} ${lastName}`,
+            firstName: firstName || '',
+            lastName: lastName || '',
+        },
         where: { id },
     });
 };

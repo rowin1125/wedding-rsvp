@@ -1,1 +1,1 @@
-export { default } from "./DesktopHeader";
+export { default } from './DesktopHeader';

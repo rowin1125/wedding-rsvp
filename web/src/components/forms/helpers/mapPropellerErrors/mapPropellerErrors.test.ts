@@ -1,34 +1,34 @@
-import { mapPropellerErrors, PropellerAxiosError } from "./mapPropellerErrors";
+import { mapPropellerErrors, PropellerAxiosError } from './mapPropellerErrors';
 
-describe("mapPropellerErrors", () => {
-    test("should map PropellerAxiosError correctly", () => {
+describe('mapPropellerErrors', () => {
+    test('should map PropellerAxiosError correctly', () => {
         const error: PropellerAxiosError = {
             response: {
                 errors: [
                     {
-                        message: "Invalid input",
-                        path: ["fieldName"],
+                        message: 'Invalid input',
+                        path: ['fieldName'],
                         extensions: {
                             invalidArgs: [
                                 {
                                     target: {
                                         input: {
-                                            someField: "value",
+                                            someField: 'value',
                                         },
                                     },
                                     value: {
-                                        someField: "invalidValue",
+                                        someField: 'invalidValue',
                                     },
-                                    property: "someField",
+                                    property: 'someField',
                                     children: [],
                                     constraints: {
-                                        max: "Value is too large",
+                                        max: 'Value is too large',
                                     },
                                 },
                                 // Add more invalid arguments here if needed
                             ],
-                            code: "400",
-                            serviceName: "service",
+                            code: '400',
+                            serviceName: 'service',
                             stacktrace: [],
                         },
                     },
@@ -37,55 +37,55 @@ describe("mapPropellerErrors", () => {
             },
         };
 
-        const expectedErrors = ["Value is too large"];
+        const expectedErrors = ['Value is too large'];
         const mappedErrors = mapPropellerErrors(error);
 
         expect(mappedErrors).toEqual(expectedErrors);
     });
 
-    test("should map PropellerAxiosError correctly when multiple errors are present", () => {
+    test('should map PropellerAxiosError correctly when multiple errors are present', () => {
         const error: PropellerAxiosError = {
             response: {
                 errors: [
                     {
-                        message: "Invalid input",
-                        path: ["fieldName"],
+                        message: 'Invalid input',
+                        path: ['fieldName'],
                         extensions: {
                             invalidArgs: [
                                 {
                                     target: {
                                         input: {
-                                            someField: "value",
+                                            someField: 'value',
                                         },
                                     },
                                     value: {
-                                        someField: "invalidValue",
+                                        someField: 'invalidValue',
                                     },
-                                    property: "someField",
+                                    property: 'someField',
                                     children: [],
                                     constraints: {
-                                        max: "Value is too large",
-                                        email: "Invalid email",
+                                        max: 'Value is too large',
+                                        email: 'Invalid email',
                                     },
                                 },
                                 {
                                     target: {
                                         input: {
-                                            someField: "value",
+                                            someField: 'value',
                                         },
                                     },
                                     value: {
-                                        someField: "invalidValue",
+                                        someField: 'invalidValue',
                                     },
-                                    property: "someField",
+                                    property: 'someField',
                                     children: [],
                                     constraints: {
-                                        min: "Value is too small",
+                                        min: 'Value is too small',
                                     },
                                 },
                             ],
-                            code: "400",
-                            serviceName: "service",
+                            code: '400',
+                            serviceName: 'service',
                             stacktrace: [],
                         },
                     },
@@ -95,16 +95,16 @@ describe("mapPropellerErrors", () => {
         };
 
         const expectedErrors = [
-            "Value is too large",
-            "Invalid email",
-            "Value is too small",
+            'Value is too large',
+            'Invalid email',
+            'Value is too small',
         ];
         const mappedErrors = mapPropellerErrors(error);
 
         expect(mappedErrors).toEqual(expectedErrors);
     });
 
-    test("should return an empty array when no errors are present", () => {
+    test('should return an empty array when no errors are present', () => {
         const error: PropellerAxiosError = {
             response: {
                 errors: [],
@@ -117,17 +117,17 @@ describe("mapPropellerErrors", () => {
         expect(mappedErrors).toEqual([]);
     });
 
-    test("should return an empty array when invalidArgs is empty", () => {
+    test('should return an empty array when invalidArgs is empty', () => {
         const error: PropellerAxiosError = {
             response: {
                 errors: [
                     {
-                        message: "Invalid input",
-                        path: ["fieldName"],
+                        message: 'Invalid input',
+                        path: ['fieldName'],
                         extensions: {
                             invalidArgs: [],
-                            code: "400",
-                            serviceName: "service",
+                            code: '400',
+                            serviceName: 'service',
                             stacktrace: [],
                         },
                     },

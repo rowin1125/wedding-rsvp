@@ -57,7 +57,9 @@ model WeddingInvitation {
 model WeddingGuest {
     id                  String             @id @default(cuid())
     weddingId           String
-    name                String
+    name                String?
+    firstName           String?
+    lastName            String?
     weddingInvitation   WeddingInvitation? @relation(fields: [weddingInvitationId], references: [id])
     weddingInvitationId String?
     wedding             Wedding            @relation(fields: [weddingId], references: [id])

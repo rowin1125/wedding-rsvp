@@ -2,17 +2,7 @@
 import * as React from 'react';
 
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import {
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    chakra,
-    Box,
-    useDisclosure,
-} from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, chakra, Box } from '@chakra-ui/react';
 import {
     useReactTable,
     flexRender,
@@ -20,11 +10,12 @@ import {
     ColumnDef,
     SortingState,
     getSortedRowModel,
+    ExpandedState,
+    getExpandedRowModel,
 } from '@tanstack/react-table';
 
 import maxLines from 'src/helpers/maxLines';
-
-import GuestInvitationModal from './components/GuestInvitationModal';
+import { DayGuestType } from 'src/pages/DayGuestsPage/DayGuestsPage';
 
 export type GuestDataTableProps<Data extends Record<string, any>> = {
     data: Data[];
@@ -36,36 +27,25 @@ export function GuestDataTable<Data extends Record<string, any>>({
     columns,
 }: GuestDataTableProps<Data>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
-    const disclosure = useDisclosure();
-    const [invitationId, setInvitationId] = React.useState<string>();
+    const [expanded, setExpanded] = React.useState<ExpandedState>({});
+
     const table = useReactTable({
-        columns,
         data,
+        columns,
+        state: {
+            sorting,
+            expanded,
+        },
+        onExpandedChange: setExpanded,
+        getSubRows: (row) => row.subRows,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
-        state: {
-            sorting,
-        },
+        getExpandedRowModel: getExpandedRowModel(),
     });
-
-    const handleRowClick = (invitationId: string) => {
-        setInvitationId(invitationId);
-        disclosure.onOpen();
-    };
-
-    const handleOnClose = () => {
-        setInvitationId(undefined);
-        disclosure.onClose();
-    };
 
     return (
         <>
-            <GuestInvitationModal
-                isOpen={disclosure.isOpen}
-                onClose={handleOnClose}
-                invitationId={invitationId}
-            />
             <Box overflow="auto">
                 <Table>
                     <Thead>
@@ -100,12 +80,23 @@ export function GuestDataTable<Data extends Record<string, any>>({
                     </Thead>
                     <Tbody>
                         {table.getRowModel().rows.map((row) => {
-                            const invitationId = row.original.id;
                             const isPresent = row.original.Aanwezig === 'Ja';
+
+                            if (row.depth > 0) {
+                                const parentData = row.getParentRow()
+                                    ?.original as DayGuestType | undefined;
+                                const genodigdeIsEqual =
+                                    parentData?.Genodigde ===
+                                    row.original.Genodigde;
+
+                                if (genodigdeIsEqual) return null;
+                            }
 
                             return (
                                 <Tr
-                                    onClick={() => handleRowClick(invitationId)}
+                                    onClick={() => {
+                                        row.toggleExpanded();
+                                    }}
                                     key={row.id}
                                     bg={isPresent ? 'green.50' : 'red.50'}
                                     cursor="pointer"
@@ -133,7 +124,12 @@ export function GuestDataTable<Data extends Record<string, any>>({
                                                         lg: 'md',
                                                     }}
                                                     style={{ ...maxLines(1) }}
-                                                    title={cell.getValue<string>()}
+                                                    title={
+                                                        typeof (cell as any)
+                                                            .value === 'string'
+                                                            ? cell.getValue<string>()
+                                                            : ''
+                                                    }
                                                 >
                                                     {flexRender(
                                                         cell.column.columnDef

@@ -6,9 +6,9 @@ import FooterMenu from './FooterMenu';
 //    https://redwoodjs.com/docs/testing#testing-components
 
 describe('FooterMenu', () => {
-  it('renders successfully', () => {
-    expect(() => {
-      render(<FooterMenu />);
-    }).not.toThrow();
-  });
+    it('renders successfully', () => {
+        expect(() => {
+            render(<FooterMenu />);
+        }).not.toThrow();
+    });
 });

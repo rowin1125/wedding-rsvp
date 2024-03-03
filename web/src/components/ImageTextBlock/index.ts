@@ -1,1 +1,1 @@
-export { default } from "./ImageTextBlock";
+export { default } from './ImageTextBlock';

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, GridItem, Icon } from '@chakra-ui/react';
@@ -17,28 +17,50 @@ const WeddingGuestsField = () => {
                 <>
                     {values.weddingGuests.length > 0 &&
                         values.weddingGuests.map((friend, index) => (
-                            <GridItem
-                                key={index}
-                                colSpan={{
-                                    base: 8,
-                                    lg: 8,
-                                }}
-                            >
-                                <ControlledInput
-                                    id={`weddingGuests.${index}.name`}
-                                    label={`Naam persoon ${index + 1}`}
-                                    placeholder="Naam"
-                                    inputRightAddonText={() => (
-                                        <Button
-                                            borderLeftRadius={0}
-                                            colorScheme="body"
-                                            onClick={() => remove(index)}
-                                        >
-                                            <Icon as={FaTrash} />
-                                        </Button>
-                                    )}
-                                />
-                            </GridItem>
+                            <Fragment key={index}>
+                                <GridItem
+                                    colSpan={{
+                                        base: 8,
+                                        lg: 4,
+                                    }}
+                                >
+                                    <ControlledInput
+                                        id={`weddingGuests.${index}.firstName`}
+                                        label={`Voornaam ${index + 1}`}
+                                        placeholder="Voornaam"
+                                        inputRightAddonText={() => (
+                                            <Button
+                                                borderLeftRadius={0}
+                                                colorScheme="body"
+                                                onClick={() => remove(index)}
+                                            >
+                                                <Icon as={FaTrash} />
+                                            </Button>
+                                        )}
+                                    />
+                                </GridItem>
+                                <GridItem
+                                    colSpan={{
+                                        base: 8,
+                                        lg: 4,
+                                    }}
+                                >
+                                    <ControlledInput
+                                        id={`weddingGuests.${index}.lastName`}
+                                        label={`Achternaam ${index + 1}`}
+                                        placeholder="Achternaam"
+                                        inputRightAddonText={() => (
+                                            <Button
+                                                borderLeftRadius={0}
+                                                colorScheme="body"
+                                                onClick={() => remove(index)}
+                                            >
+                                                <Icon as={FaTrash} />
+                                            </Button>
+                                        )}
+                                    />
+                                </GridItem>
+                            </Fragment>
                         ))}
 
                     {values.weddingGuests.length < 10 && (
@@ -52,7 +74,8 @@ const WeddingGuestsField = () => {
                                 colorScheme="body"
                                 onClick={() =>
                                     push({
-                                        name: '',
+                                        firstName: '',
+                                        lastName: '',
                                     })
                                 }
                             >
