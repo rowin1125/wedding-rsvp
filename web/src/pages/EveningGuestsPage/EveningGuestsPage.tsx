@@ -1,8 +1,11 @@
 import { useCallback, useMemo } from 'react';
 
-import { Heading, Box, useDisclosure, Button } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
+import { Heading, Box, useDisclosure, Button, Icon } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
+import { FaMagnifyingGlassPlus } from 'react-icons/fa6';
 
+import { Link, routes } from '@redwoodjs/router';
 import { MetaTags } from '@redwoodjs/web';
 
 import GuestInvitationModal from 'src/components/GuestDataTable/components/GuestInvitationModal';
@@ -45,15 +48,34 @@ const EveningGuestsPage = () => {
                     if (info.row.depth !== 0) return null;
 
                     return (
-                        <Button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleRowClick(info.row.original.id);
-                            }}
-                            colorScheme="body"
-                        >
-                            Details
-                        </Button>
+                        <>
+                            {wedding?.id && info.row.original.id && (
+                                <Button
+                                    as={Link}
+                                    to={routes.updateWeddingInvitation({
+                                        weddingId: wedding.id,
+                                        weddingInvitationId:
+                                            info.row.original.id,
+                                    })}
+                                    colorScheme="body"
+                                    variant="outline"
+                                    mr={2}
+                                    size="sm"
+                                >
+                                    <Icon as={EditIcon} />
+                                </Button>
+                            )}
+                            <Button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRowClick(info.row.original.id);
+                                }}
+                                size="sm"
+                                colorScheme="body"
+                            >
+                                <Icon as={FaMagnifyingGlassPlus} />
+                            </Button>
+                        </>
                     );
                 },
                 header: 'Actions',

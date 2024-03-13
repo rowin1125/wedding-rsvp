@@ -46,10 +46,14 @@ const EveningPresence = () => {
     const eveningGuestsNotPresentCount = eveningGuestsNotPresent?.length || 0;
     const eveningInvitationAmount = wedding?.eveningInvitationAmount || 0;
 
-    const eveningGuestsNotResponded =
+    let eveningGuestsNotResponded =
         eveningInvitationAmount -
         eveningGuestsPresentCount -
         eveningGuestsNotPresentCount;
+
+    if (eveningGuestsNotResponded < 0) {
+        eveningGuestsNotResponded = 0;
+    }
 
     const data = {
         labels: [

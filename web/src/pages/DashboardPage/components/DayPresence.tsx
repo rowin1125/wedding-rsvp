@@ -48,8 +48,12 @@ const DayPresence = () => {
     const dayGuestsNotPresentCount = dayGuestsNotPresent?.length || 0;
     const dayInvitationAmount = wedding?.dayInvitationAmount || 0;
 
-    const dayGuestsNotResponded =
+    let dayGuestsNotResponded =
         dayInvitationAmount - dayGuestsPresentCount - dayGuestsNotPresentCount;
+
+    if (dayGuestsNotResponded < 0) {
+        dayGuestsNotResponded = 0;
+    }
 
     const data = {
         labels: [

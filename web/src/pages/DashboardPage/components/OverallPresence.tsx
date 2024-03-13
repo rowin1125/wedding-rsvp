@@ -45,10 +45,14 @@ const OverallPresence = () => {
         (wedding?.eveningInvitationAmount || 0) +
         (wedding?.dayInvitationAmount || 0);
 
-    const overallGuestsNotResponded =
+    let overallGuestsNotResponded =
         overallInvitationAmount -
         overallGuestsPresentCount -
         overallGuestsNotPresentCount;
+
+    if (overallGuestsNotResponded < 0) {
+        overallGuestsNotResponded = 0;
+    }
 
     const data = {
         labels: [
