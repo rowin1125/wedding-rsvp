@@ -68,7 +68,10 @@ const DayGuestsPage = () => {
                                     colorScheme="body"
                                     variant="outline"
                                     mr={2}
-                                    size="sm"
+                                    size={{
+                                        base: 'xs',
+                                        lg: 'sm',
+                                    }}
                                 >
                                     <Icon as={EditIcon} />
                                 </Button>
@@ -78,7 +81,10 @@ const DayGuestsPage = () => {
                                     e.stopPropagation();
                                     handleRowClick(info.row.original.id);
                                 }}
-                                size="sm"
+                                size={{
+                                    base: 'xs',
+                                    lg: 'sm',
+                                }}
                                 colorScheme="body"
                             >
                                 <Icon as={FaMagnifyingGlassPlus} />
