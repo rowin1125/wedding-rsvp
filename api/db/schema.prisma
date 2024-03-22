@@ -85,3 +85,10 @@ model UserRole {
 
     @@unique([name, userId])
 }
+
+model RW_DataMigration {
+  version    String   @id
+  name       String
+  startedAt  DateTime
+  finishedAt DateTime
+}

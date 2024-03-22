@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import type { APIGatewayProxyEvent, Context } from 'aws-lambda';
 
 import {
@@ -14,7 +15,7 @@ export const handler = async (
     context: Context
 ) => {
     const forgotPasswordOptions: DbAuthHandlerOptions['forgotPassword'] = {
-        handler: async (user) => {
+        handler: async (user, resetToken) => {
             await mailUser({
                 to: [
                     {
@@ -24,7 +25,7 @@ export const handler = async (
                 ],
                 templateId: 2,
                 params: {
-                    recoverUrl: `${process.env.REDWOOD_ENV_VERCEL_URL}/reset-password?resetToken=${user.resetToken}`,
+                    recoverUrl: `${process.env.REDWOOD_ENV_VERCEL_URL}/reset-password?resetToken=${resetToken}`,
                 },
             });
 
@@ -122,6 +123,11 @@ export const handler = async (
                     hashedPassword: hashedPassword,
                     salt: salt,
                     // name: userAttributes.name
+                    roles: {
+                        create: {
+                            name: Role.USER,
+                        },
+                    },
                 },
             });
         },
@@ -143,7 +149,7 @@ export const handler = async (
     const authHandler = new DbAuthHandler(event, context, {
         // Provide prisma db client
         db: db,
-
+        allowedUserFields: ['id', 'email', 'wedding', 'weddingId', 'roles'],
         // The name of the property you'd call on `db` to access your user table.
         // i.e. if your Prisma model is named `User` this value would be `user`, as in `db.user`
         authModelAccessor: 'user',
