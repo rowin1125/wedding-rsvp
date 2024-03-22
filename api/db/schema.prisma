@@ -14,16 +14,17 @@ enum InvitationType {
 }
 
 model User {
-    id                  String    @id @default(cuid())
-    email               String    @unique
+    id                  String     @id @default(cuid())
+    email               String     @unique
     hashedPassword      String
     salt                String
     resetToken          String?
     resetTokenExpiresAt DateTime?
-    wedding             Wedding?  @relation(fields: [weddingId], references: [id])
-    weddingId           String?   @unique
-    createdAt           DateTime  @default(now())
-    updatedAt           DateTime  @updatedAt
+    wedding             Wedding?   @relation(fields: [weddingId], references: [id])
+    weddingId           String?    @unique
+    createdAt           DateTime   @default(now())
+    updatedAt           DateTime   @updatedAt
+    roles               UserRole[]
 }
 
 model Wedding {
@@ -65,4 +66,22 @@ model WeddingGuest {
     wedding             Wedding            @relation(fields: [weddingId], references: [id])
     createdAt           DateTime           @default(now())
     updatedAt           DateTime           @updatedAt
+}
+
+enum Role {
+    ADMIN
+    MASTER_OF_CEREMONIES
+    WEDDING_OWNER
+    USER
+}
+
+model UserRole {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
+    name      Role     @default(USER)
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+
+    @@unique([name, userId])
 }

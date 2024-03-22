@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import type {
     QueryResolvers,
     MutationResolvers,
@@ -25,13 +26,13 @@ export const wedding: QueryResolvers['wedding'] = ({ id }) => {
     });
 };
 
-export const createWedding: MutationResolvers['createWedding'] = ({
+export const createWedding: MutationResolvers['createWedding'] = async ({
     input,
 }) => {
     const userId = context.currentUser?.id;
     if (!userId) throw new UserInputError('No user found');
 
-    return db.wedding.create({
+    const createWedding = db.wedding.create({
         data: {
             ...input,
             user: {
@@ -39,6 +40,17 @@ export const createWedding: MutationResolvers['createWedding'] = ({
             },
         },
     });
+
+    const updateUserRole = db.userRole.create({
+        data: {
+            userId,
+            name: Role.WEDDING_OWNER,
+        },
+    });
+
+    const [wedding] = await db.$transaction([createWedding, updateUserRole]);
+
+    return wedding;
 };
 
 export const updateWedding: MutationResolvers['updateWedding'] = ({
@@ -51,15 +63,29 @@ export const updateWedding: MutationResolvers['updateWedding'] = ({
             user: {
                 connect: { id: context.currentUser?.id },
             },
+            date: input.date ?? new Date(),
         },
         where: { id },
     });
 };
 
-export const deleteWedding: MutationResolvers['deleteWedding'] = ({ id }) => {
-    return db.wedding.delete({
+export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
+    id,
+}) => {
+    const deleteWedding = db.wedding.delete({
         where: { id },
     });
+
+    const deleteUserRole = db.userRole.deleteMany({
+        where: {
+            userId: context.currentUser?.id,
+            name: Role.WEDDING_OWNER,
+        },
+    });
+
+    const [wedding] = await db.$transaction([deleteWedding, deleteUserRole]);
+
+    return wedding;
 };
 
 export const Wedding: WeddingRelationResolvers = {
