@@ -1,10 +1,9 @@
-import { Role } from '@prisma/client';
-
 import { Router, Route, Set, PrivateSet } from '@redwoodjs/router';
 
 import { useAuth } from './auth';
 import AdminLayout from './layouts/AdminLayout/AdminLayout';
 import GeneralLayout from './layouts/GeneralLayout/GeneralLayout';
+import { ROLE_ENUMS } from './lib/api/constants';
 
 const Routes = () => {
     return (
@@ -13,7 +12,7 @@ const Routes = () => {
                 <Route path="/admin/wedding-instellingen" page={WeddingSettingsPage} name="weddingSettings" />
             </PrivateSet>
             <Set wrap={AdminLayout}>
-                <PrivateSet unauthenticated="home" roles={[Role.WEDDING_OWNER, Role.MASTER_OF_CEREMONIES, Role.ADMIN]}>
+                <PrivateSet unauthenticated="home" roles={[ROLE_ENUMS.ADMIN, ROLE_ENUMS.MASTER_OF_CEREMONIES, ROLE_ENUMS.WEDDING_OWNER]}>
                     <Route path="/admin/dashboard" page={DashboardPage} name="dashboard" />
                     <Route path="/admin/dag-gasten" page={DayGuestsPage} name="dayGuests" />
                     <Route path="/admin/avond-gasten" page={EveningGuestsPage} name="eveningGuests" />
