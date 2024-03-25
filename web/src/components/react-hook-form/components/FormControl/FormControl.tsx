@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
@@ -43,7 +43,7 @@ export interface BaseReactHookFormProps {
  */
 export type BaseProps = ChakraFormControlProps & BaseReactHookFormProps;
 
-const FormControl: FC<BaseProps> = (props: BaseProps) => {
+const FormControl = (props: BaseProps) => {
     const {
         children,
         name,
