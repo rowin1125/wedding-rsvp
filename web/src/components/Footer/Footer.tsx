@@ -1,14 +1,24 @@
-import { Box, Container, Flex, Link, Text } from '@chakra-ui/react';
+import {
+    Box,
+    BoxProps,
+    Container,
+    Flex,
+    Icon,
+    Link,
+    Text,
+} from '@chakra-ui/react';
+import { CgCopyright } from 'react-icons/cg';
 
-const Footer = () => {
+const Footer = ({ ...rest }: BoxProps) => {
     return (
-        <Box backgroundColor="#F1E7DB">
+        <Box {...rest}>
             <Container maxW="8xl" p={4}>
-                <Flex gap={8} justifyContent={'center'}>
-                    <Text color="black" fontSize="sm" fontWeight="semibold">
-                        ©️ Ontwikkeld door{' '}
+                <Flex justifyContent={'center'} alignItems="center">
+                    <Icon as={CgCopyright} color="inherit" fontSize="24px" />{' '}
+                    <Text color="inherit" fontSize="sm" fontWeight="semibold">
+                        {new Date().getFullYear()}, Ontwikkeld door{' '}
                         <Link
-                            color="info.500"
+                            color="inherit"
                             as={Link}
                             href="https://derow.nl"
                             textDecor="underline"

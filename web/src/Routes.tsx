@@ -2,6 +2,7 @@ import { Router, Route, Set, PrivateSet } from '@redwoodjs/router';
 
 import { useAuth } from './auth';
 import AdminLayout from './layouts/AdminLayout/AdminLayout';
+import AuthLayout from './layouts/AuthLayout/AuthLayout';
 import GeneralLayout from './layouts/GeneralLayout/GeneralLayout';
 import { ROLE_ENUMS } from './lib/api/constants';
 
@@ -21,12 +22,14 @@ const Routes = () => {
             <Set wrap={GeneralLayout}>
                 <Route path="/{weddingId}/uitnodiging/{weddingInvitationId}" page={UpdateWeddingInvitationPage} name="updateWeddingInvitation" />
                 <Route path="/bruiloft/{weddingId}/{invitationType}" page={WeddingRsvpPage} name="weddingRsvp" />
+                <Route path="/" page={HomePage} name="home" />
+                <Route notfound page={NotFoundPage} />
+            </Set>
+            <Set wrap={AuthLayout}>
                 <Route path="/login" page={LoginPage} name="login" />
                 <Route path="/signup" page={SignupPage} name="signup" />
                 <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />
                 <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
-                <Route path="/" page={HomePage} name="home" />
-                <Route notfound page={NotFoundPage} />
             </Set>
         </Router>
     );

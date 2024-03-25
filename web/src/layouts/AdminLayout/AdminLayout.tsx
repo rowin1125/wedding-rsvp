@@ -77,7 +77,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     </GridItem>
                 </Grid>
             </Box>
-            <Footer />
+            <Footer backgroundColor="#F1E7DB" />
             <FooterMenu />
         </Box>
     );

@@ -3,6 +3,7 @@ import { extendTheme } from '@chakra-ui/react';
 import { Button } from './components/ButtonTheme';
 import { Card } from './components/CardTheme';
 import { Container } from './components/containerTheme';
+import { FormLabel } from './components/FormLabel';
 import { Heading } from './components/heading';
 import { Input } from './components/InputTheme';
 import { Link } from './components/link';
@@ -24,6 +25,7 @@ const theme = extendTheme({
         Card,
         Input,
         Textarea,
+        FormLabel,
     },
 });
 

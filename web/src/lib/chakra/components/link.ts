@@ -6,7 +6,7 @@ export const Link: ComponentStyleConfig = defineStyleConfig({
             base: '14px',
             lg: '16px',
         },
-        color: 'info.500',
+        color: 'secondary.900',
         _hover: {
             textDecorationColor: 'black',
         },

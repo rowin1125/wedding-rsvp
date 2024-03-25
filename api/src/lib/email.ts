@@ -38,7 +38,7 @@ export async function mailUser(options: MailUserOptions) {
         ],
     };
 
-    if (process.env.DISABLE_SENDINBLUE) return;
+    if (process.env.DISABLE_SENDINBLUE === 'true') return;
 
     return (
         transEmailApi

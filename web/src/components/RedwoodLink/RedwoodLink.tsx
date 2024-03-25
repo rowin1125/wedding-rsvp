@@ -10,9 +10,9 @@ import { Link } from '@redwoodjs/router';
 
 export type RedwoodLinkProps = { to: string } & ChakraLinkProps;
 
-const RedwoodLink = React.forwardRef<RedwoodLinkProps, any>(
+const RedwoodLink = React.forwardRef<HTMLAnchorElement, RedwoodLinkProps>(
     ({ ...props }, ref) => {
-        return <ChakraLink ref={ref} as={Link} {...props}></ChakraLink>;
+        return <ChakraLink ref={ref} as={Link} {...props} />;
     }
 );
 

@@ -14,8 +14,8 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
         <Box>
             <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
             <Header />
-            <Box as="main">{children}</Box>
-            <Footer />
+            <Box>{children}</Box>
+            <Footer backgroundColor="#F1E7DB" />
         </Box>
     );
 };

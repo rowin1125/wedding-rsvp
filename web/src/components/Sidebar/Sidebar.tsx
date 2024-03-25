@@ -1,16 +1,16 @@
-import { Button, Flex, Icon, Image } from '@chakra-ui/react';
+import { Button, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import { BiLogOut, BiSun } from 'react-icons/bi';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
 import { CgChevronRight, CgOptions } from 'react-icons/cg';
 import { RiDashboard3Line } from 'react-icons/ri';
 
-import { Link, routes } from '@redwoodjs/router';
+import { routes } from '@redwoodjs/router';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
-import weddingLogo from '../../../public/Logo-wedding.png';
+import RedwoodLink from '../RedwoodLink';
 
 import SidebarItem from './components/SidebarItem';
 
@@ -39,14 +39,36 @@ const Sidebar = () => {
         >
             <Flex flexDir="column" w="full" as="nav">
                 <Flex justifyContent="center" alignItems="center" py={16}>
-                    <Link
+                    <RedwoodLink
+                        w="full"
+                        zIndex={2}
                         to={routes.weddingRsvp({
                             invitationType: 'F',
                             weddingId: wedding?.id || '',
                         })}
+                        _hover={{
+                            textDecoration: 'none',
+                        }}
                     >
-                        <Image src={weddingLogo} w={'200px'} my={0} h="auto" />
-                    </Link>
+                        <Flex
+                            alignItems="center"
+                            justifyContent="center"
+                            w="full"
+                        >
+                            <Image src="/Bruiloft buddy logo.png" h="100px" />
+                            <Text
+                                ml={4}
+                                color="secondary.900"
+                                fontWeight="semibold"
+                                fontSize={{
+                                    base: '2xl',
+                                    xl: '3xl',
+                                }}
+                            >
+                                Bruiloft Buddy
+                            </Text>
+                        </Flex>
+                    </RedwoodLink>
                 </Flex>
 
                 <SidebarItem

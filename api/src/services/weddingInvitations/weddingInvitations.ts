@@ -84,8 +84,9 @@ export const createWeddingInvitation: MutationResolvers['createWeddingInvitation
             });
 
             return weddingInvitation;
-        } catch (error) {
-            throw new Error(error);
+        } catch (err) {
+            const error = err as Error;
+            throw new Error(error.message);
         }
     };
 
