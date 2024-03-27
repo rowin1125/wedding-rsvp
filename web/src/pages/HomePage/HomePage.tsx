@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { Button, Heading, Text } from '@chakra-ui/react';
+import { Heading, Text } from '@chakra-ui/react';
 
-import { Link, routes } from '@redwoodjs/router';
 import { Metadata } from '@redwoodjs/web';
 
 import HomepageHero from 'src/components/marketing/HomepageHero';
 import ImageTextBlock from 'src/components/marketing/ImageTextBlock';
+import SmartLoginButton from 'src/components/marketing/SmartLoginButton';
 
 import dashboardBB from './images/bb.png';
 import weddingRing from './images/WeddingRing.jpg';
@@ -60,14 +60,7 @@ const HomePage = () => {
                     dashboard van Bruiloft Buddy.
                 </Text>
 
-                <Button
-                    mt={4}
-                    as={Link}
-                    to={routes.signup()}
-                    colorScheme="secondary"
-                >
-                    Start met plannen
-                </Button>
+                <SmartLoginButton mt={4}>Start met plannen</SmartLoginButton>
             </ImageTextBlock>
         </>
     );

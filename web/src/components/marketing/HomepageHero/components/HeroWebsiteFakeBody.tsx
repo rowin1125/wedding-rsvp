@@ -1,14 +1,10 @@
 import React from 'react';
 
-import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 
-import { Link, routes } from '@redwoodjs/router';
-
-import { useAuth } from 'src/auth';
+import SmartLoginButton from '../../SmartLoginButton';
 
 const HeroWebsiteFakeBody = () => {
-    const { currentUser } = useAuth();
-
     return (
         <Flex
             mx={{
@@ -58,25 +54,7 @@ const HeroWebsiteFakeBody = () => {
                                     uitnodigingen tot gastenlijst en van RSVP's
                                     tot cadeaulijst.`}
                 </Text>
-                {currentUser ? (
-                    <Button
-                        as={Link}
-                        to={routes.dashboard()}
-                        colorScheme="secondary"
-                        mt={10}
-                    >
-                        Ga naar dashboard
-                    </Button>
-                ) : (
-                    <Button
-                        as={Link}
-                        to={routes.signup()}
-                        colorScheme="secondary"
-                        mt={10}
-                    >
-                        Maak jouw gratis account
-                    </Button>
-                )}
+                <SmartLoginButton mt={10}>Maak nu je website</SmartLoginButton>
             </Box>
         </Flex>
     );
