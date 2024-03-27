@@ -22,15 +22,15 @@ const Routes = () => {
             <Set wrap={GeneralLayout}>
                 <Route path="/{weddingId}/uitnodiging/{weddingInvitationId}" page={UpdateWeddingInvitationPage} name="updateWeddingInvitation" />
                 <Route path="/bruiloft/{weddingId}/{invitationType}" page={WeddingRsvpPage} name="weddingRsvp" />
-                <Route path="/" page={HomePage} name="home" />
-                <Route notfound page={NotFoundPage} />
+                <Route prerender path="/" page={HomePage} name="home" />
+                <Route prerender notfound page={NotFoundPage} />
             </Set>
             <Set wrap={AuthLayout}>
-                <Route path="/inloggen" page={LoginPage} name="login" />
-                <Route path="/aanmelden" page={SignupPage} name="signup" />
-                <Route path="/wachtwoord-vergeten" page={ForgotPasswordPage} name="forgotPassword" />
-                <Route path="/wachtwoord-herstellen" page={ResetPasswordPage} name="resetPassword" />
-                <Route path="/activeren" page={ActivatePage} name="activate" />
+                <Route prerender path="/inloggen" page={LoginPage} name="login" />
+                <Route prerender path="/aanmelden" page={SignupPage} name="signup" />
+                <Route prerender path="/wachtwoord-vergeten" page={ForgotPasswordPage} name="forgotPassword" />
+                <Route prerender path="/wachtwoord-herstellen" page={ResetPasswordPage} name="resetPassword" />
+                <Route prerender path="/activeren" page={ActivatePage} name="activate" />
             </Set>
         </Router>
     );

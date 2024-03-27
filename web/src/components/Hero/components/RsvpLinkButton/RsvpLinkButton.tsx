@@ -19,6 +19,8 @@ const RsvpLinkButton = () => {
         const elementPosition = elementRect - bodyRect;
         const offsetPosition = elementPosition - (isMobile ? offset : 0);
 
+        if (typeof window === 'undefined') return;
+
         window.scrollTo({
             top: offsetPosition,
             behavior: 'smooth',

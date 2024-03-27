@@ -23,14 +23,12 @@ import { CiMail, CiPhone } from 'react-icons/ci';
 import { SlMenu } from 'react-icons/sl';
 import { InvitationType } from 'types/graphql';
 
-import { navigate, routes, useParams } from '@redwoodjs/router';
+import { navigate, routes, useLocation, useParams } from '@redwoodjs/router';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
 import RedwoodLink from 'src/components/RedwoodLink';
-
-import logo from '../../Logo-wedding.png';
 
 export const fakeLinks = [
     { link: 'story', label: 'Story' },
@@ -59,22 +57,25 @@ export const handleLinkClick = async (
     link: string,
     weddingId: string,
     invitationType: 'F' | 'E',
+    pathname: string,
     callBack?: () => void
 ) => {
     const element = document.getElementById(link);
-    const pathname = window.location.pathname;
 
     if (!pathname.includes('bruiloft')) {
         navigate(routes.weddingRsvp({ weddingId, invitationType }));
         await waitFor(1000);
-        handleLinkClick(link, weddingId, invitationType, callBack);
+        handleLinkClick(link, weddingId, invitationType, pathname, callBack);
     }
+
     if (element) {
         const offset = 85;
         const bodyRect = document.body.getBoundingClientRect().top;
         const elementRect = element.getBoundingClientRect().top;
         const elementPosition = elementRect - bodyRect;
         const offsetPosition = elementPosition - offset;
+
+        if (typeof window === 'undefined') return;
 
         window.scrollTo({
             top: offsetPosition,
@@ -90,6 +91,8 @@ const MobileMenuDrawer = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const btnRef = React.useRef(null);
     const { logOut, currentUser } = useAuth();
+    const { pathname } = useLocation();
+
     const handleLogut = () => {
         logOut();
         toast.success('Je bent uitgelogd');
@@ -106,13 +109,8 @@ const MobileMenuDrawer = () => {
 
     let invitationType: InvitationType;
 
-    if (
-        !weddingInvitation?.invitationType ||
-        window.location.pathname.includes('bruiloft')
-    ) {
-        invitationType = window.location.pathname.includes('F')
-            ? 'DAY'
-            : 'EVENING';
+    if (!weddingInvitation?.invitationType || pathname.includes('bruiloft')) {
+        invitationType = pathname.includes('F') ? 'DAY' : 'EVENING';
     } else {
         invitationType = weddingInvitation?.invitationType || 'DAY';
     }
@@ -122,7 +120,7 @@ const MobileMenuDrawer = () => {
             <Center
                 justifyContent="space-between"
                 w={{ base: 'full', lg: 'auto' }}
-                py={{ base: 2, lg: 0 }}
+                py={{ base: 0, lg: 0 }}
                 display={{ base: 'flex', lg: 'none' }}
             >
                 <Flex justifyContent="center" w="full">
@@ -133,7 +131,11 @@ const MobileMenuDrawer = () => {
                         alignItems="center"
                         _hover={{ textDecoration: 'none' }}
                     >
-                        <Image src={logo} width={24} alt="Demi & Rowin" />
+                        <Image
+                            src={'/Bruiloft buddy logo.png'}
+                            width={16}
+                            alt="Demi & Rowin"
+                        />
                     </RedwoodLink>
                 </Flex>
                 <Button
@@ -161,14 +163,14 @@ const MobileMenuDrawer = () => {
                             flexDir="column"
                         >
                             <Image
-                                src={logo}
-                                width={'100px'}
-                                height={'100px'}
+                                src={'/Bruiloft buddy logo.png'}
+                                width={'80px'}
+                                height="auto"
                                 alt="Demi & Rowin"
                                 style={{ objectFit: 'contain' }}
                             />
                             <Heading mt={4} fontSize="3xl">
-                                Wedding
+                                Bruiloft Buddy
                             </Heading>
                         </DrawerHeader>
 
@@ -183,6 +185,7 @@ const MobileMenuDrawer = () => {
                                                 invitationType === 'DAY'
                                                     ? 'F'
                                                     : 'E',
+                                                pathname,
                                                 onClose
                                             )
                                         }

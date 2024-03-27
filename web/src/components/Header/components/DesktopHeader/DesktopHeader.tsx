@@ -23,7 +23,7 @@ import { CiMail, CiPhone } from 'react-icons/ci';
 import { SlMenu } from 'react-icons/sl';
 import { InvitationType } from 'types/graphql';
 
-import { navigate, routes, useParams } from '@redwoodjs/router';
+import { navigate, routes, useLocation, useParams } from '@redwoodjs/router';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
@@ -31,7 +31,6 @@ import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/u
 import RedwoodLink from 'src/components/RedwoodLink/RedwoodLink';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
-import logo from '../../Logo-wedding.png';
 import {
     fakeLinks,
     handleLinkClick,
@@ -45,6 +44,7 @@ const DesktopHeader = () => {
     const { weddingInvitation } =
         useGetGuestInvitationById(weddingInvitationId);
     const btnRef = React.useRef(null);
+    const { pathname } = useLocation();
 
     const handleLogout = () => {
         toast.success('Je bent uitgelogd');
@@ -58,13 +58,8 @@ const DesktopHeader = () => {
     };
     let invitationType: InvitationType;
 
-    if (
-        !weddingInvitation?.invitationType ||
-        window.location.pathname.includes('bruiloft')
-    ) {
-        invitationType = window.location.pathname.includes('F')
-            ? 'DAY'
-            : 'EVENING';
+    if (!weddingInvitation?.invitationType || pathname.includes('bruiloft')) {
+        invitationType = pathname.includes('F') ? 'DAY' : 'EVENING';
     } else {
         invitationType = weddingInvitation?.invitationType || 'DAY';
     }
@@ -90,7 +85,24 @@ const DesktopHeader = () => {
                     alignItems="center"
                     _hover={{ textDecoration: 'none' }}
                 >
-                    <Image src={logo} width={28} alt="Demi & Rowin" />
+                    <Flex alignItems="center" justifyContent="center" w="full">
+                        <Image
+                            src={'/Bruiloft buddy logo.png'}
+                            width={20}
+                            alt="Demi & Rowin"
+                        />
+                        <Text
+                            ml={4}
+                            color="secondary.900"
+                            fontWeight="semibold"
+                            fontSize={{
+                                base: '2xl',
+                                xl: '3xl',
+                            }}
+                        >
+                            Bruiloft Buddy
+                        </Text>
+                    </Flex>
                 </RedwoodLink>
             )}
             <Flex justifyContent="space" alignItems="center">
@@ -100,7 +112,8 @@ const DesktopHeader = () => {
                             handleLinkClick(
                                 link.link,
                                 weddingId,
-                                invitationType === 'DAY' ? 'F' : 'E'
+                                invitationType === 'DAY' ? 'F' : 'E',
+                                pathname
                             )
                         }
                         key={link.label}
@@ -136,7 +149,7 @@ const DesktopHeader = () => {
                             flexDir="column"
                         >
                             <Image
-                                src={logo}
+                                src={'/Bruiloft buddy logo.png'}
                                 width={'100px'}
                                 height={'100px'}
                                 alt="Demi & Rowin"
