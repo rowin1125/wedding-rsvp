@@ -10,7 +10,7 @@ const Header = () => {
 
     return (
         <Box
-            backgroundColor="#F1E7DB"
+            backgroundColor="primary.500"
             position={{ base: 'sticky', lg: 'relative' }}
             top={0}
             zIndex={10}

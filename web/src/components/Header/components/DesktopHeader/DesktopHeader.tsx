@@ -37,7 +37,7 @@ import {
 } from '../MobileMenuDrawer/MobileMenuDrawer';
 
 const DesktopHeader = () => {
-    const { logOut, currentUser } = useAuth();
+    const { logOut, currentUser, loading } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { weddingId, weddingInvitationId } = useParams();
     const { wedding } = useGetWeddingById(weddingId);
@@ -88,7 +88,7 @@ const DesktopHeader = () => {
                     <Flex alignItems="center" justifyContent="center" w="full">
                         <Image
                             src={'/Bruiloft buddy logo.png'}
-                            width={20}
+                            width={16}
                             alt="Demi & Rowin"
                         />
                         <Text
@@ -254,6 +254,7 @@ const DesktopHeader = () => {
                                 <Button
                                     colorScheme="body"
                                     onClick={handleLoginRoute}
+                                    isLoading={loading}
                                 >
                                     Inloggen
                                 </Button>
