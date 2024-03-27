@@ -1,9 +1,12 @@
 import React from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, Grid, Heading } from '@chakra-ui/react';
-import { Form, Formik } from 'formik';
+import { Box, Flex, Grid, Heading } from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { FormProvider, useForm } from 'react-hook-form';
 import { InvitationType } from 'types/graphql';
+
+import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
 
 import { useCreateWeddingInvitation } from '../../hooks/useCreateWeddingInvitation';
 
@@ -25,21 +28,18 @@ const RsvpForm = ({ invitationType }: RsvpFormProps) => {
         invitationType,
     });
 
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={async (values, { resetForm }) => {
-                const weddingInvitationResponse = await createWeddingInvitation(
-                    values
-                );
+    const methods = useForm({
+        resolver: yupResolver(validationSchema),
+        defaultValues: initialValues,
+        mode: 'onBlur',
+    });
 
-                if (!weddingInvitationResponse.data?.createWeddingInvitation.id)
-                    return;
-                resetForm();
-            }}
-            validationSchema={validationSchema}
-        >
-            <Box as={Form}>
+    return (
+        <FormProvider {...methods}>
+            <Box
+                as={'form'}
+                onSubmit={methods.handleSubmit(createWeddingInvitation)}
+            >
                 <Heading textAlign="center" fontSize="md">
                     RSVP
                 </Heading>
@@ -52,21 +52,20 @@ const RsvpForm = ({ invitationType }: RsvpFormProps) => {
                     gap={{ base: 4, lg: 4 }}
                 >
                     <EssentialInformationFields />
-                    <WeddingGuestsField />
+                    <WeddingGuestsField control={methods.control} />
                     <ExtraInformationFields invitationType={invitationType} />
                 </Grid>
                 <Flex justifyContent="flex-end">
-                    <Button
-                        colorScheme="body"
-                        type="submit"
-                        mt={4}
+                    <SubmitButton
+                        colorScheme="secondary"
                         isLoading={loading}
+                        isDisabled={loading}
                     >
                         Versturen
-                    </Button>
+                    </SubmitButton>
                 </Flex>
             </Box>
-        </Formik>
+        </FormProvider>
     );
 };
 

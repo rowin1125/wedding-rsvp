@@ -10,14 +10,14 @@ import {
     Text,
 } from '@chakra-ui/react';
 
-import ControlledInput from 'src/components/forms/components/ControlledInput';
-import ControlledRadioGroup from 'src/components/forms/components/ControlledRadioGroup';
+import InputControl from 'src/components/react-hook-form/components/InputControl';
+import RadioGroupControl from 'src/components/react-hook-form/components/RadioGroupControl';
 
 const EssentialInformationFields = () => {
     return (
         <>
             <GridItem colSpan={{ base: 8, lg: 8 }}>
-                <ControlledRadioGroup id="presence" label="Aanwezigheid">
+                <RadioGroupControl name="presence" label="Aanwezigheid">
                     <Flex flexWrap="wrap" w="full" columnGap={4} rowGap={1}>
                         <Radio value="true">
                             <Text>Ja, ik ben aanwezig</Text>
@@ -26,11 +26,11 @@ const EssentialInformationFields = () => {
                             <Text>Nee, ik kan helaas niet</Text>
                         </Radio>
                     </Flex>
-                </ControlledRadioGroup>
+                </RadioGroupControl>
             </GridItem>
             <GridItem colSpan={{ base: 8, lg: 8 }}>
-                <ControlledRadioGroup
-                    id="useCouponCode"
+                <RadioGroupControl
+                    name="useCouponCode"
                     label="Overnachting bij Van der Valk"
                 >
                     <Box>
@@ -60,7 +60,7 @@ const EssentialInformationFields = () => {
                             </Flex>
                         </Flex>
                     </Box>
-                </ControlledRadioGroup>
+                </RadioGroupControl>
             </GridItem>
 
             <GridItem colSpan={{ base: 8, lg: 8 }}>
@@ -71,10 +71,12 @@ const EssentialInformationFields = () => {
             </GridItem>
 
             <GridItem colSpan={{ base: 8, lg: 8 }}>
-                <ControlledInput
-                    id="email"
+                <InputControl
+                    name="email"
                     label="Email"
-                    placeholder="Jouw emailadres"
+                    inputProps={{
+                        placeholder: 'Jouw emailadres',
+                    }}
                 />
             </GridItem>
         </>

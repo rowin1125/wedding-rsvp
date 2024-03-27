@@ -4,9 +4,6 @@ import {
     Input,
     InputProps,
     InputGroup,
-    InputLeftAddon,
-    InputLeftElement,
-    InputRightAddon,
     InputRightElement,
     Icon,
 } from '@chakra-ui/react';
@@ -18,10 +15,10 @@ import { BaseProps } from '../FormControl/FormControl';
 
 export type InputControlProps = BaseProps & {
     inputProps?: InputProps;
-    leftAddon?: ReactNode;
-    rightAddon?: ReactNode;
-    leftElement?: ReactNode;
-    rightElement?: ReactNode;
+    leftAddon?: ReactNode | (() => ReactNode);
+    rightAddon?: ReactNode | (() => ReactNode);
+    leftElement?: ReactNode | (() => ReactNode);
+    rightElement?: ReactNode | (() => ReactNode);
 };
 
 const InputControl = ({
@@ -45,40 +42,42 @@ const InputControl = ({
         defaultValue: inputProps?.defaultValue || '',
     });
 
-    console.log('error', error);
     const isValid = !error && isTouched;
+
+    const RenderElement = ({
+        element,
+    }: {
+        element: ReactNode | (() => ReactNode);
+    }) => {
+        if (typeof element === 'string') {
+            return <>{element}</>;
+        }
+
+        if (typeof element === 'function') {
+            return element();
+        }
+
+        return element;
+    };
 
     return (
         <FormControl name={name} control={control} label={label} {...rest}>
             <InputGroup>
-                {typeof leftAddon === 'string' ? (
-                    <InputLeftAddon>{leftAddon}</InputLeftAddon>
-                ) : (
-                    leftAddon
-                )}
-                {typeof leftElement === 'string' ? (
-                    <InputLeftElement>{leftElement}</InputLeftElement>
-                ) : (
-                    leftElement
-                )}
+                <RenderElement element={leftAddon} />
+                <RenderElement element={leftElement} />
                 <Input
                     {...field}
                     id={name}
                     isDisabled={isSubmitting}
                     borderColor={isValid ? 'success.500' : 'gray.200'}
+                    borderRightRadius={
+                        !!rightAddon || !!rightElement ? '0' : 'lg'
+                    }
                     {...inputProps}
                     value={field.value ?? ''}
                 />
-                {typeof rightElement === 'string' ? (
-                    <InputRightElement>{rightElement}</InputRightElement>
-                ) : (
-                    rightElement
-                )}
-                {typeof rightAddon === 'string' ? (
-                    <InputRightAddon>{rightAddon}</InputRightAddon>
-                ) : (
-                    rightAddon
-                )}
+                <RenderElement element={rightElement} />
+                <RenderElement element={rightAddon} />
                 {isValid && (
                     <InputRightElement mr={rightAddon ? 14 : 'unset'}>
                         <Icon as={FaCheck} color="success.500" />

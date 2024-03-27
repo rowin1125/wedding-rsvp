@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC } from 'react';
 
 import { Button, ButtonProps } from '@chakra-ui/react';
 import {
@@ -14,7 +13,7 @@ export type ResetButtonProps = ButtonProps & {
     reset?: UseFormReset<any>;
 };
 
-export const ResetButton: FC<ResetButtonProps> = (props: ResetButtonProps) => {
+const ResetButton = (props: ResetButtonProps) => {
     const { children, control, ...rest } = props;
     const { isSubmitting, isDirty } = useFormState({ control });
     const { reset } = useFormContext();

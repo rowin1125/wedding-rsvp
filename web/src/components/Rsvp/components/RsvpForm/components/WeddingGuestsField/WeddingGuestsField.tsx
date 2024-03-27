@@ -2,90 +2,97 @@ import React, { Fragment } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, GridItem, Icon } from '@chakra-ui/react';
-import { FieldArray, useFormikContext } from 'formik';
+import { Control, useFieldArray } from 'react-hook-form';
 import { FaTrash } from 'react-icons/fa';
 
-import ControlledInput from 'src/components/forms/components/ControlledInput';
-import { initialWeddingInvitationValues } from 'src/components/Rsvp/hooks/useCreateWeddingInvitation';
+import InputControl from 'src/components/react-hook-form/components/InputControl';
 
-const WeddingGuestsField = () => {
-    const { values } =
-        useFormikContext<typeof initialWeddingInvitationValues>();
+type WeddingGuestsFieldProps = {
+    control: Control<any, any>;
+};
+
+const WeddingGuestsField = ({ control }: WeddingGuestsFieldProps) => {
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'weddingGuests',
+    });
+
     return (
-        <FieldArray name="weddingGuests">
-            {({ remove, push }: any) => (
-                <>
-                    {values.weddingGuests.length > 0 &&
-                        values.weddingGuests.map((friend, index) => (
-                            <Fragment key={index}>
-                                <GridItem
-                                    colSpan={{
-                                        base: 8,
-                                        lg: 4,
-                                    }}
-                                >
-                                    <ControlledInput
-                                        id={`weddingGuests.${index}.firstName`}
-                                        label={`Voornaam ${index + 1}`}
-                                        placeholder="Voornaam"
-                                        inputRightAddonText={() => (
-                                            <Button
-                                                borderLeftRadius={0}
-                                                colorScheme="body"
-                                                onClick={() => remove(index)}
-                                            >
-                                                <Icon as={FaTrash} />
-                                            </Button>
-                                        )}
-                                    />
-                                </GridItem>
-                                <GridItem
-                                    colSpan={{
-                                        base: 8,
-                                        lg: 4,
-                                    }}
-                                >
-                                    <ControlledInput
-                                        id={`weddingGuests.${index}.lastName`}
-                                        label={`Achternaam ${index + 1}`}
-                                        placeholder="Achternaam"
-                                        inputRightAddonText={() => (
-                                            <Button
-                                                borderLeftRadius={0}
-                                                colorScheme="body"
-                                                onClick={() => remove(index)}
-                                            >
-                                                <Icon as={FaTrash} />
-                                            </Button>
-                                        )}
-                                    />
-                                </GridItem>
-                            </Fragment>
-                        ))}
-
-                    {values.weddingGuests.length < 10 && (
-                        <GridItem
-                            colSpan={{
-                                base: 8,
-                                lg: 8,
+        <>
+            {fields.map((field, index) => (
+                <Fragment key={field.id}>
+                    <GridItem
+                        colSpan={{
+                            base: 8,
+                            lg: 4,
+                        }}
+                    >
+                        <InputControl
+                            name={`weddingGuests.${index}.firstName`}
+                            label={`Voornaam ${index + 1}`}
+                            inputProps={{
+                                placeholder: 'Voornaam',
                             }}
-                        >
-                            <Button
-                                colorScheme="body"
-                                onClick={() =>
-                                    push({
-                                        firstName: '',
-                                        lastName: '',
-                                    })
-                                }
-                            >
-                                + Voeg nog een persoon toe
-                            </Button>
-                        </GridItem>
-                    )}
-                </>
+                            rightAddon={() => (
+                                <Button
+                                    borderLeftRadius={0}
+                                    colorScheme="body"
+                                    onClick={() => remove(index)}
+                                    isDisabled={fields.length === 1}
+                                >
+                                    <Icon as={FaTrash} />
+                                </Button>
+                            )}
+                        />
+                    </GridItem>
+                    <GridItem
+                        colSpan={{
+                            base: 8,
+                            lg: 4,
+                        }}
+                    >
+                        <InputControl
+                            name={`weddingGuests.${index}.lastName`}
+                            label={`Achternaam ${index + 1}`}
+                            inputProps={{
+                                placeholder: 'Achternaam',
+                            }}
+                            rightAddon={() => (
+                                <Button
+                                    borderLeftRadius={0}
+                                    colorScheme="body"
+                                    isDisabled={fields.length === 1}
+                                    onClick={() => remove(index)}
+                                >
+                                    <Icon as={FaTrash} />
+                                </Button>
+                            )}
+                        />
+                    </GridItem>
+                </Fragment>
+            ))}
+            {fields.length < 10 && (
+                <GridItem
+                    colSpan={{
+                        base: 8,
+                        lg: 8,
+                    }}
+                >
+                    <Button
+                        isDisabled={fields.length >= 10}
+                        colorScheme="body"
+                        onClick={() =>
+                            append({
+                                firstName: '',
+                                lastName: '',
+                            })
+                        }
+                    >
+                        + Voeg nog een persoon toe
+                    </Button>
+                </GridItem>
             )}
-        </FieldArray>
+        </>
     );
 };
 

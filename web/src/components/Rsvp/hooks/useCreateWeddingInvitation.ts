@@ -3,7 +3,7 @@ import {
     CreateWeddingInvitationMutationVariables,
     InvitationType,
 } from 'types/graphql';
-import { array, boolean, object, string } from 'yup';
+import { array, object, string, InferType } from 'yup';
 
 import { useParams } from '@redwoodjs/router';
 import { useMutation } from '@redwoodjs/web';
@@ -65,38 +65,48 @@ export const useCreateWeddingInvitation = ({
         email: string()
             .email('Niet geldig emailadres')
             .required('Verplicht veld'),
-        presence: boolean().required('Verplicht veld'),
-        weddingGuests: array().when('presence', {
-            is: (presence: boolean) => presence,
+        presence: string().required('Verplicht veld').oneOf(['true', 'false']),
+        useCouponCode: string().when('presence', {
+            is: (presence: string) => presence === 'true',
             then: (schema) =>
-                schema.of(
-                    object({
-                        firstName: string().required('Verplicht veld'),
-                        lastName: string().required('Verplicht veld'),
-                    })
-                ),
+                schema.required('Verplicht veld').oneOf(['true', 'false']),
         }),
+        weddingGuests: array()
+            .of(
+                object({
+                    firstName: string(),
+                    lastName: string(),
+                })
+            )
+            .when('presence', {
+                is: (presence: string) => presence === 'true',
+                then: (schema) =>
+                    schema.of(
+                        object({
+                            firstName: string().required('Verplicht veld'),
+                            lastName: string().required('Verplicht veld'),
+                        })
+                    ),
+            }),
         dietaryWishes: string().when('presence', {
-            is: (presence: boolean) => presence && invitationType === 'DAY',
-            then: (schema) => schema.required('Verplicht veld'),
-        }),
-        useCouponCode: boolean().when('presence', {
-            is: (presence: boolean) => presence,
+            is: (presence: string) =>
+                presence === 'true' && invitationType === 'DAY',
             then: (schema) => schema.required('Verplicht veld'),
         }),
         remarks: string(),
     });
 
     const handleCreateWeddingInvitation = async (
-        values: typeof initialWeddingInvitationValues
+        values: InferType<typeof validationSchema>
     ) => {
         const { weddingGuests, ...rest } = values;
 
-        const weddingGuestsInput = weddingGuests.map((guest) => ({
-            weddingId: weddingId,
-            firstName: guest.firstName,
-            lastName: guest.lastName,
-        }));
+        const weddingGuestsInput =
+            weddingGuests?.map((guest) => ({
+                weddingId: weddingId,
+                firstName: guest.firstName,
+                lastName: guest.lastName,
+            })) || [];
 
         return createWeddingInvitation({
             variables: {

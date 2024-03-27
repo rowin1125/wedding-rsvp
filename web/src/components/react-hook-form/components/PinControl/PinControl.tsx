@@ -1,5 +1,3 @@
-import { FC } from 'react';
-
 import {
     HStack,
     PinInput,
@@ -17,9 +15,7 @@ export type PinInputControlProps = BaseProps & {
     pinInputProps?: Omit<PinInputProps, 'children'>;
 };
 
-const PinInputControl: FC<PinInputControlProps> = (
-    props: PinInputControlProps
-) => {
+const PinInputControl = (props: PinInputControlProps) => {
     const {
         name,
         control,

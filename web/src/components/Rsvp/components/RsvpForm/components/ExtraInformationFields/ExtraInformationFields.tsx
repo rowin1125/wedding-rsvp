@@ -3,7 +3,7 @@ import React from 'react';
 import { GridItem } from '@chakra-ui/react';
 import { InvitationType } from 'types/graphql';
 
-import ControlledTextarea from 'src/components/forms/components/ControlledTextarea';
+import TextareaControl from 'src/components/react-hook-form/components/TextareaControl';
 
 type ExtraInformationFieldsProps = {
     invitationType: InvitationType;
@@ -15,21 +15,26 @@ const ExtraInformationFields = ({
     return (
         <>
             <GridItem colSpan={{ base: 8, lg: 8 }}>
-                <ControlledTextarea
-                    id="dietaryWishes"
+                <TextareaControl
+                    name="dietaryWishes"
                     label="Dieetwensen"
-                    placeholder="Dieetwensen, allergieën of een kleine onderweg 👶?"
                     isHidden={invitationType === 'EVENING'}
-                    rows={3}
+                    textareaProps={{
+                        rows: 3,
+                        placeholder:
+                            'Dieetwensen, allergieën of een kleine onderweg 👶?',
+                    }}
                 />
             </GridItem>
 
             <GridItem colSpan={{ base: 8, lg: 8 }}>
-                <ControlledTextarea
-                    id="remarks"
+                <TextareaControl
+                    name="remarks"
                     label="Opmerkingen"
-                    placeholder="Opmerkingen"
-                    rows={3}
+                    textareaProps={{
+                        rows: 3,
+                        placeholder: 'Opmerkingen',
+                    }}
                 />
             </GridItem>
         </>

@@ -5,10 +5,11 @@ import FormControl, { BaseProps } from '../FormControl/FormControl';
 
 export type TextareaControlProps = BaseProps & {
     textareaProps?: TextareaProps;
+    isHidden?: boolean;
 };
 
-export const TextareaControl = (props: TextareaControlProps) => {
-    const { name, control, textareaProps, ...rest } = props;
+const TextareaControl = (props: TextareaControlProps) => {
+    const { name, control, textareaProps, isHidden, ...rest } = props;
     const {
         field,
         formState: { isSubmitting },
@@ -19,7 +20,7 @@ export const TextareaControl = (props: TextareaControlProps) => {
     });
 
     return (
-        <FormControl name={name} control={control} {...rest}>
+        <FormControl name={name} control={control} hidden={isHidden} {...rest}>
             <Textarea
                 {...field}
                 id={name}
