@@ -1,15 +1,17 @@
 import React from 'react';
 
-import { Heading, Flex, Button, Box, Text } from '@chakra-ui/react';
-import { Formik, Form } from 'formik';
-import { number, object, string } from 'yup';
+import { Heading, Flex, Box, Text, VStack } from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { FormProvider, useForm } from 'react-hook-form';
+import { InferType, object, string } from 'yup';
 
 import { navigate, routes } from '@redwoodjs/router';
-import { MetaTags } from '@redwoodjs/web';
+import { Metadata } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import DeleteDialog from 'src/components/DeleteDialog/DeleteDialog';
-import ControlledInput from 'src/components/forms/components/ControlledInput';
+import InputControl from 'src/components/react-hook-form/components/InputControl';
+import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
 import { useDeleteWeddingById } from './hooks/useDeleteWeddingById';
@@ -19,25 +21,47 @@ const UpdateWeddingForm = () => {
     const { wedding, loading: weddingLoading } = useGetWeddingById();
     const { updateWedding, loading: updateWeddingLoading } = useUpdateWedding();
     const { deleteWeddingById, loading } = useDeleteWeddingById();
+
+    const initialDate = new Date(wedding?.date || '')
+        .toISOString()
+        .split('T')[0];
+
     const validationSchema = object({
         name: string().required('Naam is verplicht'),
         date: string().required('Datum is verplicht'),
-        dayInvitationAmount: number().required('Aantal is verplicht'),
-        eveningInvitationAmount: number().required('Aantal is verplicht'),
+        dayInvitationAmount: string()
+            .required('Aantal is verplicht')
+            .test(
+                'isNumeric',
+                'Getal mag geen tekst bevatten',
+                (value) => !isNaN(Number(value))
+            ),
+        eveningInvitationAmount: string()
+            .required('Aantal is verplicht')
+            .test(
+                'isNumeric',
+                'Naam mag geen tekst bevatten',
+                (value) => !isNaN(Number(value))
+            ),
+    });
+
+    const initialValues = {
+        name: wedding?.name || '',
+        date: initialDate || '',
+        dayInvitationAmount: String(wedding?.dayInvitationAmount) || '0',
+        eveningInvitationAmount:
+            String(wedding?.eveningInvitationAmount) || '0',
+    };
+
+    const methods = useForm({
+        resolver: yupResolver(validationSchema),
+        defaultValues: initialValues,
+        mode: 'onBlur',
     });
 
     if (weddingLoading || !wedding) return null;
 
-    const initialDate = new Date(wedding.date).toISOString().split('T')[0];
-
-    const initialValues = {
-        name: wedding.name,
-        date: initialDate,
-        dayInvitationAmount: wedding.dayInvitationAmount,
-        eveningInvitationAmount: wedding.eveningInvitationAmount,
-    };
-
-    const onSubmit = async (values: typeof initialValues) => {
+    const onSubmit = async (values: InferType<typeof validationSchema>) => {
         try {
             await updateWedding({
                 variables: {
@@ -54,59 +78,69 @@ const UpdateWeddingForm = () => {
             });
             toast.success('Bruiloft aangepast!');
             navigate(routes.dashboard());
-        } catch (error: any) {
-            toast.error(error.message);
+        } catch (error) {
+            if (error instanceof Error) toast.error(error.message);
         }
     };
 
     return (
         <>
-            <Box w={{ base: 'full', lg: '40%' }}>
-                <MetaTags
+            <Box w={{ base: 'full', lg: '400px' }}>
+                <Metadata
                     title="Bruiloft aanmaken"
                     description="Bruiloft aanmaken pagina"
                 />
                 <Heading>Update de bruiloft</Heading>
-                <Formik
-                    initialValues={initialValues}
-                    onSubmit={onSubmit}
-                    validationSchema={validationSchema}
-                >
-                    <Box as={Form}>
-                        <ControlledInput
-                            id="name"
+                <FormProvider {...methods}>
+                    <VStack
+                        as="form"
+                        onSubmit={methods.handleSubmit(onSubmit)}
+                        align="start"
+                        spacing={5}
+                    >
+                        <InputControl
+                            name="name"
                             label="Naam bruiloft"
-                            placeholder="Naam"
+                            inputProps={{
+                                placeholder: 'Naam',
+                            }}
                         />
-                        <ControlledInput
-                            id="date"
+                        <InputControl
+                            name="date"
                             label="Datum bruiloft"
-                            placeholder="Datum"
-                            type="date"
+                            inputProps={{
+                                type: 'date',
+                            }}
                         />
-                        <ControlledInput
-                            id="dayInvitationAmount"
+
+                        <InputControl
+                            name="dayInvitationAmount"
                             label="Geschatte aantal dag gasten"
-                            placeholder="Bijv. 22"
+                            inputProps={{
+                                placeholder: 'Bijv. 22',
+                                type: 'number',
+                            }}
                         />
-                        <ControlledInput
-                            id="eveningInvitationAmount"
+                        <InputControl
+                            name="eveningInvitationAmount"
                             label="Geschatte aantal avond gasten"
-                            placeholder="Bijv. 22"
+                            inputProps={{
+                                placeholder: 'Bijv. 22',
+                                type: 'number',
+                            }}
                         />
-                        <Flex justifyContent="flex-end">
-                            <Button
-                                colorScheme="body"
-                                type="submit"
-                                mt={4}
-                                isDisabled={updateWeddingLoading}
+
+                        <Flex justifyContent="flex-end" w="full">
+                            <SubmitButton
+                                colorScheme="secondary"
                                 isLoading={updateWeddingLoading}
+                                isDisabled={updateWeddingLoading}
                             >
-                                Versturen
-                            </Button>
+                                Update bruiloft
+                            </SubmitButton>
                         </Flex>
-                    </Box>
-                </Formik>
+                    </VStack>
+                </FormProvider>
             </Box>
             <Box mt={10}>
                 <Box

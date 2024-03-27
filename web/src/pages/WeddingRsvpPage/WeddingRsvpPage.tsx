@@ -1,5 +1,5 @@
 import { useParams } from '@redwoodjs/router';
-import { MetaTags } from '@redwoodjs/web';
+import { Metadata } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import Banner from 'src/components/Banner';
@@ -30,7 +30,7 @@ const WeddingRsvpPage = () => {
 
     return (
         <>
-            <MetaTags title="Uitnodiging" description="WeddingRsvp page" />
+            <Metadata title="Uitnodiging" description="WeddingRsvp page" />
             <Hero title="Demi & Rowin" subtitle="Wij gaan trouwen!" />
             <Countdown targetDate={'2024-05-16T00:00:00+02:00'} />
             <Banner />

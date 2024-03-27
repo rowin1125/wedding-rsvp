@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { VStack, Heading, ButtonGroup, Button, Flex } from '@chakra-ui/react';
-import { valibotResolver } from '@hookform/resolvers/valibot';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, FormProvider } from 'react-hook-form';
-import { minLength, object, string } from 'valibot';
+import { object, string } from 'yup';
 
 import { Link, navigate, routes } from '@redwoodjs/router';
 import { toast } from '@redwoodjs/web/dist/toast';
@@ -13,9 +13,9 @@ import InputControl from 'src/components/react-hook-form/components/InputControl
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton/SubmitButton';
 
 const validationSchema = object({
-    password: string('Wachtwoord is verplicht', [
-        minLength(6, 'Wachtwoord moet minimaal 6 karakters bevatten'),
-    ]),
+    password: string()
+        .min(6, 'Wachtwoord moet minimaal 6 karakters bevatten')
+        .required('Wachtwoord is verplicht'),
 });
 
 const defaultValues = {
@@ -31,7 +31,7 @@ const ResetPasswordForm = ({ resetToken, enabled }: ResetPasswordForm) => {
     const { resetPassword, loading, reauthenticate } = useAuth();
 
     const methods = useForm({
-        resolver: valibotResolver(validationSchema),
+        resolver: yupResolver(validationSchema),
         defaultValues,
         mode: 'onBlur',
     });

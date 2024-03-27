@@ -11188,13 +11188,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^2.1.1":
-  version: 2.2.1
-  resolution: "deepmerge@npm:2.2.1"
-  checksum: 4379288cabd817587cee92a095ea65d18317b45e48010a2e0d87982b5f432239a144f9c8ebd4ab090cc21f0cb47e51ebfe32921f329b3b3084a2711d5d63e450
-  languageName: node
-  linkType: hard
-
 "default-gateway@npm:^6.0.3":
   version: 6.0.3
   resolution: "default-gateway@npm:6.0.3"
@@ -13282,23 +13275,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"formik@npm:^2.4.3":
-  version: 2.4.3
-  resolution: "formik@npm:2.4.3"
-  dependencies:
-    deepmerge: ^2.1.1
-    hoist-non-react-statics: ^3.3.0
-    lodash: ^4.17.21
-    lodash-es: ^4.17.21
-    react-fast-compare: ^2.0.1
-    tiny-warning: ^1.0.2
-    tslib: ^2.0.0
-  peerDependencies:
-    react: ">=16.8.0"
-  checksum: 85258bb547b09b63fa3a80e02bebfc95e2dc653062a5572a502b9484d491abf4c34a1734e34744d285f90aacacd447d3fe0000b3032426b88a3c11023cddc458
-  languageName: node
-  linkType: hard
-
 "forwarded@npm:0.2.0":
   version: 0.2.0
   resolution: "forwarded@npm:0.2.0"
@@ -14080,7 +14056,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -16315,13 +16291,6 @@ __metadata:
   peerDependencies:
     lodash: 4.x
   checksum: 02881ae6e595245badbc29f4b4bc57f6fbab45ed5d7117c269b9a3c5efa57726670028074c989bd8b0a587211fa6d9447ac6124fb9e887c0571b307e1746bac8
-  languageName: node
-  linkType: hard
-
-"lodash-es@npm:^4.17.21":
-  version: 4.17.21
-  resolution: "lodash-es@npm:4.17.21"
-  checksum: fb407355f7e6cd523a9383e76e6b455321f0f153a6c9625e21a8827d10c54c2a2341bd2ae8d034358b60e07325e1330c14c224ff582d04612a46a4f0479ff2f2
   languageName: node
   linkType: hard
 
@@ -18871,7 +18840,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:15.8.1, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -19174,13 +19143,6 @@ __metadata:
   version: 3.2.1
   resolution: "react-fast-compare@npm:3.2.1"
   checksum: 81e805b9cde58a49e37ecb7361a4c97a24e869182761ceda9428c9f4de4b26e461a33c155bfe8fad67c8ae26c6355750671ff6335df80c5d3fe9c537ff2d6ffb
-  languageName: node
-  linkType: hard
-
-"react-fast-compare@npm:^2.0.1":
-  version: 2.0.4
-  resolution: "react-fast-compare@npm:2.0.4"
-  checksum: f0300c677e95198b5f993cbb8a983dab09586157dc678f9e2b5b29ff941b6677a8776fbbdc425ce102fad86937e36bb45cfcfd797f006270b97ccf287ebfb885
   languageName: node
   linkType: hard
 
@@ -21461,13 +21423,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tiny-warning@npm:^1.0.2":
-  version: 1.0.3
-  resolution: "tiny-warning@npm:1.0.3"
-  checksum: ef8531f581b30342f29670cb41ca248001c6fd7975ce22122bd59b8d62b4fc84ad4207ee7faa95cde982fa3357cd8f4be650142abc22805538c3b1392d7084fa
-  languageName: node
-  linkType: hard
-
 "title-case@npm:3.0.3, title-case@npm:^3.0.3":
   version: 3.0.3
   resolution: "title-case@npm:3.0.3"
@@ -22348,13 +22303,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"valibot@npm:^0.30.0":
-  version: 0.30.0
-  resolution: "valibot@npm:0.30.0"
-  checksum: 9b343d3b9812d580a0e2452952e74570a3781fc76e6187cd90898b83249353b95a04d8d9193789ee1c86379b94ee76b45e045f26870384f036af6410ce2dfc0a
-  languageName: node
-  linkType: hard
-
 "value-or-promise@npm:^1.0.11, value-or-promise@npm:^1.0.12":
   version: 1.0.12
   resolution: "value-or-promise@npm:1.0.12"
@@ -22567,16 +22515,13 @@ __metadata:
     "@tanstack/react-table": ^8.9.8
     chart.js: ^4.4.0
     eslint-plugin-unused-imports: ^3.0.0
-    formik: ^2.4.3
     framer-motion: ^9
-    prop-types: 15.8.1
     react: 18.2.0
     react-chartjs-2: ^5.2.0
     react-dom: 18.2.0
     react-hook-form: ^7.51.1
     react-icons: latest
     swiper: ^10.2.0
-    valibot: ^0.30.0
     yup: ^1.2.0
   languageName: unknown
   linkType: soft

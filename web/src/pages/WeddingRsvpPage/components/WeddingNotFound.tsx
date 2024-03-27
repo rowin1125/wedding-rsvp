@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Box, Flex, Heading, Image, Text } from '@chakra-ui/react';
 
-import { MetaTags } from '@redwoodjs/web';
+import { Metadata } from '@redwoodjs/web';
 
 import Hero from 'src/components/Hero';
 
@@ -11,7 +11,7 @@ import brokenHeart from './images/broken hart.png';
 const WeddingNotFound = () => {
     return (
         <Box>
-            <MetaTags
+            <Metadata
                 title="Geen bruiloft gevonden"
                 description="WeddingRsvp page"
             />

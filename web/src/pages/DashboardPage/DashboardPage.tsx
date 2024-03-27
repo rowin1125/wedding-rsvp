@@ -1,6 +1,6 @@
 import { Box, Grid, GridItem, Heading } from '@chakra-ui/react';
 
-import { MetaTags } from '@redwoodjs/web';
+import { Metadata } from '@redwoodjs/web';
 
 import Countdown from 'src/components/Countdown/Countdown';
 import DataDisplay from 'src/components/DataDisplay/DataDisplay';
@@ -25,7 +25,7 @@ const DashboardPage = () => {
 
     return (
         <Box>
-            <MetaTags title="Dashboard" description="Dashboard page" />
+            <Metadata title="Dashboard" description="Dashboard page" />
             <Heading fontWeight="bold" as="h2" size="h2">
                 Overzicht van de bruiloft van {wedding?.name}
             </Heading>

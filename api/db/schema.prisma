@@ -50,7 +50,7 @@ model WeddingInvitation {
     weddingGuests  WeddingGuest[]
     invitationType InvitationType
     email          String
-    wedding        Wedding        @relation(fields: [weddingId], references: [id])
+    wedding        Wedding        @relation(fields: [weddingId], references: [id], onDelete: Cascade)
     createdAt      DateTime       @default(now())
     updatedAt      DateTime       @updatedAt
 }
@@ -61,9 +61,9 @@ model WeddingGuest {
     name                String?
     firstName           String?
     lastName            String?
-    weddingInvitation   WeddingInvitation? @relation(fields: [weddingInvitationId], references: [id])
+    weddingInvitation   WeddingInvitation? @relation(fields: [weddingInvitationId], references: [id], onDelete: Cascade)
     weddingInvitationId String?
-    wedding             Wedding            @relation(fields: [weddingId], references: [id])
+    wedding             Wedding            @relation(fields: [weddingId], references: [id], onDelete: Cascade)
     createdAt           DateTime           @default(now())
     updatedAt           DateTime           @updatedAt
 }
@@ -87,8 +87,8 @@ model UserRole {
 }
 
 model RW_DataMigration {
-  version    String   @id
-  name       String
-  startedAt  DateTime
-  finishedAt DateTime
+    version    String   @id
+    name       String
+    startedAt  DateTime
+    finishedAt DateTime
 }

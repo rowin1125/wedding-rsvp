@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { VStack, Heading, Flex, Text } from '@chakra-ui/react';
-import { valibotResolver } from '@hookform/resolvers/valibot';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, FormProvider } from 'react-hook-form';
-import { email, minLength, object, string } from 'valibot';
+import { object, string } from 'yup';
 
 import { routes } from '@redwoodjs/router';
 import { toast } from '@redwoodjs/web/dist/toast';
@@ -14,11 +14,12 @@ import SubmitButton from 'src/components/react-hook-form/components/SubmitButton
 import RedwoodLink from 'src/components/RedwoodLink';
 
 const validationSchema = object({
-    email: string('Email is verplicht', [email('Email is niet geldig')]),
-
-    password: string('Wachtwoord is verplicht', [
-        minLength(6, 'Wachtwoord moet minimaal 6 karakters bevatten'),
-    ]),
+    email: string()
+        .email('Geen geldig emailadres')
+        .required('Email is verplicht'),
+    password: string()
+        .min(6, 'Wachtwoord moet minimaal 6 karakters bevatten')
+        .required('Wachtwoord is verplicht'),
 });
 
 const defaultValues = {
@@ -30,7 +31,7 @@ const LoginForm = () => {
     const { logIn, loading } = useAuth();
 
     const methods = useForm({
-        resolver: valibotResolver(validationSchema),
+        resolver: yupResolver(validationSchema),
         defaultValues,
         mode: 'onBlur',
     });

@@ -1,14 +1,15 @@
 import React from 'react';
 
-import { Box, Button, Flex, Heading } from '@chakra-ui/react';
-import { Form, Formik } from 'formik';
-import { CreateWeddingMutationVariables } from 'types/graphql';
-import { number, object, string } from 'yup';
+import { Box, Flex, Heading, VStack } from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { FormProvider, useForm } from 'react-hook-form';
+import { InferType, object, string } from 'yup';
 
-import { MetaTags } from '@redwoodjs/web';
+import { Metadata } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/dist/toast';
 
-import ControlledInput from 'src/components/forms/components/ControlledInput';
+import InputControl from 'src/components/react-hook-form/components/InputControl';
+import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
 
 import { useCreateWedding } from './hooks/useCreateWedding';
 
@@ -17,20 +18,30 @@ const CreateWeddingForm = () => {
     const validationSchema = object({
         name: string().required('Naam is verplicht'),
         date: string().required('Datum is verplicht'),
-        dayInvitationAmount: number().required('Aantal is verplicht'),
-        eveningInvitationAmount: number().required('Aantal is verplicht'),
+        dayInvitationAmount: string()
+            .required('Aantal is verplicht')
+            .test(
+                'isNumeric',
+                'Getal mag geen tekst bevatten',
+                (value) => !isNaN(Number(value))
+            ),
+        eveningInvitationAmount: string()
+            .required('Aantal is verplicht')
+            .test(
+                'isNumeric',
+                'Naam mag geen tekst bevatten',
+                (value) => !isNaN(Number(value))
+            ),
     });
 
     const initialValues = {
         name: 'Demi & Rowin',
         date: '2024-05-16',
-        dayInvitationAmount: 0,
-        eveningInvitationAmount: 0,
+        dayInvitationAmount: '0',
+        eveningInvitationAmount: '0',
     };
 
-    const onSubmit = async (
-        values: CreateWeddingMutationVariables['input']
-    ) => {
+    const onSubmit = async (values: InferType<typeof validationSchema>) => {
         try {
             await createWedding({
                 variables: {
@@ -44,62 +55,78 @@ const CreateWeddingForm = () => {
                     },
                 },
             });
-        } catch (error: any) {
-            toast.error(error.message);
+        } catch (error) {
+            if (error instanceof Error) toast.error(error.message);
         }
     };
+
+    const methods = useForm({
+        resolver: yupResolver(validationSchema),
+        defaultValues: initialValues,
+        mode: 'onBlur',
+    });
 
     return (
         <Box
             maxW={{
-                lg: '30%',
+                lg: '400px',
             }}
         >
-            <MetaTags
+            <Metadata
                 title="Bruiloft aanmaken"
                 description="Bruiloft aanmaken pagina"
             />
             <Heading>Maak eerst een bruiloft aan!</Heading>
-            <Formik
-                initialValues={initialValues}
-                onSubmit={onSubmit}
-                validationSchema={validationSchema}
-            >
-                <Box as={Form}>
-                    <ControlledInput
-                        id="name"
+            <FormProvider {...methods}>
+                <VStack
+                    as="form"
+                    onSubmit={methods.handleSubmit(onSubmit)}
+                    align="start"
+                    spacing={4}
+                >
+                    <InputControl
+                        name="name"
                         label="Naam bruiloft"
-                        placeholder="Naam"
+                        inputProps={{
+                            placeholder: 'Naam',
+                        }}
                     />
-                    <ControlledInput
-                        id="date"
+                    <InputControl
+                        name="date"
                         label="Datum bruiloft"
-                        placeholder="Datum"
-                        type="date"
+                        inputProps={{
+                            type: 'date',
+                        }}
                     />
-                    <ControlledInput
-                        id="dayInvitationAmount"
+
+                    <InputControl
+                        name="dayInvitationAmount"
                         label="Geschatte aantal dag gasten"
-                        placeholder="Bijv. 22"
+                        inputProps={{
+                            placeholder: 'Bijv. 22',
+                            type: 'number',
+                        }}
                     />
-                    <ControlledInput
-                        id="eveningInvitationAmount"
+                    <InputControl
+                        name="eveningInvitationAmount"
                         label="Geschatte aantal avond gasten"
-                        placeholder="Bijv. 22"
+                        inputProps={{
+                            placeholder: 'Bijv. 22',
+                            type: 'number',
+                        }}
                     />
-                    <Flex justifyContent="flex-end">
-                        <Button
-                            colorScheme="body"
-                            type="submit"
-                            mt={4}
-                            isDisabled={loading}
+
+                    <Flex justifyContent="flex-end" w="full">
+                        <SubmitButton
+                            colorScheme="secondary"
                             isLoading={loading}
+                            isDisabled={loading}
                         >
-                            Versturen
-                        </Button>
+                            Maak bruiloft aan
+                        </SubmitButton>
                     </Flex>
-                </Box>
-            </Formik>
+                </VStack>
+            </FormProvider>
         </Box>
     );
 };

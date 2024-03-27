@@ -27,6 +27,7 @@ const TextareaControl = (props: TextareaControlProps) => {
                 isDisabled={isSubmitting}
                 {...textareaProps}
                 value={field.value ?? ''}
+                bg="primary.200"
             />
         </FormControl>
     );

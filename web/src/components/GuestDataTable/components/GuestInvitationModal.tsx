@@ -51,6 +51,8 @@ const GuestInvitationModal = ({
                             'weddingId',
                             'id',
                             'weddingInvitationId',
+                            'firstName',
+                            'lastName',
                         ]}
                     />
                 </ModalBody>

@@ -1,9 +1,10 @@
 import {
+    CreateWeddingGuestInput,
     GetGuestInvitationByIdQuery,
     UpdateWeddingInvitationMutation,
     UpdateWeddingInvitationMutationVariables,
 } from 'types/graphql';
-import { array, boolean, object, string } from 'yup';
+import { InferType, array, object, string } from 'yup';
 
 import { useMutation } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/dist/toast';
@@ -62,9 +63,13 @@ export const useUpdateWeddingInvitation = ({
 
     const initialWeddingInvitationValues = {
         email: weddingInvitation?.email ?? '',
-        presence: weddingInvitation?.presence.toString() ?? '',
-        useCouponCode: weddingInvitation?.useCouponCode.toString() ?? '',
-        weddingGuests: weddingInvitation?.weddingGuests ?? [],
+        presence: weddingInvitation?.presence.toString() ?? 'true',
+        useCouponCode: weddingInvitation?.useCouponCode.toString() ?? 'false',
+        weddingGuests:
+            weddingInvitation?.weddingGuests.map((guest) => ({
+                firstName: guest?.firstName || '',
+                lastName: guest?.lastName || '',
+            })) ?? [],
         dietaryWishes: weddingInvitation?.dietaryWishes ?? '',
         remarks: weddingInvitation?.remarks ?? '',
     };
@@ -73,37 +78,50 @@ export const useUpdateWeddingInvitation = ({
         email: string()
             .email('Niet geldig emailadres')
             .required('Verplicht veld'),
-        presence: boolean().required('Verplicht veld'),
-        useCouponCode: boolean().when('presence', {
-            is: (presence: boolean) => presence,
-            then: (schema) => schema.required('Verplicht veld'),
-        }),
-        weddingGuests: array().when('presence', {
-            is: (presence: boolean) => presence,
+        presence: string().required('Verplicht veld').oneOf(['true', 'false']),
+        useCouponCode: string().when('presence', {
+            is: (presence: string) => presence === 'true',
             then: (schema) =>
-                schema.of(
-                    object({
-                        name: string().required('Verplicht veld'),
-                    })
-                ),
+                schema.required('Verplicht veld').oneOf(['true', 'false']),
         }),
+        weddingGuests: array()
+            .of(
+                object({
+                    firstName: string(),
+                    lastName: string(),
+                })
+            )
+            .when('presence', {
+                is: (presence: string) => presence === 'true',
+                then: (schema) =>
+                    schema.of(
+                        object({
+                            firstName: string().required('Verplicht veld'),
+                            lastName: string().required('Verplicht veld'),
+                        })
+                    ),
+            }),
         dietaryWishes: string().when('presence', {
-            is: (presence: boolean) =>
-                presence && weddingInvitation?.invitationType === 'DAY',
+            is: (presence: string) =>
+                presence === 'true' &&
+                weddingInvitation.invitationType === 'DAY',
             then: (schema) => schema.required('Verplicht veld'),
         }),
         remarks: string(),
     });
 
     const handleUpdateWeddingInvitation = async (
-        values: typeof initialWeddingInvitationValues
+        values: InferType<typeof validationSchema>
     ) => {
         const { weddingGuests, ...rest } = values;
 
-        const weddingGuestsInput = weddingGuests.map((guest) => ({
-            weddingId: weddingInvitation.weddingId,
-            name: guest?.name || '',
-        }));
+        const weddingGuestsInput: CreateWeddingGuestInput[] =
+            weddingGuests?.map((guest) => ({
+                weddingId: weddingInvitation.weddingId,
+                firstName: guest.firstName,
+                lastName: guest.lastName,
+                name: `${guest.firstName} ${guest.lastName}`,
+            })) || [];
 
         return updateWeddingInvitation({
             variables: {

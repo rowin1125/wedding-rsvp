@@ -23,6 +23,8 @@ export const GET_GUEST_INVITATION_BY_ID = gql`
             weddingGuests {
                 id
                 name
+                firstName
+                lastName
                 weddingId
                 weddingInvitationId
             }

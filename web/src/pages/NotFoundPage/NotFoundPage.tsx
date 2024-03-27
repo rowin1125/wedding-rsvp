@@ -1,6 +1,6 @@
 import { Heading, Flex, Box, Image, Text } from '@chakra-ui/react';
 
-import { MetaTags } from '@redwoodjs/web';
+import { Metadata } from '@redwoodjs/web';
 
 import Hero from 'src/components/Hero';
 
@@ -8,7 +8,7 @@ import brokenHeart from '../WeddingRsvpPage/components/images/broken hart.png';
 
 export default () => (
     <Box as="main">
-        <MetaTags
+        <Metadata
             title="Pagina niet gevonden"
             description="Pagina niet gevonden"
         />

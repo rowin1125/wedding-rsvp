@@ -1,4 +1,4 @@
-import { MetaTags } from '@redwoodjs/web';
+import { Metadata } from '@redwoodjs/web';
 
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
@@ -13,7 +13,7 @@ const WeddingSettingsPage = () => {
 
     return (
         <>
-            <MetaTags
+            <Metadata
                 title="Bruiloft instellingen"
                 description="Bruiloft instellingen pagina"
             />

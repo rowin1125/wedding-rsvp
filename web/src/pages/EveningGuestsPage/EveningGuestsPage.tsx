@@ -6,7 +6,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { FaMagnifyingGlassPlus } from 'react-icons/fa6';
 
 import { Link, routes } from '@redwoodjs/router';
-import { MetaTags } from '@redwoodjs/web';
+import { Metadata } from '@redwoodjs/web';
 
 import GuestInvitationModal from 'src/components/GuestDataTable/components/GuestInvitationModal';
 import { GuestDataTable } from 'src/components/GuestDataTable/GuestDataTable';
@@ -141,7 +141,7 @@ const EveningGuestsPage = () => {
 
     return (
         <>
-            <MetaTags title="EveningGuests" description="EveningGuests page" />
+            <Metadata title="EveningGuests" description="EveningGuests page" />
 
             <Box>
                 <Heading mb={8}>

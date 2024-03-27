@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Button, Flex, Grid, Heading } from '@chakra-ui/react';
-import { Form, Formik } from 'formik';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { FormProvider, useForm } from 'react-hook-form';
 import { GetGuestInvitationByIdQuery, InvitationType } from 'types/graphql';
 
-import { useUpdateWeddingInvitation } from '../../hooks/useUpdateWeddingInvitation';
+import EssentialInformationFields from 'src/components/Rsvp/components/RsvpForm/components/EssentialInformationFields/EssentialInformationFields';
+import ExtraInformationFields from 'src/components/Rsvp/components/RsvpForm/components/ExtraInformationFields/ExtraInformationFields';
+import WeddingGuestsField from 'src/components/Rsvp/components/RsvpForm/components/WeddingGuestsField/WeddingGuestsField';
 
-import EssentialInformationFields from './components/EssentialInformationFields/EssentialInformationFields';
-import ExtraInformationFields from './components/ExtraInformationFields/ExtraInformationFields';
-import WeddingGuestsField from './components/WeddingGuestsField/WeddingGuestsField';
+import { useUpdateWeddingInvitation } from '../../hooks/useUpdateWeddingInvitation';
 
 type RsvpFormProps = {
     invitationType: InvitationType;
@@ -29,15 +30,22 @@ const UpdateRsvpForm = ({
         loading,
     } = useUpdateWeddingInvitation({ weddingInvitation });
 
+    const methods = useForm({
+        resolver: yupResolver(validationSchema),
+        defaultValues: initialValues,
+        mode: 'onBlur',
+    });
+
+    useEffect(() => {
+        methods.reset(initialValues);
+    }, [initialValues, methods]);
+
     return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={async (values) => {
-                await updateWeddingInvitation(values);
-            }}
-            validationSchema={validationSchema}
-        >
-            <Box as={Form}>
+        <FormProvider {...methods}>
+            <Box
+                as={'form'}
+                onSubmit={methods.handleSubmit(updateWeddingInvitation)}
+            >
                 <Heading textAlign="center" fontSize="md">
                     RSVP
                 </Heading>
@@ -50,7 +58,7 @@ const UpdateRsvpForm = ({
                     gap={{ base: 4, lg: 4 }}
                 >
                     <EssentialInformationFields />
-                    <WeddingGuestsField />
+                    <WeddingGuestsField control={methods.control} />
                     <ExtraInformationFields invitationType={invitationType} />
                 </Grid>
                 <Flex justifyContent="flex-end">
@@ -64,7 +72,7 @@ const UpdateRsvpForm = ({
                     </Button>
                 </Flex>
             </Box>
-        </Formik>
+        </FormProvider>
     );
 };
 

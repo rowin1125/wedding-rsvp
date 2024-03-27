@@ -1,9 +1,8 @@
 import React from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Flex, Grid, Heading } from '@chakra-ui/react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Flex, Grid, Heading, VStack } from '@chakra-ui/react';
+import { FormProvider } from 'react-hook-form';
 import { InvitationType } from 'types/graphql';
 
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
@@ -19,24 +18,15 @@ type RsvpFormProps = {
 };
 
 const RsvpForm = ({ invitationType }: RsvpFormProps) => {
-    const {
-        createWeddingInvitation,
-        loading,
-        validationSchema,
-        initialValues,
-    } = useCreateWeddingInvitation({
-        invitationType,
-    });
-
-    const methods = useForm({
-        resolver: yupResolver(validationSchema),
-        defaultValues: initialValues,
-        mode: 'onBlur',
-    });
+    const { createWeddingInvitation, loading, methods } =
+        useCreateWeddingInvitation({
+            invitationType,
+        });
 
     return (
         <FormProvider {...methods}>
-            <Box
+            <VStack
+                spacing={4}
                 as={'form'}
                 onSubmit={methods.handleSubmit(createWeddingInvitation)}
             >
@@ -55,7 +45,7 @@ const RsvpForm = ({ invitationType }: RsvpFormProps) => {
                     <WeddingGuestsField control={methods.control} />
                     <ExtraInformationFields invitationType={invitationType} />
                 </Grid>
-                <Flex justifyContent="flex-end">
+                <Flex justifyContent="flex-end" w="full">
                     <SubmitButton
                         colorScheme="secondary"
                         isLoading={loading}
@@ -64,7 +54,7 @@ const RsvpForm = ({ invitationType }: RsvpFormProps) => {
                         Versturen
                     </SubmitButton>
                 </Flex>
-            </Box>
+            </VStack>
         </FormProvider>
     );
 };

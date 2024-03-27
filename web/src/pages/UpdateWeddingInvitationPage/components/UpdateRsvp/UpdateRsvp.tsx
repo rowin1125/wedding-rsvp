@@ -6,8 +6,8 @@ import { useParams } from '@redwoodjs/router';
 
 import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
 
-import UpdateRsvpForm from './components/RsvpForm/RsvpForm';
 import RsvpIntro from './components/RsvpIntro/RsvpIntro';
+import UpdateRsvpForm from './components/UpdateRsvpForm/UpdateRsvpForm';
 
 type RsvpProps = {
     invitationType: InvitationType;

@@ -7,7 +7,7 @@ const { definePartsStyle, defineMultiStyleConfig } =
 const baseStyle = definePartsStyle({
     field: {
         _placeholder: {
-            color: 'secondary.200',
+            color: 'gray.200',
         },
     },
     group: {

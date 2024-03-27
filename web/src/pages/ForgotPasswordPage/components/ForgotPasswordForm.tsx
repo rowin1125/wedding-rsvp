@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 
 import { VStack, Heading, ButtonGroup, Button } from '@chakra-ui/react';
-import { valibotResolver } from '@hookform/resolvers/valibot';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, FormProvider } from 'react-hook-form';
-import { email, object, string } from 'valibot';
+import { object, string } from 'yup';
 
 import { Link, navigate, routes } from '@redwoodjs/router';
 import { toast } from '@redwoodjs/web/dist/toast';
@@ -13,7 +13,7 @@ import InputControl from 'src/components/react-hook-form/components/InputControl
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton/SubmitButton';
 
 const validationSchema = object({
-    email: string('Email is verplicht', [email('Email is niet geldig')]),
+    email: string().email('Geen geldig emailadres').required('Verplicht veld'),
 });
 
 const defaultValues = {
@@ -25,7 +25,7 @@ const ForgetPasswordForm = () => {
     const emailRef = useRef<HTMLInputElement>(null);
 
     const methods = useForm({
-        resolver: valibotResolver(validationSchema),
+        resolver: yupResolver(validationSchema),
         defaultValues,
         mode: 'onBlur',
     });

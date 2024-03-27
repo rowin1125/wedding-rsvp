@@ -1,5 +1,5 @@
 import { useParams } from '@redwoodjs/router';
-import { MetaTags } from '@redwoodjs/web';
+import { Metadata } from '@redwoodjs/web';
 
 import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
 
@@ -12,7 +12,7 @@ const UpdateWeddingInvitationPage = () => {
 
     return (
         <>
-            <MetaTags
+            <Metadata
                 title="UpdateWeddingInvitation"
                 description="UpdateWeddingInvitation page"
             />

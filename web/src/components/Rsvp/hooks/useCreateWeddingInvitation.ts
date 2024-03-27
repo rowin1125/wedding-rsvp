@@ -1,3 +1,5 @@
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 import {
     CreateWeddingInvitationMutation,
     CreateWeddingInvitationMutationVariables,
@@ -42,25 +44,6 @@ export const useCreateWeddingInvitation = ({
 }: UseCreateWeddingInvitation) => {
     const { weddingId } = useParams();
 
-    const [createWeddingInvitation, mutationMeta] = useMutation<
-        CreateWeddingInvitationMutation,
-        CreateWeddingInvitationMutationVariables
-    >(CREATE_WEDDING_INVITATION, {
-        onCompleted: () => {
-            toast.success(
-                'Bedankt voor het doorgeven van jullie aanwezigheid! Bekijk de bevestiging in je mailbox (check ook je spamfolder)!',
-                {
-                    duration: 10000,
-                }
-            );
-        },
-        onError: () => {
-            toast.error(
-                'Er is iets misgegaan bij het doorgeven van jullie aanwezigheid.'
-            );
-        },
-    });
-
     const validationSchema = object({
         email: string()
             .email('Niet geldig emailadres')
@@ -96,6 +79,12 @@ export const useCreateWeddingInvitation = ({
         remarks: string(),
     });
 
+    const methods = useForm({
+        resolver: yupResolver(validationSchema),
+        defaultValues: initialWeddingInvitationValues,
+        mode: 'onBlur',
+    });
+
     const handleCreateWeddingInvitation = async (
         values: InferType<typeof validationSchema>
     ) => {
@@ -108,7 +97,7 @@ export const useCreateWeddingInvitation = ({
                 lastName: guest.lastName,
             })) || [];
 
-        return createWeddingInvitation({
+        await createWeddingInvitation({
             variables: {
                 input: {
                     ...rest,
@@ -120,12 +109,33 @@ export const useCreateWeddingInvitation = ({
                 },
             },
         });
+        methods.reset();
     };
+
+    const [createWeddingInvitation, mutationMeta] = useMutation<
+        CreateWeddingInvitationMutation,
+        CreateWeddingInvitationMutationVariables
+    >(CREATE_WEDDING_INVITATION, {
+        onCompleted: () => {
+            toast.success(
+                'Bedankt voor het doorgeven van jullie aanwezigheid! Bekijk de bevestiging in je mailbox (check ook je spamfolder)!',
+                {
+                    duration: 10000,
+                }
+            );
+        },
+        onError: () => {
+            toast.error(
+                'Er is iets misgegaan bij het doorgeven van jullie aanwezigheid.'
+            );
+        },
+    });
 
     return {
         initialValues: initialWeddingInvitationValues,
         validationSchema,
         createWeddingInvitation: handleCreateWeddingInvitation,
+        methods,
         ...mutationMeta,
     };
 };
