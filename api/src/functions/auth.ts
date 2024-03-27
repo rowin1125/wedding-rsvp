@@ -1,5 +1,6 @@
 import { Role } from '@prisma/client';
 import type { APIGatewayProxyEvent, Context } from 'aws-lambda';
+import { v4 } from 'uuid';
 
 import {
     DbAuthHandler,
@@ -7,6 +8,7 @@ import {
 } from '@redwoodjs/auth-dbauth-api';
 
 import { db } from 'src/lib/db';
+import { activateUserEmail } from 'src/services/users/users';
 
 import { mailUser } from '../lib/email';
 
@@ -25,7 +27,7 @@ export const handler = async (
                 ],
                 templateId: 2,
                 params: {
-                    recoverUrl: `${process.env.REDWOOD_ENV_VERCEL_URL}/reset-password?resetToken=${resetToken}`,
+                    recoverUrl: `${process.env.REDWOOD_ENV_VERCEL_URL}/wachtwoord-herstellen?resetToken=${resetToken}`,
                 },
             });
 
@@ -58,6 +60,10 @@ export const handler = async (
         // by the `logIn()` function from `useAuth()` in the form of:
         // `{ message: 'Error message' }`
         handler: (user) => {
+            if (!user.verified) {
+                throw new Error('Valideer je account eerst');
+            }
+
             return user;
         },
 
@@ -116,20 +122,34 @@ export const handler = async (
         //
         // If this returns anything else, it will be returned by the
         // `signUp()` function in the form of: `{ message: 'String here' }`.
-        handler: ({ username, hashedPassword, salt }) => {
-            return db.user.create({
-                data: {
-                    email: username,
-                    hashedPassword: hashedPassword,
-                    salt: salt,
-                    // name: userAttributes.name
-                    roles: {
-                        create: {
-                            name: Role.USER,
+        handler: async ({ username, hashedPassword, salt }) => {
+            const verifiedToken = v4();
+            let user;
+
+            try {
+                user = await db.user.create({
+                    data: {
+                        email: username,
+                        hashedPassword: hashedPassword,
+                        salt: salt,
+                        // name: userAttributes.name
+                        verifiedToken,
+                        roles: {
+                            create: {
+                                name: Role.USER,
+                            },
                         },
                     },
-                },
-            });
+                });
+                await activateUserEmail({
+                    email: user.email,
+                    verifiedToken,
+                });
+            } catch (error) {
+                throw new Error('Failed to sign up');
+            }
+
+            return `We hebben een bevestiging naar ${user.email} gestuurd. Activeer je account en ga aan de slag!`;
         },
 
         // Include any format checks for password here. Return `true` if the

@@ -12,7 +12,9 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
     return (
         <>
             <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
-            <Box as="main">{children}</Box>
+            <Box as="main" pb={{ base: 10, lg: 0 }} bg="primary.500">
+                {children}
+            </Box>
             <Footer
                 position="fixed"
                 zIndex={1}

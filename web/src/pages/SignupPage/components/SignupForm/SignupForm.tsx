@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 import { VStack, Heading, Flex, Text } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, FormProvider } from 'react-hook-form';
 import { object, string } from 'yup';
 
-import { routes } from '@redwoodjs/router';
+import { navigate, routes } from '@redwoodjs/router';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
@@ -29,7 +29,6 @@ const defaultValues = {
 
 const SignupForm = () => {
     const { signUp, loading } = useAuth();
-    const emailRef = useRef<HTMLInputElement>(null);
 
     const methods = useForm({
         resolver: yupResolver(validationSchema),
@@ -44,7 +43,9 @@ const SignupForm = () => {
         });
 
         if (response.message) {
-            toast(response.message);
+            methods.reset(defaultValues);
+            toast.success(response.message);
+            navigate(routes.login());
         } else if (response.error) {
             toast.error(response.error);
         } else {
@@ -52,10 +53,6 @@ const SignupForm = () => {
             toast.success('Welkom!');
         }
     };
-
-    useEffect(() => {
-        emailRef.current?.focus();
-    }, []);
 
     return (
         <FormProvider {...methods}>

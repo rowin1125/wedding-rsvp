@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { VStack, Heading, Flex, Text } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,6 +12,8 @@ import { useAuth } from 'src/auth';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton/SubmitButton';
 import RedwoodLink from 'src/components/RedwoodLink';
+
+import ResendVerificationMail from './ResendVerificationMail';
 
 const validationSchema = object({
     email: string()
@@ -29,6 +31,8 @@ const defaultValues = {
 
 const LoginForm = () => {
     const { logIn, loading } = useAuth();
+    const [email, setEmail] = useState('');
+    const [showResendButton, setShowResendButton] = useState(false);
 
     const methods = useForm({
         resolver: yupResolver(validationSchema),
@@ -45,6 +49,10 @@ const LoginForm = () => {
         if (response.message) {
             toast(response.message);
         } else if (response.error) {
+            if ((response.error as string).includes('Valideer')) {
+                setEmail(data.email);
+                setShowResendButton(true);
+            }
             toast.error(response.error);
         } else {
             // user is signed in automatically
@@ -53,71 +61,78 @@ const LoginForm = () => {
     };
 
     return (
-        <FormProvider {...methods}>
-            <VStack
-                as="form"
-                onSubmit={methods.handleSubmit(onSubmit)}
-                align="start"
-                spacing={5}
-            >
-                <Heading as="h2" size="h1">
-                    Login
-                </Heading>
-
-                <InputControl
-                    name="email"
-                    label="Email"
-                    inputProps={{
-                        placeholder: 'jouw-naam@gmail.com',
-                    }}
-                />
-                <InputControl
-                    name="password"
-                    label="Wachtwoord"
-                    inputProps={{
-                        type: 'password',
-                        placeholder: '********',
-                    }}
-                />
-                <Flex
-                    alignItems="center"
-                    justifyContent="flex-end"
-                    mt={0}
-                    w="full"
+        <>
+            <FormProvider {...methods}>
+                <VStack
+                    as="form"
+                    onSubmit={methods.handleSubmit(onSubmit)}
+                    align="start"
+                    spacing={5}
                 >
-                    <RedwoodLink
-                        to={routes.forgotPassword()}
-                        fontSize="sm"
-                        color="secondary.400"
-                    >
-                        Wachtwoord vergeten?
-                    </RedwoodLink>
-                </Flex>
-                <Flex
-                    alignItems="center"
-                    justifyContent="space-between"
-                    w="full"
-                >
-                    <SubmitButton
-                        colorScheme="secondary"
-                        isLoading={loading}
-                        isDisabled={loading}
-                    >
+                    <Heading as="h2" size="h1">
                         Login
-                    </SubmitButton>
-                    <Text fontSize="sm">
-                        Heb je nog geen account?{' '}
+                    </Heading>
+
+                    <InputControl
+                        name="email"
+                        label="Email"
+                        inputProps={{
+                            placeholder: 'jouw-naam@gmail.com',
+                        }}
+                    />
+                    <InputControl
+                        name="password"
+                        label="Wachtwoord"
+                        inputProps={{
+                            type: 'password',
+                            placeholder: '********',
+                        }}
+                    />
+                    <Flex
+                        alignItems="center"
+                        justifyContent="flex-end"
+                        mt={0}
+                        w="full"
+                    >
                         <RedwoodLink
-                            fontSize="inherit"
-                            to={routes.signup()}
-                            textDecor="underline"
+                            to={routes.forgotPassword()}
+                            fontSize="sm"
+                            color="secondary.400"
                         >
-                            Aanmelden
+                            Wachtwoord vergeten?
                         </RedwoodLink>
-                    </Text>
-                </Flex>
-            </VStack>
-        </FormProvider>
+                    </Flex>
+                    <Flex
+                        alignItems="center"
+                        justifyContent="space-between"
+                        w="full"
+                    >
+                        <SubmitButton
+                            colorScheme="secondary"
+                            isLoading={loading}
+                            isDisabled={loading}
+                        >
+                            Login
+                        </SubmitButton>
+                        <Text fontSize="sm">
+                            Heb je nog geen account?{' '}
+                            <RedwoodLink
+                                fontSize="inherit"
+                                to={routes.signup()}
+                                textDecor="underline"
+                            >
+                                Aanmelden
+                            </RedwoodLink>
+                        </Text>
+                    </Flex>
+                </VStack>
+            </FormProvider>
+            <ResendVerificationMail
+                showResendButton={showResendButton}
+                setShowResendButton={setShowResendButton}
+                email={email}
+            />
+        </>
     );
 };
 

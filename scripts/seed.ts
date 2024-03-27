@@ -30,6 +30,7 @@ export default async () => {
                     email: user.email,
                     hashedPassword,
                     salt,
+                    verified: true,
                 },
             });
 

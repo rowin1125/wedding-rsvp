@@ -57,7 +57,7 @@ const AuthScreen = ({
                 </Flex>
             </RedwoodLink>
             <GridItem colSpan={{ base: 12, xl: 8 }} position="relative">
-                <Box position="relative" h={{ base: '300px', xl: '100vh' }}>
+                <Box position="relative" minH={{ base: '300px', xl: '100vh' }}>
                     <Box
                         h="100%"
                         bg="primary.500"
@@ -115,7 +115,7 @@ const AuthScreen = ({
             <GridItem
                 colSpan={{ base: 12, xl: 4 }}
                 position="relative"
-                h={{
+                minH={{
                     base: 'calc(100vh - 300px)',
                     xl: 'auto',
                 }}
@@ -126,12 +126,7 @@ const AuthScreen = ({
                     alignItems="center"
                     h="full"
                 >
-                    <Box
-                        maxH={{ base: '400px', xl: '90vh' }}
-                        maxW="400px"
-                        w="full"
-                        p={{ base: 4, xl: 0 }}
-                    >
+                    <Box maxW="400px" w="full" p={{ base: 4, xl: 0 }}>
                         {children}
                     </Box>
                 </Flex>

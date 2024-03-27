@@ -33,6 +33,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     const isSettingsPage = pathname === routes.weddingSettings();
 
     useEffect(() => {
+        if (!currentUser) return;
         if (loading || isSettingsPage || currentUser?.weddingId) return;
 
         navigate(routes.weddingSettings());

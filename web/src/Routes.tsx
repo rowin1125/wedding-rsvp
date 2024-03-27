@@ -26,10 +26,11 @@ const Routes = () => {
                 <Route notfound page={NotFoundPage} />
             </Set>
             <Set wrap={AuthLayout}>
-                <Route path="/login" page={LoginPage} name="login" />
-                <Route path="/signup" page={SignupPage} name="signup" />
-                <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />
-                <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
+                <Route path="/inloggen" page={LoginPage} name="login" />
+                <Route path="/aanmelden" page={SignupPage} name="signup" />
+                <Route path="/wachtwoord-vergeten" page={ForgotPasswordPage} name="forgotPassword" />
+                <Route path="/wachtwoord-herstellen" page={ResetPasswordPage} name="resetPassword" />
+                <Route path="/activeren" page={ActivatePage} name="activate" />
             </Set>
         </Router>
     );
