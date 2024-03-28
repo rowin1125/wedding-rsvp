@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Box, Flex, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, useDisclosure } from '@chakra-ui/react';
 import { BiSun } from 'react-icons/bi';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
 import { CgOptions } from 'react-icons/cg';
+import { FaRegEnvelopeOpen } from 'react-icons/fa6';
 import { MdFormatListBulleted } from 'react-icons/md';
 import { RiDashboard3Line } from 'react-icons/ri';
 
@@ -11,6 +12,7 @@ import { routes } from '@redwoodjs/router';
 
 import FooterDrawer from './components/FooterDrawer';
 import FooterMenuItem from './components/FooterMenuItem';
+import FooterMenuItemChild from './components/FooterMenuItemChild';
 
 export const footerMenuHeight = '70px';
 
@@ -41,17 +43,22 @@ const FooterMenu = () => {
                             fontSize: 'xl',
                         }}
                     />
+                    <FooterMenuItem title="dagdelen" icon={FaRegEnvelopeOpen}>
+                        <FooterMenuItemChild
+                            icon={BiSun}
+                            to={routes.dayGuests()}
+                        >
+                            Dag gasten
+                        </FooterMenuItemChild>
+                        <FooterMenuItemChild
+                            icon={BsFillMoonStarsFill}
+                            divider={false}
+                            to={routes.eveningGuests()}
+                        >
+                            Avond gasten
+                        </FooterMenuItemChild>
+                    </FooterMenuItem>
 
-                    <FooterMenuItem
-                        icon={BiSun}
-                        title="Dag-gasten"
-                        to={routes.dayGuests()}
-                    />
-                    <FooterMenuItem
-                        icon={BsFillMoonStarsFill}
-                        title="Avond-gasten"
-                        to={routes.eveningGuests()}
-                    />
                     <FooterMenuItem
                         icon={CgOptions}
                         title="Instellingen"
@@ -62,6 +69,7 @@ const FooterMenu = () => {
                         onClick={onToggle}
                         title="Menu"
                         icon={MdFormatListBulleted}
+                        as={Button}
                     />
                     <FooterDrawer
                         isOpen={isOpen}

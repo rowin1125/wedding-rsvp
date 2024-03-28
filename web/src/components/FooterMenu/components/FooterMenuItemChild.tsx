@@ -4,7 +4,7 @@ import { Button, Divider, Flex, Icon, MenuItem } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
 import { CgChevronRight } from 'react-icons/cg';
 
-import RedwoodLink from 'src/components/RedwoodLink';
+import { Link } from '@redwoodjs/router';
 
 type FooterMenuItemChildProps = {
     children: React.ReactNode;
@@ -29,10 +29,11 @@ const FooterMenuItemChild = ({
                 <Button
                     py={8}
                     colorScheme="primary"
-                    as={RedwoodLink}
+                    as={Link}
                     to={to}
                     w="full"
                     borderRadius={0}
+                    color="body.900"
                 >
                     <Flex justifyContent="space-between" w="full">
                         <Flex alignItems="center">

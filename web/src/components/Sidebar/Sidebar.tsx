@@ -1,7 +1,8 @@
-import { Button, Flex, Icon, Image, Text } from '@chakra-ui/react';
+import { Button, Flex, Icon, Image, useEventListener } from '@chakra-ui/react';
 import { BiLogOut, BiSun } from 'react-icons/bi';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
-import { CgChevronRight, CgOptions } from 'react-icons/cg';
+import { CgOptions, CgWebsite } from 'react-icons/cg';
+import { FaRegEnvelopeOpen } from 'react-icons/fa6';
 import { RiDashboard3Line } from 'react-icons/ri';
 
 import { routes } from '@redwoodjs/router';
@@ -9,26 +10,38 @@ import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
+import useLocalStorage from 'src/hooks/useLocalStorage';
 
 import RedwoodLink from '../RedwoodLink';
 
 import SidebarItem from './components/SidebarItem';
+import SidebarItemChild from './components/SidebarItemChild';
+import SidebarToggle from './components/SidebarToggle';
+
+const ClOSE_SIDEBAR_KEYS = ['221', '['];
 
 const Sidebar = () => {
+    const [navOpen, toggleNav] = useLocalStorage('navOpen', true);
     const { logOut } = useAuth();
     const handleLogout = () => {
         toast.success('Je bent uitgelogd');
         logOut();
     };
     const { wedding } = useGetWeddingById();
+    const handler = ({ key }: { key: string }) => {
+        if (ClOSE_SIDEBAR_KEYS.includes(String(key))) {
+            toggleNav(!navOpen);
+        }
+    };
+
+    useEventListener('keydown', handler);
 
     return (
         <Flex
             pos="sticky"
             left="0"
             top={0}
-            minH="calc(100vh - 300px - 56px)"
-            h="full"
+            h="100vh"
             boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.05)"
             flexDir="column"
             justifyContent="space-between"
@@ -38,10 +51,14 @@ const Sidebar = () => {
             zIndex={4}
         >
             <Flex flexDir="column" w="full" as="nav">
-                <Flex justifyContent="center" alignItems="center" py={16}>
+                <Flex
+                    justifyContent="center"
+                    alignItems="center"
+                    py={6}
+                    minH="190px"
+                >
                     <RedwoodLink
                         w="full"
-                        zIndex={2}
                         to={routes.weddingRsvp({
                             invitationType: 'F',
                             weddingId: wedding?.id || '',
@@ -55,44 +72,68 @@ const Sidebar = () => {
                             justifyContent="center"
                             w="full"
                         >
-                            <Image src="/Bruiloft buddy logo.png" h="100px" />
-                            <Text
-                                ml={4}
-                                color="secondary.900"
-                                fontWeight="semibold"
-                                fontSize={{
-                                    base: '2xl',
-                                    xl: '3xl',
-                                }}
-                            >
-                                Bruiloft Buddy
-                            </Text>
+                            <Image
+                                src="/Bruiloft buddy logo.png"
+                                w={navOpen ? '120px' : '50px'}
+                                h="auto"
+                            />
                         </Flex>
                     </RedwoodLink>
                 </Flex>
 
                 <SidebarItem
-                    navOpen={true}
+                    navOpen={navOpen}
                     icon={RiDashboard3Line}
                     title="Dashboard"
                     to={routes.dashboard()}
                 />
-
                 <SidebarItem
-                    navOpen={true}
-                    icon={BiSun}
-                    title="Dag-gasten"
-                    to={routes.dayGuests()}
-                />
+                    navOpen={navOpen}
+                    icon={FaRegEnvelopeOpen}
+                    title="Dagdelen"
+                    to={routes.dashboard()}
+                >
+                    <SidebarItemChild icon={BiSun} to={routes.dayGuests()}>
+                        Dag gasten
+                    </SidebarItemChild>
+                    <SidebarItemChild
+                        icon={BsFillMoonStarsFill}
+                        divider={false}
+                        to={routes.eveningGuests()}
+                    >
+                        Avond gasten
+                    </SidebarItemChild>
+                </SidebarItem>
+                {wedding?.id && (
+                    <SidebarItem
+                        navOpen={navOpen}
+                        icon={CgWebsite}
+                        title="RSVP"
+                        to={routes.dashboard()}
+                    >
+                        <SidebarItemChild
+                            icon={BiSun}
+                            to={routes.weddingRsvp({
+                                invitationType: 'F',
+                                weddingId: wedding.id,
+                            })}
+                        >
+                            Dag gasten
+                        </SidebarItemChild>
+                        <SidebarItemChild
+                            icon={BsFillMoonStarsFill}
+                            to={routes.weddingRsvp({
+                                invitationType: 'E',
+                                weddingId: wedding.id,
+                            })}
+                            divider={false}
+                        >
+                            Avond gasten
+                        </SidebarItemChild>
+                    </SidebarItem>
+                )}
                 <SidebarItem
-                    navOpen={true}
-                    icon={BsFillMoonStarsFill}
-                    title="Avond-gasten"
-                    to={routes.eveningGuests()}
-                />
-
-                <SidebarItem
-                    navOpen={true}
+                    navOpen={navOpen}
                     icon={CgOptions}
                     title="Instellingen"
                     to={routes.weddingSettings()}
@@ -109,7 +150,7 @@ const Sidebar = () => {
                     py={8}
                     w="full"
                     bg={'body.50'}
-                    color={'black'}
+                    color={'secondary.900'}
                     borderRadius={0}
                     _hover={{
                         bg: 'body.100',
@@ -119,14 +160,24 @@ const Sidebar = () => {
                         bg: 'body.100',
                     }}
                 >
-                    <Flex alignItems="center">
-                        <Icon as={BiLogOut} mr={4} />
-                        Log uit
-                    </Flex>
-
-                    <Icon as={CgChevronRight} ml={4} />
+                    {navOpen ? (
+                        <Flex alignItems="center">
+                            <Icon as={BiLogOut} mr={4} />
+                            Log uit
+                        </Flex>
+                    ) : (
+                        <Button
+                            my="12px"
+                            mx={1}
+                            colorScheme={'primary'}
+                            color={'body.900'}
+                        >
+                            <Icon as={BiLogOut} />
+                        </Button>
+                    )}
                 </Button>
             </Flex>
+            <SidebarToggle navOpen={navOpen} toggleNav={toggleNav} />
         </Flex>
     );
 };

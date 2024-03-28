@@ -4,7 +4,7 @@ import { Button, Divider, Flex, Icon, MenuItem } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
 import { CgChevronRight } from 'react-icons/cg';
 
-import RedwoodLink from 'src/components/RedwoodLink';
+import { Link } from '@redwoodjs/router';
 
 type SidebarItemChildProps = {
     children: React.ReactNode;
@@ -29,15 +29,19 @@ const SidebarItemChild = ({
                 <Button
                     py={8}
                     colorScheme="primary"
-                    as={RedwoodLink}
+                    as={Link}
                     to={to}
                     w="full"
                     variant="ghost"
                     borderRadius={0}
                 >
                     <Flex justifyContent="space-between" w="full">
-                        <Flex alignItems="center">
-                            {hasIcon && <Icon mr={2} as={CustomIcon} />}
+                        <Flex
+                            alignItems="center"
+                            fontWeight="semibold"
+                            color="secondary.900"
+                        >
+                            {hasIcon && <Icon mr={4} as={CustomIcon} />}
                             {children}
                         </Flex>
                         <Icon as={CgChevronRight} ml={4} />

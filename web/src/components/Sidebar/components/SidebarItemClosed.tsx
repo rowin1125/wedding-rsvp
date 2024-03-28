@@ -25,10 +25,15 @@ const SidebarItemClosed = ({
                 as={RedwoodLink}
                 to={to}
                 my="12px"
-                colorScheme={active ? 'body' : 'gray'}
+                colorScheme={active ? 'body' : 'primary'}
                 mx={1}
             >
-                <Icon as={icon} fontSize="md" {...iconProps} />
+                <Icon
+                    as={icon}
+                    fontSize="md"
+                    color={active ? 'white' : 'body.900'}
+                    {...iconProps}
+                />
             </Button>
         </Flex>
     );

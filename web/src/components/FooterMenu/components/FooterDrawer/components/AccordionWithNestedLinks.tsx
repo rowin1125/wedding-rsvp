@@ -15,30 +15,26 @@ import { IconType } from 'react-icons';
 type AccordionWithNestedLinksProps = {
     children: React.ReactNode;
     icon: IconType;
+    title: string;
 };
 
 const AccordionWithNestedLinks = ({
     children,
     icon: IconComponent,
+    title,
 }: AccordionWithNestedLinksProps) => (
-    <AccordionItem p={0} borderColor="gray.100">
-        <Heading as="h2" color="white" py={2}>
+    <AccordionItem p={0} borderColor="secondary.900">
+        <Heading as="p" py={2} fontFamily="Montserrat">
             <AccordionButton>
                 <Flex alignItems="center" justifyContent="flex-start" w="full">
-                    <Icon
-                        as={IconComponent}
-                        fontSize="lg"
-                        color="white"
-                        mr={4}
-                    />
+                    <Icon as={IconComponent} fontSize="lg" mr={4} />
                     <Text
                         flex={1}
                         textAlign="left"
-                        fontWeight="bold"
+                        fontWeight="semibold"
                         fontSize="lg"
-                        color="white"
                     >
-                        Team
+                        {title}
                     </Text>
                 </Flex>
                 <AccordionIcon />

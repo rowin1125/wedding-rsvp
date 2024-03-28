@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-    Box,
+    Accordion,
     Button,
     Drawer,
     DrawerBody,
@@ -10,16 +10,22 @@ import {
     DrawerFooter,
     DrawerOverlay,
     Flex,
-    Heading,
 } from '@chakra-ui/react';
+import { BiSun } from 'react-icons/bi';
+import { BsFillMoonStarsFill } from 'react-icons/bs';
+import { CgOptions, CgWebsite } from 'react-icons/cg';
+import { FaRegEnvelopeOpen } from 'react-icons/fa6';
+import { RiDashboard3Line } from 'react-icons/ri';
+import { TbHome } from 'react-icons/tb';
 
 import { routes } from '@redwoodjs/router';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
-import RedwoodLink from 'src/components/RedwoodLink';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
+import AccordionDirectLink from './components/AccordionDirectLink';
+import AccordionWithNestedLinks from './components/AccordionWithNestedLinks';
 import FooterDrawerHeader from './components/FooterDrawerHeader';
 
 type FooterDrawerProps = {
@@ -46,47 +52,86 @@ const FooterDrawer = ({ isOpen, onClose, btnRef }: FooterDrawerProps) => {
             finalFocusRef={btnRef}
         >
             <DrawerOverlay />
-            <DrawerContent mb="70px" bg="#F1E7DB" color="white">
+            <DrawerContent mb="70px" bg="#F1E7DB">
                 <DrawerCloseButton />
                 <FooterDrawerHeader />
 
                 <DrawerBody>
-                    <Heading mt={10} mb={4}>
-                        {"Pagina's"}
-                    </Heading>
-                    <Box position="relative" mb={4}>
-                        <Button
-                            as={RedwoodLink}
-                            to={routes.weddingRsvp({
-                                invitationType: 'F',
-                                weddingId: wedding.id,
-                            })}
-                            w="full"
-                            variant="outline"
-                            colorScheme="body"
+                    <Accordion allowMultiple>
+                        <AccordionDirectLink
+                            onClose={onClose}
+                            to={routes.home()}
+                            icon={TbHome}
                         >
-                            Daggasten pagina
-                        </Button>
-                    </Box>
-                    <Box position="relative" mb={4}>
-                        <Button
-                            as={RedwoodLink}
-                            to={routes.weddingRsvp({
-                                invitationType: 'E',
-                                weddingId: wedding.id,
-                            })}
-                            w="full"
-                            variant="outline"
-                            colorScheme="body"
+                            Home
+                        </AccordionDirectLink>
+                        <AccordionDirectLink
+                            onClose={onClose}
+                            to={routes.dashboard()}
+                            icon={RiDashboard3Line}
+                            iconProps={{
+                                fontSize: 'xl',
+                            }}
                         >
-                            Avondgasten pagina
-                        </Button>
-                    </Box>
-                    <Box position="relative" mb={4}>
-                        <Button w="full" variant="outline" colorScheme="body">
-                            Uitloggen
-                        </Button>
-                    </Box>
+                            Dashboard
+                        </AccordionDirectLink>
+
+                        <AccordionWithNestedLinks
+                            title="Dagdelen"
+                            icon={FaRegEnvelopeOpen}
+                        >
+                            <AccordionDirectLink
+                                onClose={onClose}
+                                nested
+                                to={routes.dayGuests()}
+                                icon={BiSun}
+                            >
+                                Dag gasten
+                            </AccordionDirectLink>
+
+                            <AccordionDirectLink
+                                onClose={onClose}
+                                nested
+                                to={routes.eveningGuests()}
+                                icon={BsFillMoonStarsFill}
+                            >
+                                Avond gasten
+                            </AccordionDirectLink>
+                        </AccordionWithNestedLinks>
+                        <AccordionWithNestedLinks title="RSVP" icon={CgWebsite}>
+                            <AccordionDirectLink
+                                onClose={onClose}
+                                nested
+                                to={routes.weddingRsvp({
+                                    invitationType: 'F',
+                                    weddingId: wedding.id,
+                                })}
+                                icon={BiSun}
+                            >
+                                Dag gasten
+                            </AccordionDirectLink>
+
+                            <AccordionDirectLink
+                                onClose={onClose}
+                                nested
+                                to={routes.weddingRsvp({
+                                    invitationType: 'E',
+                                    weddingId: wedding.id,
+                                })}
+                                icon={BsFillMoonStarsFill}
+                            >
+                                Avond gasten
+                            </AccordionDirectLink>
+                        </AccordionWithNestedLinks>
+
+                        <AccordionDirectLink
+                            onClose={onClose}
+                            to={routes.weddingSettings()}
+                            icon={CgOptions}
+                        >
+                            Instellingen
+                        </AccordionDirectLink>
+                    </Accordion>
                 </DrawerBody>
 
                 <DrawerFooter boxShadow="5px -30px 21px #F1E7DB" zIndex={4}>

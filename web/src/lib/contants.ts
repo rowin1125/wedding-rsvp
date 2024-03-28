@@ -1,0 +1,8 @@
+export const WEDDING_OWNER = 'WEDDING_OWNER';
+export const MASTER_OF_CEREMONIES = 'MASTER_OF_CEREMONIES';
+export const ADMIN = 'ADMIN';
+export const ROLE_ENUMS = {
+    WEDDING_OWNER,
+    MASTER_OF_CEREMONIES,
+    ADMIN,
+};

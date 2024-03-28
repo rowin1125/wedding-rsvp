@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, BoxProps, Button, Icon, IconProps, Text } from '@chakra-ui/react';
 import { IconType } from 'react-icons/lib';
 
-import RedwoodLink from 'src/components/RedwoodLink';
+import { Link } from '@redwoodjs/router';
 
 type AccordionDirectLinkProps = {
     to: string;
@@ -28,28 +28,28 @@ const AccordionDirectLink = ({
     const linkProps = isRegularLink ? { href: to } : { to };
     return (
         <Box
-            borderColor={nested ? '' : 'gray.100'}
+            borderColor={nested ? '' : 'secondary.900'}
             borderTop={nested ? '' : '1px'}
-            py={nested ? 0 : 2}
+            py={nested ? 1 : 2}
             onClick={onClose}
             {...props}
         >
             <Button
                 py={nested ? 0 : 2}
-                as={as || RedwoodLink}
+                as={as || Link}
                 {...linkProps}
                 display="flex"
                 alignItems="center"
                 justifyContent="flex-start"
             >
                 <Icon
+                    color="secondary.900"
                     as={IconComponent}
                     fontSize="lg"
-                    color="white"
                     mr={4}
                     {...iconProps}
                 />
-                <Text fontWeight="bold" fontSize="lg" color="white">
+                <Text fontWeight="semibold" fontSize="lg">
                     {children}
                 </Text>
             </Button>

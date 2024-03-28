@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box, Flex, Grid, GridItem, Heading, Image } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image } from '@chakra-ui/react';
 
 import { navigate, routes, useLocation } from '@redwoodjs/router';
 import { Toaster, toast } from '@redwoodjs/web/dist/toast';
@@ -44,39 +44,54 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <Box>
             <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
             <Box as="main">
-                <Grid templateColumns="repeat(12, 1fr)" gap={4} rowGap={0}>
-                    <GridItem colSpan={12} position="relative">
-                        <Image
-                            src={heroImage}
-                            w="full"
-                            h="300px"
-                            objectFit="cover"
-                            filter="brightness(0.5)"
-                        />
-                        <Flex
-                            inset={0}
-                            position="absolute"
-                            justifyContent="center"
-                            alignItems="center"
-                        >
-                            <Heading color="white" fontSize="6xl">
-                                {capitalizeText(pageTitle)}
-                            </Heading>
-                        </Flex>
-                    </GridItem>
-                    <GridItem
-                        colSpan={3}
-                        display={{ base: 'none', lg: 'block' }}
+                <Box
+                    h="400px"
+                    bg="primary.500"
+                    position="absolute"
+                    top={0}
+                    left={0}
+                    right={0}
+                    zIndex={-1}
+                >
+                    <Image
+                        src={heroImage}
+                        w="full"
+                        h="full"
+                        objectFit="cover"
+                        filter="brightness(0.5)"
+                    />
+                    <Flex
+                        inset={0}
+                        position="absolute"
+                        justifyContent="center"
+                        alignItems="center"
                     >
+                        <Heading color="white" fontSize="6xl">
+                            {capitalizeText(pageTitle)}
+                        </Heading>
+                    </Flex>
+                </Box>
+                <Flex
+                    justifyContent="space-between"
+                    mx={{ base: 4, xl: 0 }}
+                    pr={{ base: 0, xl: 4 }}
+                    position="relative"
+                >
+                    <Box position="relative">
                         <Sidebar />
-                    </GridItem>
-                    <GridItem
-                        colSpan={{ base: 12, lg: 9 }}
-                        p={{ base: 4, lg: 10 }}
-                    >
-                        {children}
-                    </GridItem>
-                </Grid>
+                    </Box>
+                    <Flex flexDir="column" w="full" pt={8} mb={10}>
+                        <Box
+                            pt="400px"
+                            as="main"
+                            pl={{ xl: 8 }}
+                            px={{ xl: 8 }}
+                            pr={{ xl: 0 }}
+                        >
+                            {children}
+                        </Box>
+                    </Flex>
+                </Flex>
             </Box>
             <Footer backgroundColor="#F1E7DB" />
             <FooterMenu />

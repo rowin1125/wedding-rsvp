@@ -14,8 +14,7 @@ const SidebarToggle = ({ navOpen, toggleNav }: SidebarToggleProps) => {
             <Tooltip
                 label="Gebruik ` [ ` op je toetsenbord om de navigatie te openen of sluiten"
                 placement="top"
-                bg="primary.500"
-                color="white"
+                bg="secondary.500"
                 hasArrow
                 openDelay={600}
             >
@@ -26,6 +25,7 @@ const SidebarToggle = ({ navOpen, toggleNav }: SidebarToggleProps) => {
                     colorScheme="primary"
                     variant="ghost"
                     py={6}
+                    fontWeight="bold"
                 >
                     {navOpen ? 'Sluiten' : ''}{' '}
                     <Icon

@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef } from 'react';
 
-import { Button, ButtonProps, Icon, IconProps } from '@chakra-ui/react';
+import { As, Button, ButtonProps, Icon, IconProps } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
 
-import { useLocation } from '@redwoodjs/router';
-
-import RedwoodLink from 'src/components/RedwoodLink';
+import { Link, useLocation } from '@redwoodjs/router';
 
 import FooterMenuItemWrapper from './FooterMenuItemWrapper';
 
@@ -16,11 +14,12 @@ type FooterMenuItemProps = {
     title: string;
     iconProps?: IconProps;
     children?: React.ReactNode;
+    as?: As;
 } & ButtonProps;
 
 export const FooterMenuItem = forwardRef<FooterMenuItemProps, any>(
     (
-        { icon: IconComponent, to, title, iconProps, children, ...props },
+        { icon: IconComponent, to, title, iconProps, children, as, ...props },
         ref
     ) => {
         const { pathname } = useLocation();
@@ -39,7 +38,7 @@ export const FooterMenuItem = forwardRef<FooterMenuItemProps, any>(
                 hasChildren={hasChildren}
             >
                 <Button
-                    as={to ? RedwoodLink : 'button'}
+                    as={to ? Link : as ? as : 'div'}
                     {...(to && { to })}
                     my="12px"
                     colorScheme={active ? 'body' : 'blackAlpha'}

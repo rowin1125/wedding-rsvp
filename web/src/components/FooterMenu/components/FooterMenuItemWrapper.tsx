@@ -18,7 +18,7 @@ const FooterMenuItemWrapper = ({
 
     return (
         <Menu placement="top-start">
-            <MenuButton as="div" py={0}>
+            <MenuButton as="button" py={0}>
                 {children}
             </MenuButton>
             <MenuList p={0} overflow="hidden " borderColor="primary.500">
