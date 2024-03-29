@@ -35,11 +35,11 @@ const HeroCard = ({ rotate, scale, children }: HeroCardProps) => {
                 lg: 6,
             }}
             pt={{
-                base: 4,
+                base: 7,
                 lg: 8,
             }}
             pb={{
-                base: 8,
+                base: 12,
                 lg: 12,
             }}
             bg="secondary.200"
@@ -55,20 +55,35 @@ const HeroCard = ({ rotate, scale, children }: HeroCardProps) => {
                 top={0}
             >
                 <Box
-                    w={5}
-                    h={5}
+                    w={{
+                        base: 4,
+                        lg: 5,
+                    }}
+                    h={{
+                        base: 4,
+                        lg: 5,
+                    }}
                     bg="gray.300"
                     rounded="full"
                     position="relative"
                     top="6px"
                 />
                 <Box
-                    w={2}
-                    h={2}
+                    w={{
+                        base: 1.5,
+                        lg: 2,
+                    }}
+                    h={{
+                        base: 1.5,
+                        lg: 2,
+                    }}
                     bg="secondary.200"
                     rounded="full"
                     position="absolute"
-                    top="12px"
+                    top={{
+                        base: '11px',
+                        lg: '12px',
+                    }}
                     zIndex={3}
                 />
             </Flex>
@@ -80,8 +95,14 @@ const HeroCard = ({ rotate, scale, children }: HeroCardProps) => {
                 bottom={0}
             >
                 <Box
-                    w={8}
-                    h={8}
+                    w={{
+                        base: 8,
+                        lg: 8,
+                    }}
+                    h={{
+                        base: 8,
+                        lg: 8,
+                    }}
                     bg="gray.300"
                     rounded="full"
                     position="relative"
@@ -89,8 +110,14 @@ const HeroCard = ({ rotate, scale, children }: HeroCardProps) => {
                 />
                 <Box
                     position="absolute"
-                    w={6}
-                    h={6}
+                    w={{
+                        base: 6,
+                        lg: 6,
+                    }}
+                    h={{
+                        base: 6,
+                        lg: 6,
+                    }}
                     bg="primary.100"
                     rounded="full"
                     bottom="12px"
