@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { MotionValue, motion } from 'framer-motion';
 
 type HeroCardProps = {
@@ -30,14 +30,73 @@ const HeroCard = ({ rotate, scale, children }: HeroCardProps) => {
             w="full"
             border="4"
             borderColor="secondary.300"
-            p={{
+            px={{
                 base: 2,
                 lg: 6,
+            }}
+            pt={{
+                base: 4,
+                lg: 8,
+            }}
+            pb={{
+                base: 8,
+                lg: 12,
             }}
             bg="secondary.200"
             rounded="2xl"
             shadow="2xl"
+            position="relative"
         >
+            <Flex
+                position="absolute"
+                w="full"
+                justifyContent="center"
+                zIndex={3}
+                top={0}
+            >
+                <Box
+                    w={5}
+                    h={5}
+                    bg="gray.300"
+                    rounded="full"
+                    position="relative"
+                    top="6px"
+                />
+                <Box
+                    w={2}
+                    h={2}
+                    bg="secondary.200"
+                    rounded="full"
+                    position="absolute"
+                    top="12px"
+                    zIndex={3}
+                />
+            </Flex>
+            <Flex
+                position="absolute"
+                w="full"
+                justifyContent="center"
+                zIndex={3}
+                bottom={0}
+            >
+                <Box
+                    w={8}
+                    h={8}
+                    bg="gray.300"
+                    rounded="full"
+                    position="relative"
+                    bottom="8px"
+                />
+                <Box
+                    position="absolute"
+                    w={6}
+                    h={6}
+                    bg="primary.100"
+                    rounded="full"
+                    bottom="12px"
+                    zIndex={3}
+                />
+            </Flex>
             <Box
                 h="full"
                 w="full"
