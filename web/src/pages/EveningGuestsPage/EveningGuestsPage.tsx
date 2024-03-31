@@ -108,8 +108,15 @@ const EveningGuestsPage = () => {
                 ),
                 header: 'Ingevuld op',
             }),
+            columnHelper.accessor('Dieet wensen', {
+                cell: (info) => {
+                    if (info.row.depth > 0) return;
+
+                    return info.getValue() || 'Geen';
+                },
+            }),
         ],
-        [handleRowClick]
+        [handleRowClick, wedding?.id]
     );
 
     const data = eveningGuests?.map((weddingInvitation) => ({
@@ -129,6 +136,7 @@ const EveningGuestsPage = () => {
                 `${weddingGuest?.firstName} ${weddingGuest?.lastName}`,
             Aanwezig: weddingInvitation?.presence ? 'Ja' : 'Nee',
         })),
+        'Dieet wensen': weddingInvitation.dietaryWishes || 'Geen',
     }));
 
     if (!data || loading) return null;
