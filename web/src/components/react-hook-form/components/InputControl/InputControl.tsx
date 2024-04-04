@@ -13,6 +13,8 @@ import { FaCheck } from 'react-icons/fa6';
 import FormControl from '../FormControl';
 import { BaseProps } from '../FormControl/FormControl';
 
+import RenderAddon from './components/RenderAddon';
+
 export type InputControlProps = BaseProps & {
     inputProps?: InputProps;
     leftAddon?: ReactNode | (() => ReactNode);
@@ -44,27 +46,11 @@ const InputControl = ({
 
     const isValid = !error && isTouched;
 
-    const RenderElement = ({
-        element,
-    }: {
-        element: ReactNode | (() => ReactNode);
-    }) => {
-        if (typeof element === 'string') {
-            return <>{element}</>;
-        }
-
-        if (typeof element === 'function') {
-            return element();
-        }
-
-        return element;
-    };
-
     return (
         <FormControl name={name} control={control} label={label} {...rest}>
             <InputGroup>
-                <RenderElement element={leftAddon} />
-                <RenderElement element={leftElement} />
+                <RenderAddon element={leftAddon} />
+                <RenderAddon element={leftElement} />
                 <Input
                     {...field}
                     id={name}
@@ -76,8 +62,8 @@ const InputControl = ({
                     {...inputProps}
                     value={field.value ?? ''}
                 />
-                <RenderElement element={rightElement} />
-                <RenderElement element={rightAddon} />
+                <RenderAddon element={rightElement} />
+                <RenderAddon element={rightAddon} />
                 {isValid && (
                     <InputRightElement mr={rightAddon ? 14 : 'unset'}>
                         <Icon as={FaCheck} color="success.500" />

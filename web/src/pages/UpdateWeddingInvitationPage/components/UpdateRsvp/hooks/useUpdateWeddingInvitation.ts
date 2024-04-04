@@ -67,8 +67,8 @@ export const useUpdateWeddingInvitation = ({
         useCouponCode: weddingInvitation?.useCouponCode.toString() ?? 'false',
         weddingGuests:
             weddingInvitation?.weddingGuests.map((guest) => ({
-                firstName: guest?.firstName || '',
-                lastName: guest?.lastName || '',
+                firstName: guest?.firstName || guest?.name?.split(' ')[0] || '',
+                lastName: guest?.lastName || guest?.name?.split(' ')[1] || '',
             })) ?? [],
         dietaryWishes: weddingInvitation?.dietaryWishes ?? '',
         remarks: weddingInvitation?.remarks ?? '',
