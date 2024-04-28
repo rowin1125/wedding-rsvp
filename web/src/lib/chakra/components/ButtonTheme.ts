@@ -1,30 +1,49 @@
 import { defineStyleConfig } from '@chakra-ui/react';
 
+import theme from '../theme';
+
 export const Button = defineStyleConfig({
     defaultProps: {
-        colorScheme: 'primary',
+        colorScheme: 'secondary',
     },
     baseStyle: {
         fontWeight: 'semibold',
     },
     variants: {
-        outline: {
-            borderColor: 'body.500',
-            color: 'body.500',
-            fontWeight: 'normal',
-            _hover: {
-                backgroundColor: 'body.500',
-                color: 'white',
-            },
-            _disabled: {
+        outline: (props) => {
+            return {
+                borderWidth: 2,
+                borderColor:
+                    theme.colors[
+                        props.colorScheme as keyof typeof theme.colors
+                    ]?.[500],
+                color: theme.colors[
+                    props.colorScheme as keyof typeof theme.colors
+                ]?.[500],
+                fontWeight: 'normal',
                 _hover: {
-                    color: 'body.500',
+                    backgroundColor:
+                        theme.colors[
+                            props.colorScheme as keyof typeof theme.colors
+                        ]?.[500],
+                    color: 'white',
                 },
-            },
+                _disabled: {
+                    _hover: {
+                        color: theme.colors[
+                            props.colorScheme as keyof typeof theme.colors
+                        ]?.[500],
+                    },
+                },
+            };
         },
-        ghost: {
-            color: 'body.500',
-            fontWeight: 'normal',
+        ghost: (props) => {
+            return {
+                color: theme.colors[
+                    props.colorScheme as keyof typeof theme.colors
+                ]?.[500],
+                fontWeight: 'normal',
+            };
         },
     },
 });

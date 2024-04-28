@@ -81,7 +81,7 @@ const StoryTimeline = () => {
                                     base: 1,
                                     lg: isTextFirst ? 0 : 1,
                                 }}
-                                borderColor="tertairy.500"
+                                borderColor="secondary.500"
                             >
                                 <Heading
                                     mb={0}

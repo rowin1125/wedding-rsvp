@@ -41,6 +41,7 @@ const AccordionDirectLink = ({
                 display="flex"
                 alignItems="center"
                 justifyContent="flex-start"
+                colorScheme="primary"
             >
                 <Icon
                     color="secondary.900"

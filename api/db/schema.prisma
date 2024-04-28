@@ -22,7 +22,7 @@ model User {
     resetTokenExpiresAt DateTime?
     verified            Boolean    @default(false)
     verifiedToken       String?
-    wedding             Wedding?   @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    wedding             Wedding?   @relation(fields: [weddingId], references: [id])
     weddingId           String?    @unique
     createdAt           DateTime   @default(now())
     updatedAt           DateTime   @updatedAt
@@ -33,6 +33,7 @@ model Wedding {
     id                      String              @id @default(cuid())
     date                    DateTime
     name                    String
+    gcloudStoragePath       String              @default("")
     dayInvitationAmount     Int                 @default(0)
     eveningInvitationAmount Int                 @default(0)
     weddingInvitation       WeddingInvitation[]
@@ -40,6 +41,7 @@ model Wedding {
     user                    User?
     createdAt               DateTime            @default(now())
     updatedAt               DateTime            @updatedAt
+    gallery                 Gallery[]
 }
 
 model WeddingInvitation {
@@ -86,6 +88,29 @@ model UserRole {
     userId    String
 
     @@unique([name, userId])
+}
+
+model Gallery {
+    id                String   @id @default(cuid())
+    name              String
+    gcloudStoragePath String
+    wedding           Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId         String
+    assets            Asset[]
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+}
+
+model Asset {
+    id                String   @id @default(cuid())
+    gallery           Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+    galleryId         String
+    metadata          Json
+    gcloudStoragePath String
+    fileType          String
+    url               String
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
 }
 
 model RW_DataMigration {

@@ -3,6 +3,7 @@ export const schema = gql`
         id: String!
         date: DateTime!
         name: String!
+        gcloudStoragePat: String!
         dayInvitationAmount: Int!
         eveningInvitationAmount: Int!
         weddingInvitation: [WeddingInvitation]!

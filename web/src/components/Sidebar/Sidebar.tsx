@@ -1,5 +1,5 @@
 import { Button, Flex, Icon, Image, useEventListener } from '@chakra-ui/react';
-import { BiLogOut, BiSun } from 'react-icons/bi';
+import { BiLogOut, BiPhotoAlbum, BiSun } from 'react-icons/bi';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
 import { CgOptions, CgWebsite } from 'react-icons/cg';
 import { FaRegEnvelopeOpen } from 'react-icons/fa6';
@@ -59,10 +59,7 @@ const Sidebar = () => {
                 >
                     <RedwoodLink
                         w="full"
-                        to={routes.weddingRsvp({
-                            invitationType: 'F',
-                            weddingId: wedding?.id || '',
-                        })}
+                        to={routes.home()}
                         _hover={{
                             textDecoration: 'none',
                         }}
@@ -118,7 +115,7 @@ const Sidebar = () => {
                                 weddingId: wedding.id,
                             })}
                         >
-                            Dag gasten
+                            RSVP Dag
                         </SidebarItemChild>
                         <SidebarItemChild
                             icon={BsFillMoonStarsFill}
@@ -128,10 +125,16 @@ const Sidebar = () => {
                             })}
                             divider={false}
                         >
-                            Avond gasten
+                            RSVP Avond
                         </SidebarItemChild>
                     </SidebarItem>
                 )}
+                <SidebarItem
+                    navOpen={navOpen}
+                    icon={BiPhotoAlbum}
+                    title="Galerij"
+                    to={routes.galleries()}
+                />
                 <SidebarItem
                     navOpen={navOpen}
                     icon={CgOptions}

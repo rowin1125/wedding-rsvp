@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   db:
     image: postgres
@@ -8,11 +7,11 @@ services:
     environment:
       POSTGRES_USER: rowin
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: wedding-rsvp_development
+      POSTGRES_DB: bruiloft-buddy_development
 
 networks:
   default:
-    name: wedding-rsvp
+    name: bruiloft-buddy-rsvp
     driver: bridge
     ipam:
       driver: default

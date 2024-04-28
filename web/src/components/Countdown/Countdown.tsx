@@ -80,7 +80,7 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
                                         lg: '4xl',
                                     }}
                                     borderRightWidth={2}
-                                    borderColor="tertairy.900"
+                                    borderColor="secondary.900"
                                     py={4}
                                     px={8}
                                 >
@@ -93,7 +93,7 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
                                         lg: '4xl',
                                     }}
                                     borderRightWidth={2}
-                                    borderColor="tertairy.900"
+                                    borderColor="secondary.900"
                                     py={4}
                                     px={8}
                                 >

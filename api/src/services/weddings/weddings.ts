@@ -1,3 +1,4 @@
+import { createId } from '@paralleldrive/cuid2';
 import { Role } from '@prisma/client';
 import type {
     QueryResolvers,
@@ -5,8 +6,10 @@ import type {
     WeddingRelationResolvers,
 } from 'types/graphql';
 
+import { removeNulls } from '@redwoodjs/api';
 import { UserInputError } from '@redwoodjs/graphql-server';
 
+import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { db } from 'src/lib/db';
 
 export const weddings: QueryResolvers['weddings'] = () => {
@@ -32,9 +35,12 @@ export const createWedding: MutationResolvers['createWedding'] = async ({
     const userId = context.currentUser?.id;
     if (!userId) throw new UserInputError('No user found');
 
+    const id = createId();
     const createWedding = db.wedding.create({
         data: {
+            id,
             ...input,
+            gcloudStoragePath: id,
             user: {
                 connect: { id: userId },
             },
@@ -59,11 +65,12 @@ export const updateWedding: MutationResolvers['updateWedding'] = ({
 }) => {
     return db.wedding.update({
         data: {
-            ...input,
+            ...removeNulls(input),
             user: {
                 connect: { id: context.currentUser?.id },
             },
             date: input.date ?? new Date(),
+            gcloudStoragePath: id,
         },
         where: { id },
     });
@@ -72,20 +79,43 @@ export const updateWedding: MutationResolvers['updateWedding'] = ({
 export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
     id,
 }) => {
-    const deleteWedding = db.wedding.delete({
+    const wedding = await db.wedding.findUnique({
         where: { id },
     });
 
-    const deleteUserRole = db.userRole.deleteMany({
-        where: {
-            userId: context.currentUser?.id,
-            name: Role.WEDDING_OWNER,
-        },
-    });
+    if (!wedding) {
+        throw new UserInputError('Wedding not found');
+    }
 
-    const [wedding] = await db.$transaction([deleteWedding, deleteUserRole]);
+    const bucket = await getStorageClient();
 
-    return wedding;
+    try {
+        await bucket.deleteFiles({
+            prefix: wedding.gcloudStoragePath,
+            force: true,
+        });
+
+        const deleteWedding = db.wedding.delete({
+            where: { id },
+        });
+
+        const deleteUserRole = db.userRole.deleteMany({
+            where: {
+                userId: context.currentUser?.id,
+                name: Role.WEDDING_OWNER,
+            },
+        });
+
+        const [deletedWedding] = await db.$transaction([
+            deleteWedding,
+            deleteUserRole,
+        ]);
+
+        return deletedWedding;
+    } catch (error) {
+        console.error(error);
+        throw new UserInputError('Failed to delete wedding');
+    }
 };
 
 export const Wedding: WeddingRelationResolvers = {

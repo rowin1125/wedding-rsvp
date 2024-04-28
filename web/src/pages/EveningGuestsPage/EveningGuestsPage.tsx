@@ -10,8 +10,10 @@ import { Metadata } from '@redwoodjs/web';
 
 import GuestInvitationModal from 'src/components/GuestDataTable/components/GuestInvitationModal';
 import { GuestDataTable } from 'src/components/GuestDataTable/GuestDataTable';
+import Hero from 'src/components/Hero';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 import { useGetWeddingInvitationsByWeddingId } from 'src/hooks/useGetWeddingInvitationsByWeddingId';
+import AdminContentWrapper from 'src/layouts/AdminLayout/components/AdminContentWrapper';
 
 import { DayGuestType } from '../DayGuestsPage/DayGuestsPage';
 
@@ -150,8 +152,9 @@ const EveningGuestsPage = () => {
     return (
         <>
             <Metadata title="EveningGuests" description="EveningGuests page" />
+            <Hero />
 
-            <Box>
+            <AdminContentWrapper>
                 <Heading mb={8}>
                     Avondgasten{' '}
                     <Box as="span" fontWeight="black">
@@ -169,7 +172,7 @@ const EveningGuestsPage = () => {
                     invitationId={invitationId}
                 />
                 <GuestDataTable columns={columns} data={data} />
-            </Box>
+            </AdminContentWrapper>
         </>
     );
 };

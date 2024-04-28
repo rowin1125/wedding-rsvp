@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { Box, Button, Flex, useDisclosure } from '@chakra-ui/react';
-import { BiSun } from 'react-icons/bi';
+import { BiPhotoAlbum, BiSun } from 'react-icons/bi';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
-import { CgOptions } from 'react-icons/cg';
+import { CgOptions, CgWebsite } from 'react-icons/cg';
 import { FaRegEnvelopeOpen } from 'react-icons/fa6';
 import { MdFormatListBulleted } from 'react-icons/md';
 import { RiDashboard3Line } from 'react-icons/ri';
@@ -59,6 +59,27 @@ const FooterMenu = () => {
                         </FooterMenuItemChild>
                     </FooterMenuItem>
 
+                    <FooterMenuItem title="RSVP" icon={CgWebsite}>
+                        <FooterMenuItemChild
+                            icon={BiSun}
+                            to={routes.dayGuests()}
+                        >
+                            RSVP Dag
+                        </FooterMenuItemChild>
+                        <FooterMenuItemChild
+                            icon={BsFillMoonStarsFill}
+                            divider={false}
+                            to={routes.eveningGuests()}
+                        >
+                            RSVP Avond
+                        </FooterMenuItemChild>
+                    </FooterMenuItem>
+
+                    <FooterMenuItem
+                        icon={BiPhotoAlbum}
+                        title="Galerij"
+                        to={routes.galleries()}
+                    />
                     <FooterMenuItem
                         icon={CgOptions}
                         title="Instellingen"

@@ -2,6 +2,27 @@ help:
 	@cat $(MAKEFILE_LIST) | docker run --rm -i rowin1125/enrise-make-helper
 
 # ===========================
+# Default: help section
+# ===========================
+
+info: intro
+
+project-name := $(shell basename $(CURDIR) | sed 's/./\U&/' | sed 's/^\(.\)/\U\1/')
+cache_file := $(CURDIR)/dev/intro_cache.txt
+
+intro:
+	@if [ -f $(cache_file) ]; then \
+			cat $(cache_file); \
+	else \
+			curl -s "https://figlet-api.onrender.com/ascii?text=$(project-name)&font=doom" | \
+			jq -r '.ascii' | \
+			awk '{gsub("\\n","\n"); print}' | \
+			awk '{print "    "$$0}' > $(cache_file); \
+			cat $(cache_file); \
+	fi
+
+
+# ===========================
 # Snippets
 # ===========================
 
@@ -16,12 +37,21 @@ docker-run-alpine = docker run --rm -u $$(id -u):$$(id -g) -v `pwd`:/app -w /app
 ##
 
 # Reset database
+
+# Initialize the project
+init: intro
+	@docker-compose up -d
+	@yarn rw prisma migrate deploy
+	@yarn rw prisma db seed
+
+# Reset the database
 do-db-reset:
 	@docker-compose down -v
 	@docker-compose up -d
 	@yarn rw prisma migrate deploy
 	@yarn rw prisma db seed
 
+# Reset the database and create a new migration
 do-db-reset-and-create-migration:
 	@docker-compose down -v
 	@docker-compose up -d
@@ -29,6 +59,7 @@ do-db-reset-and-create-migration:
 	@yarn rw prisma migrate deploy
 	@yarn rw prisma db seed
 
+# Seed the database
 do-seed:
 	@yarn rw prisma db seed
 

@@ -23,6 +23,7 @@ const SidebarToggle = ({ navOpen, toggleNav }: SidebarToggleProps) => {
                     onClick={() => toggleNav(!navOpen)}
                     size="sm"
                     colorScheme="primary"
+                    color="body.900"
                     variant="ghost"
                     py={6}
                     fontWeight="bold"

@@ -11,7 +11,7 @@ import {
     DrawerOverlay,
     Flex,
 } from '@chakra-ui/react';
-import { BiSun } from 'react-icons/bi';
+import { BiPhotoAlbum, BiSun } from 'react-icons/bi';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
 import { CgOptions, CgWebsite } from 'react-icons/cg';
 import { FaRegEnvelopeOpen } from 'react-icons/fa6';
@@ -108,7 +108,7 @@ const FooterDrawer = ({ isOpen, onClose, btnRef }: FooterDrawerProps) => {
                                 })}
                                 icon={BiSun}
                             >
-                                Dag gasten
+                                RSVP Dag
                             </AccordionDirectLink>
 
                             <AccordionDirectLink
@@ -120,10 +120,17 @@ const FooterDrawer = ({ isOpen, onClose, btnRef }: FooterDrawerProps) => {
                                 })}
                                 icon={BsFillMoonStarsFill}
                             >
-                                Avond gasten
+                                RSVP Avond
                             </AccordionDirectLink>
                         </AccordionWithNestedLinks>
 
+                        <AccordionDirectLink
+                            onClose={onClose}
+                            to={routes.galleries()}
+                            icon={BiPhotoAlbum}
+                        >
+                            Galerij
+                        </AccordionDirectLink>
                         <AccordionDirectLink
                             onClose={onClose}
                             to={routes.weddingSettings()}

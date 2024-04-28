@@ -12,7 +12,12 @@ export const SubmitButton = (props: SubmitButtonProps) => {
     const { isSubmitting } = useFormState({ control });
 
     return (
-        <Button type="submit" isLoading={isSubmitting} {...rest}>
+        <Button
+            type="submit"
+            colorScheme={props.colorScheme ?? 'tertiary'}
+            isLoading={isSubmitting}
+            {...rest}
+        >
             {children}
         </Button>
     );

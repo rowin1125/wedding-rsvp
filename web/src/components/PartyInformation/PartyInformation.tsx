@@ -73,7 +73,7 @@ const PartyInformation = () => {
                         >
                             <Icon
                                 as={BsEnvelopePaperHeart}
-                                color="tertairy.50"
+                                color="secondary.50"
                                 fontSize="3xl"
                             />
                         </Box>
