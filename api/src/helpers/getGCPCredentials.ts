@@ -2,7 +2,7 @@ import { Storage, StorageOptions } from '@google-cloud/storage';
 
 export const getGCPCredentials = (): StorageOptions => {
     // for Vercel, use environment variables
-    return process.env.REDWOOD_ENV_GOOGLE_PRIVATE_KEY
+    return process.env.GOOGLE_PRIVATE_KEY
         ? {
               credentials: {
                   client_email: process.env.GCLOUD_SERVICE_ACCOUNT_EMAIL,
@@ -14,18 +14,8 @@ export const getGCPCredentials = (): StorageOptions => {
               projectId: process.env.GCP_PROJECT_ID,
           }
         : // for local development, use gcloud CLI
-          //   {
-          //       keyFilename: 'storage-key.json',
-          //   };
           {
-              credentials: {
-                  client_email: process.env.GCLOUD_SERVICE_ACCOUNT_EMAIL,
-                  private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(
-                      /\\n/g,
-                      '\n'
-                  ),
-              },
-              projectId: process.env.GCP_PROJECT_ID,
+              keyFilename: 'storage-key.json',
           };
 };
 
