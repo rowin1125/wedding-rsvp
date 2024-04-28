@@ -28,5 +28,14 @@ export const getStorageClient = async (bucketName?: string) => {
 
     const bucket = storageClient.bucket(finalBucketName);
 
+    bucket.setCorsConfiguration([
+        {
+            origin: ['https://*.bruiloftbuddy.nl'],
+            responseHeader: ['Content-Type'],
+            method: ['GET', 'HEAD', 'PUT', 'POST', 'DELETE'],
+            maxAgeSeconds: 3600,
+        },
+    ]);
+
     return bucket;
 };
