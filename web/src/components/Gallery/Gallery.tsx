@@ -76,10 +76,6 @@ const Gallery = () => {
                 isLazy
                 {...(!isDesktop ? { isFitted: true } : {})}
             >
-                {process.env.REDWOOD_ENV_GCLOUD_STORAGE_BUCKET}
-                {process.env.REDWOOD_ENV_GCP_PROJECT_ID}
-                {process.env.REDWOOD_ENV_GCLOUD_SERVICE_ACCOUNT_EMAIL}
-                {process.env.REDWOOD_ENV_GOOGLE_PRIVATE_KEY}
                 <TabList position="sticky" top={0} zIndex={2}>
                     <Tab>{`Foto's`}</Tab>
                     <Tab>QR-Code</Tab>
