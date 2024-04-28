@@ -1,0 +1,8 @@
+[
+    {
+      "origin": ["https://*.bruiloftbuddy.nl"],
+      "responseHeader": ["Content-Type"],
+      "method": ["GET", "HEAD", "PUT", "POST", "DELETE"],
+      "maxAgeSeconds": 3600
+    }
+  ]
