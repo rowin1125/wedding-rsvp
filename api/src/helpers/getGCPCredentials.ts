@@ -22,9 +22,7 @@ export const getGCPCredentials = (): StorageOptions => {
 export const getStorageClient = async (bucketName?: string) => {
     const storageClient = new Storage(getGCPCredentials());
     const finalBucketName =
-        bucketName ??
-        process.env.REDWOOD_ENV_GCLOUD_STORAGE_BUCKET ??
-        'bruiloft_buddy_dev';
+        bucketName ?? process.env.GCLOUD_STORAGE_BUCKET ?? 'bruiloft_buddy_dev';
 
     const bucket = storageClient.bucket(finalBucketName);
 
