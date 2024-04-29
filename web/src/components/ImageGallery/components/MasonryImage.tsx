@@ -49,6 +49,7 @@ const MasonryImage = ({
             w="full"
             borderRadius="xl"
             overflow="hidden"
+            shadow="xl"
             position="relative"
             height={randomHeight}
         >
@@ -79,8 +80,9 @@ const MasonryImage = ({
                     mb: 2,
                     w: 'full',
                     h: 'full',
+
                     objectFit: {
-                        base: 'contain',
+                        base: 'cover',
                     },
                     loading: 'lazy',
                     onClick: () => {

@@ -176,6 +176,9 @@ const Sidebar = () => {
                         </Flex>
                     ) : (
                         <Button
+                            as="span"
+                            role="button"
+                            aria-label="Log uit"
                             my="12px"
                             mx={1}
                             colorScheme={'primary'}

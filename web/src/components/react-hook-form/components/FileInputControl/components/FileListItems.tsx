@@ -12,18 +12,22 @@ import {
 } from '@chakra-ui/react';
 import { GiCheckMark } from 'react-icons/gi';
 
+import Loader from 'src/components/Loader';
+
 import ResolveAsset from './ResolveAsset';
 
 type FileListItemsProps = {
     files: File[];
     removeFile: (fileName: string) => void;
     uploadedFiles: MutableRefObject<File[]>;
+    isLoading?: boolean;
 };
 
 const FileListItems = ({
     files,
     removeFile,
     uploadedFiles,
+    isLoading,
 }: FileListItemsProps) => {
     let imageWidth = 200;
     if (files.length > 2 && files.length < 4) {
@@ -88,6 +92,21 @@ const FileListItems = ({
                                 <ResolveAsset file={file} />
                             </Box>
                         </Tooltip>
+
+                        {!isUploaded && isLoading && (
+                            <Flex
+                                position={'absolute'}
+                                justifyContent="center"
+                                alignItems="center"
+                                inset={0}
+                                w="full"
+                                h="full"
+                                bg="blackAlpha.500"
+                                zIndex={2}
+                            >
+                                <Loader color="white" />
+                            </Flex>
+                        )}
                         {isUploaded && (
                             <Flex
                                 position={'absolute'}

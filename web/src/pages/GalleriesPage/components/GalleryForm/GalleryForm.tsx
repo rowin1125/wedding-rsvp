@@ -44,6 +44,8 @@ const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
         mode: 'onBlur',
     });
 
+    const formHasChanged = methods.formState.isDirty;
+
     const onSubmit = async (data: InferType<typeof validationSchema>) => {
         try {
             if (formType === 'create') {
@@ -117,7 +119,7 @@ const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
                     <SubmitButton
                         colorScheme="secondary"
                         isLoading={loading}
-                        isDisabled={loading}
+                        isDisabled={loading || !formHasChanged}
                     >
                         {formType === 'create' ? 'Aanmaken' : 'Bewerken'}
                     </SubmitButton>

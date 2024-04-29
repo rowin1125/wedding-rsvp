@@ -12,6 +12,11 @@ type PaginationProps = FlexProps & {
     setCurrentPage: (page: number) => void;
     isLoading?: boolean;
     pushPage?: boolean;
+    subPagination?: {
+        start: number;
+        end: number;
+        totalCount: number;
+    };
 };
 
 const Pagination = ({
@@ -20,6 +25,7 @@ const Pagination = ({
     setCurrentPage,
     isLoading,
     pushPage = true,
+    subPagination,
     ...props
 }: PaginationProps) => {
     const { isMobile } = useIsDevice();
@@ -55,79 +61,101 @@ const Pagination = ({
 
     return (
         <Flex
-            gap={{
-                base: 2,
-                lg: 2,
+            justifyContent="center"
+            alignItems="center"
+            pt={8}
+            flexDir={{
+                base: 'column',
+                lg: 'column',
             }}
-            justifyContent={{
-                base: 'center',
-                lg: 'start',
-            }}
-            paddingY={4}
-            marginY={4}
-            {...props}
         >
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(currentPage - 1)}
-                isDisabled={currentPage === 1 || isLoading}
-                isLoading={isLoading}
-                aria-label={'Previous'}
+            <Flex
+                gap={{
+                    base: 2,
+                    lg: 2,
+                }}
+                justifyContent={{
+                    base: 'center',
+                    lg: 'start',
+                }}
+                mt={4}
+                alignItems="center"
+                {...props}
             >
-                {isMobile ? <Icon as={BiChevronLeft} /> : 'Previous'}
-            </Button>
-            {!isMobile && currentPage > 3 && (
-                <>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setPage(1)}
-                        disabled={isLoading}
-                    >
-                        1
-                    </Button>
-                    <Button variant="ghost" size="sm" isDisabled={true}>
-                        ...
-                    </Button>
-                </>
-            )}
-            {paginationSet.map((item) => (
                 <Button
-                    key={item}
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    onClick={() => setPage(item)}
-                    fontWeight={item === currentPage ? 'bold' : 'normal'}
-                    isDisabled={isLoading}
+                    onClick={() => setPage(currentPage - 1)}
+                    isDisabled={currentPage === 1 || isLoading}
+                    isLoading={isLoading}
+                    aria-label={'Previous'}
                 >
-                    {item}
+                    {isMobile ? <Icon as={BiChevronLeft} /> : 'Previous'}
                 </Button>
-            ))}
-            {!isMobile && currentPage < pages - 2 && (
-                <>
-                    <Button variant="ghost" size="sm" isDisabled={true}>
-                        ...
-                    </Button>
+                {!isMobile && currentPage > 3 && (
+                    <>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setPage(1)}
+                            disabled={isLoading}
+                        >
+                            1
+                        </Button>
+                        <Button variant="ghost" size="sm" isDisabled={true}>
+                            ...
+                        </Button>
+                    </>
+                )}
+                {paginationSet.map((item) => (
                     <Button
+                        key={item}
                         variant="ghost"
                         size="sm"
-                        onClick={() => setPage(pages)}
+                        onClick={() => setPage(item)}
+                        fontWeight={item === currentPage ? 'bold' : 'normal'}
+                        isDisabled={isLoading}
                     >
-                        {pages}
+                        {item}
                     </Button>
-                </>
+                ))}
+                {!isMobile && currentPage < pages - 2 && (
+                    <>
+                        <Button variant="ghost" size="sm" isDisabled={true}>
+                            ...
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setPage(pages)}
+                        >
+                            {pages}
+                        </Button>
+                    </>
+                )}
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage(currentPage + 1)}
+                    isDisabled={currentPage >= pages || isLoading}
+                    isLoading={isLoading}
+                    aria-label={'Next'}
+                >
+                    {isMobile ? <Icon as={BiChevronRight} /> : 'Next'}
+                </Button>
+            </Flex>
+            {subPagination && (
+                <Flex
+                    alignItems="center"
+                    h="full"
+                    color="secondary.400"
+                    fontSize="sm"
+                    mt={2}
+                >
+                    {subPagination.start} - {subPagination.end} of{' '}
+                    {subPagination.totalCount}
+                </Flex>
             )}
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(currentPage + 1)}
-                isDisabled={currentPage >= pages || isLoading}
-                isLoading={isLoading}
-                aria-label={'Next'}
-            >
-                {isMobile ? <Icon as={BiChevronRight} /> : 'Next'}
-            </Button>
         </Flex>
     );
 };

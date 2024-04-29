@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { useApolloClient } from '@apollo/client';
 import { useDisclosure } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -45,6 +47,7 @@ type UseCreateAssetsType = {
 export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
     const client = useApolloClient();
     const uploadedFiles = React.useRef<File[]>([]);
+    const [globalLoading, setGlobalLoading] = useState(false);
 
     const modalDisclosure = useDisclosure();
     const { id: galleryId } = useParams();
@@ -83,6 +86,7 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
                 toast.error('No files selected');
                 return;
             }
+            setGlobalLoading(true);
 
             const createAssetsPromises = [];
 
@@ -97,12 +101,14 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
                     },
                 });
 
-                if (!values?.files || !url.data?.requestSigningUrl)
+                if (!values?.files || !url.data?.requestSigningUrl) {
+                    setGlobalLoading(false);
                     return {
                         errors: {
                             files: 'No files selected',
                         },
                     };
+                }
 
                 await fetch(url.data?.requestSigningUrl, {
                     method: 'PUT',
@@ -137,8 +143,10 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
             modalDisclosure.onClose();
 
             uploadedFiles.current = [];
+            setGlobalLoading(false);
         } catch (err) {
             const error = err as Error;
+            setGlobalLoading(false);
             toast.error(error.message);
         }
     };
@@ -150,5 +158,6 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
         onSubmit,
         createAssetsMutationData,
         requestSigningUrlMutationData,
+        globalLoading,
     };
 };

@@ -122,6 +122,8 @@ const GridGallery = ({
                                 },
                                 inset: 0,
                                 position: 'absolute',
+                                borderRadius: 'xl',
+                                shadow: 'xl',
                             }}
                             fileType={image.fileType}
                             videoProps={{

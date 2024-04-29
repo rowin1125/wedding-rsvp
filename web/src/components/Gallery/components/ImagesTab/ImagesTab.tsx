@@ -55,18 +55,11 @@ const ImagesTab = ({ gallery }: ImagesTabProps) => {
                     onClick={assetManager.modalDisclosure.onOpen}
                 >{`Foto's toevoegen`}</Button>
             </Flex>
-            {hasAssets && (
-                <Flex mt={6}>
-                    Bestanden {offset + 1} tot {maxImages} |{' '}
-                    {gallery.assets.count}
-                </Flex>
-            )}
             {!hasAssets && (
                 <Flex
                     justifyContent="center"
                     alignItems="center"
                     flexDir="column"
-                    mt={10}
                 >
                     <Heading textAlign="center">
                         Voeg de eerste fotos toe:{' '}
@@ -134,6 +127,11 @@ const ImagesTab = ({ gallery }: ImagesTabProps) => {
                         currentPage={currentPage}
                         pages={totalPages}
                         setCurrentPage={setCurrentPage}
+                        subPagination={{
+                            totalCount: gallery.assets.count,
+                            end: maxImages,
+                            start: offset + 1,
+                        }}
                     />
                 </>
             )}

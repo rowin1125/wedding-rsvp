@@ -32,6 +32,8 @@ type FileInputControlType = {
     buttonProps?: ButtonProps;
     fileListWrapperProps?: BoxProps;
     uploadedFiles: MutableRefObject<File[]>;
+    isLoading?: boolean;
+    isDisabled?: boolean;
 };
 
 export const ONE_MB = 1000000;
@@ -48,6 +50,8 @@ const FileInputControl = ({
     buttonProps,
     fileListWrapperProps,
     uploadedFiles,
+    isLoading,
+    isDisabled,
     ...props
 }: FileInputControlType) => {
     const {
@@ -103,6 +107,7 @@ const FileInputControl = ({
                             onClick={handleInputButtonClick}
                             borderRadius="md"
                             alignSelf="center"
+                            isDisabled={isDisabled}
                             fontWeight="normal"
                             mr={selectFilesTitle ? 0 : 'auto'}
                             {...buttonProps}
@@ -143,6 +148,7 @@ const FileInputControl = ({
                     {...fileListWrapperProps}
                 >
                     <FileListItems
+                        isLoading={isLoading}
                         files={field.value}
                         removeFile={removeFile}
                         uploadedFiles={uploadedFiles}

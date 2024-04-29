@@ -37,9 +37,9 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
             alignItems="center"
         >
             <ResolveAssetType
-                fileType={gallery.assets?.[0]?.fileType ?? 'image'}
+                fileType={gallery.assets?.items?.[0]?.fileType ?? 'image'}
                 imageProps={{
-                    src: gallery.assets?.[0]?.url,
+                    src: gallery.assets?.items?.[0]?.url,
                     alt: gallery.name,
                     objectFit: 'cover',
                     width: '100%',
@@ -49,7 +49,7 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
                     filter: 'brightness(0.7) sepia(0.5)',
                 }}
                 videoProps={{
-                    src: gallery.assets?.[0]?.url,
+                    src: gallery.assets?.items?.[0]?.url,
                     objectFit: 'cover',
                     position: 'absolute',
                     inset: 0,
@@ -59,7 +59,9 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
                 }}
             />
             <Box
-                bgImage={gallery.assets?.[0]?.url ?? '/weddingDrinks.jpg'}
+                bgImage={
+                    gallery.assets?.items?.[0]?.url ?? '/weddingDrinks.jpg'
+                }
                 bgSize="cover"
                 inset={0}
                 position="absolute"

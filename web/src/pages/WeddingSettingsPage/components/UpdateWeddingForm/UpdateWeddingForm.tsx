@@ -59,6 +59,8 @@ const UpdateWeddingForm = () => {
         mode: 'onBlur',
     });
 
+    const formHasChanged = methods.formState.isDirty;
+
     if (weddingLoading || !wedding) return null;
 
     const onSubmit = async (values: InferType<typeof validationSchema>) => {
@@ -134,7 +136,9 @@ const UpdateWeddingForm = () => {
                             <SubmitButton
                                 colorScheme="secondary"
                                 isLoading={updateWeddingLoading}
-                                isDisabled={updateWeddingLoading}
+                                isDisabled={
+                                    updateWeddingLoading || !formHasChanged
+                                }
                             >
                                 Update bruiloft
                             </SubmitButton>

@@ -25,7 +25,7 @@ type CreateAssetModalProps = {
 };
 
 const CreateAssetModal = ({ assetManager }: CreateAssetModalProps) => {
-    const { methods, uploadedFiles, onSubmit } = assetManager;
+    const { methods, uploadedFiles, onSubmit, globalLoading } = assetManager;
     const { isOpen, onClose } = assetManager.modalDisclosure;
 
     return (
@@ -54,6 +54,8 @@ const CreateAssetModal = ({ assetManager }: CreateAssetModalProps) => {
                                         GCLOUD_MAX_FILE_SIZE / 1024 / 1024
                                     }
                                     uploadedFiles={uploadedFiles}
+                                    isLoading={globalLoading}
+                                    isDisabled={globalLoading}
                                 />
 
                                 <Box as="hr" w="full" mb={4} />
