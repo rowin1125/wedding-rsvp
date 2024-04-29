@@ -57,7 +57,6 @@ const WeddingRsvpPage = () => {
                             base: '50vh',
                             lg: 'calc(80vh - 93px)',
                         }}
-                        image="../../components/Hero/images/Screenshot from 2023-08-25 17-41-23.png"
                     />
                     <Countdown targetDate={'2024-05-16T00:00:00+02:00'} />
                     <Banner />
