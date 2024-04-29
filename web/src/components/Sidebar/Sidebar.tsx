@@ -101,34 +101,40 @@ const Sidebar = () => {
                         Avond gasten
                     </SidebarItemChild>
                 </SidebarItem>
-                {wedding?.id && (
-                    <SidebarItem
-                        navOpen={navOpen}
-                        icon={CgWebsite}
-                        title="RSVP"
-                        to={routes.dashboard()}
+                <SidebarItem
+                    navOpen={navOpen}
+                    icon={CgWebsite}
+                    title="RSVP"
+                    to={routes.dashboard()}
+                >
+                    <SidebarItemChild
+                        icon={BiSun}
+                        to={
+                            wedding?.id
+                                ? routes.weddingRsvp({
+                                      invitationType: 'F',
+                                      weddingId: wedding.id,
+                                  })
+                                : routes.dashboard()
+                        }
                     >
-                        <SidebarItemChild
-                            icon={BiSun}
-                            to={routes.weddingRsvp({
-                                invitationType: 'F',
-                                weddingId: wedding.id,
-                            })}
-                        >
-                            RSVP Dag
-                        </SidebarItemChild>
-                        <SidebarItemChild
-                            icon={BsFillMoonStarsFill}
-                            to={routes.weddingRsvp({
-                                invitationType: 'E',
-                                weddingId: wedding.id,
-                            })}
-                            divider={false}
-                        >
-                            RSVP Avond
-                        </SidebarItemChild>
-                    </SidebarItem>
-                )}
+                        RSVP Dag
+                    </SidebarItemChild>
+                    <SidebarItemChild
+                        icon={BsFillMoonStarsFill}
+                        to={
+                            wedding?.id
+                                ? routes.weddingRsvp({
+                                      invitationType: 'E',
+                                      weddingId: wedding.id,
+                                  })
+                                : routes.dashboard()
+                        }
+                        divider={false}
+                    >
+                        RSVP Avond
+                    </SidebarItemChild>
+                </SidebarItem>
                 <SidebarItem
                     navOpen={navOpen}
                     icon={BiPhotoAlbum}
