@@ -63,8 +63,6 @@ const Gallery = () => {
         });
     }, [gallery?.assets, gallery?.name, setHeroData]);
 
-    if (!gallery || loading) return <Loader />;
-
     return (
         <Box>
             <Tabs
@@ -84,12 +82,16 @@ const Gallery = () => {
 
                 <TabPanels>
                     <TabPanel>
-                        <ImagesTab gallery={gallery} />
+                        {!gallery && loading && <Loader />}
+                        {gallery && !loading && <ImagesTab gallery={gallery} />}
                     </TabPanel>
                     {/* TODO: Build QR-code generator */}
                     <TabPanel>2</TabPanel>
                     <TabPanel>
-                        <SettingsTab gallery={gallery} />
+                        {!gallery && loading && <Loader />}
+                        {gallery && !loading && (
+                            <SettingsTab gallery={gallery} />
+                        )}
                     </TabPanel>
                 </TabPanels>
             </Tabs>

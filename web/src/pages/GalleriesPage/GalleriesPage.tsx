@@ -45,7 +45,6 @@ const GalleriesPage = () => {
                 h="300px"
             />
 
-            {loading && <Loader />}
             <AdminContentWrapper>
                 <Flex w="full" justifyContent="space-between" mb={4}>
                     <Button
@@ -60,6 +59,7 @@ const GalleriesPage = () => {
                         Maak nog een album aan
                     </Button>
                 </Flex>
+                {loading && <Loader />}
                 {!hasGallery && !loading && <CreateNewGallery />}
                 <Grid gridTemplateColumns="repeat(3, 1fr)" gap={6} mt={10}>
                     {galleries?.map((gallery) => (
