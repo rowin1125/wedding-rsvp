@@ -5,10 +5,13 @@ import {
     UpdateGalleryMutationVariables,
 } from 'types/graphql';
 
+import { useParams } from '@redwoodjs/router';
 import { useMutation } from '@redwoodjs/web';
 
 import { useAuth } from 'src/auth';
-import { GET_GALLERY_BY_WEDDING_ID } from 'src/pages/GalleriesPage/hooks/useGetGalleries';
+import { FIND_GALLERY_QUERY } from 'src/components/Gallery/hooks/useFindGallery';
+import { GET_GALLERIES_BY_WEDDING_ID } from 'src/pages/GalleriesPage/hooks/useGetGalleries';
+import { DEFAULT_PAGINATION_OFFSET } from 'src/pages/GalleryPage/hooks/useGalleryPagination';
 
 export const CREATE_GALLERY = gql`
     mutation CreateGalleryMutation($input: CreateGalleryInput!) {
@@ -16,7 +19,7 @@ export const CREATE_GALLERY = gql`
             id
             name
             weddingId
-            assets {
+            assets(take: 1, skip: 0) {
                 items {
                     id
                     url
@@ -24,6 +27,8 @@ export const CREATE_GALLERY = gql`
             }
             createdAt
             updatedAt
+            qrCode
+            qrCodeId
         }
     }
 `;
@@ -34,7 +39,7 @@ export const UPDATE_GALLERY = gql`
             id
             name
             weddingId
-            assets {
+            assets(take: 1, skip: 0) {
                 items {
                     id
                     url
@@ -42,12 +47,15 @@ export const UPDATE_GALLERY = gql`
             }
             createdAt
             updatedAt
+            qrCode
+            qrCodeId
         }
     }
 `;
 
 export const useGalleryForm = () => {
     const { currentUser } = useAuth();
+    const { id: galleryId } = useParams();
 
     const [createGallery, createGalleryMutationData] = useMutation<
         CreateGalleryMutation,
@@ -55,7 +63,7 @@ export const useGalleryForm = () => {
     >(CREATE_GALLERY, {
         refetchQueries: [
             {
-                query: GET_GALLERY_BY_WEDDING_ID,
+                query: GET_GALLERIES_BY_WEDDING_ID,
                 variables: {
                     weddingId: currentUser?.weddingId,
                 },
@@ -69,9 +77,17 @@ export const useGalleryForm = () => {
     >(UPDATE_GALLERY, {
         refetchQueries: [
             {
-                query: GET_GALLERY_BY_WEDDING_ID,
+                query: GET_GALLERIES_BY_WEDDING_ID,
                 variables: {
                     weddingId: currentUser?.weddingId,
+                },
+            },
+            {
+                query: FIND_GALLERY_QUERY,
+                variables: {
+                    id: galleryId,
+                    take: DEFAULT_PAGINATION_OFFSET,
+                    skip: 0,
                 },
             },
         ],

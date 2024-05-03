@@ -1,6 +1,6 @@
+import { createId } from '@paralleldrive/cuid2';
 import { Role } from '@prisma/client';
 import type { APIGatewayProxyEvent, Context } from 'aws-lambda';
-import { v4 } from 'uuid';
 
 import {
     DbAuthHandler,
@@ -123,7 +123,7 @@ export const handler = async (
         // If this returns anything else, it will be returned by the
         // `signUp()` function in the form of: `{ message: 'String here' }`.
         handler: async ({ username, hashedPassword, salt }) => {
-            const verifiedToken = v4();
+            const verifiedToken = createId();
             let user;
 
             try {

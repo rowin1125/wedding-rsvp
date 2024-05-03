@@ -21,6 +21,10 @@ const SwitchControl = (props: SwitchControlProps) => {
     });
     const error = get(errors, name, '');
 
+    const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        field.onChange(e.target.checked ? 'true' : 'false');
+    };
+
     return (
         <FormControl
             name={name}
@@ -28,15 +32,17 @@ const SwitchControl = (props: SwitchControlProps) => {
             label={label}
             as={Flex}
             alignItems="center"
+            labelProps={{ mb: 0 }}
             {...rest}
         >
             <Switch
                 {...field}
                 id={name}
                 isInvalid={!!error && isTouched}
-                isChecked={field.value}
+                isChecked={field.value === 'true'}
                 isDisabled={isSubmitting}
                 {...switchProps}
+                onChange={handleSwitchChange}
             />
         </FormControl>
     );

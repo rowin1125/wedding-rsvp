@@ -1,6 +1,9 @@
+import { useEffect } from 'react';
+
 import {
     Slider,
     SliderFilledTrack,
+    SliderMark,
     SliderProps,
     SliderThumb,
     SliderThumbProps,
@@ -35,6 +38,18 @@ export const SliderControl = (props: SliderControlProps) => {
         defaultValue: props.sliderProps?.defaultValue || '',
     });
 
+    const [sliderValue, setSliderValue] = React.useState<number>(
+        Number(field.value)
+    );
+
+    useEffect(() => {
+        setSliderValue(Number(field.value));
+    }, [field.value]);
+
+    const onChange = (value: number) => {
+        setSliderValue(value);
+        field.onChange(value);
+    };
     return (
         <FormControl name={name} control={control} {...rest}>
             <Slider
@@ -42,11 +57,23 @@ export const SliderControl = (props: SliderControlProps) => {
                 id={name}
                 isDisabled={isSubmitting}
                 {...sliderProps}
+                onChange={onChange}
             >
+                <SliderMark
+                    value={sliderValue}
+                    textAlign="center"
+                    mt="-2.5"
+                    zIndex={4}
+                    fontSize="sm"
+                    fontWeight="semibold"
+                    ml="-4px"
+                >
+                    {sliderValue}
+                </SliderMark>
                 <SliderTrack {...sliderTrackProps}>
                     <SliderFilledTrack />
                 </SliderTrack>
-                <SliderThumb {...sliderThumbProps} />
+                <SliderThumb p={3} {...sliderThumbProps} />
             </Slider>
         </FormControl>
     );

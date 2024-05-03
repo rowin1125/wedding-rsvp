@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { useDisclosure } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { createId } from '@paralleldrive/cuid2';
 import { useForm } from 'react-hook-form';
 import {
     CreateAssetsMutation,
@@ -10,7 +11,6 @@ import {
     RequestSigningUrlMutation,
     RequestSigningUrlMutationVariables,
 } from 'types/graphql';
-import { v4 } from 'uuid';
 import { InferType, object } from 'yup';
 
 import { useParams } from '@redwoodjs/router';
@@ -92,7 +92,7 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
 
             for (const file of values.files) {
                 const fileType = file.type;
-                const uniqueId = v4();
+                const uniqueId = createId();
                 const gcloudStoragePath = `${weddingId}/${galleryId}/${uniqueId}`;
 
                 const url = await requestSigningUrl({

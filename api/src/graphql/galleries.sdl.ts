@@ -3,6 +3,8 @@ export const schema = gql`
         id: String!
         name: String!
         gcloudStoragePath: String!
+        qrCode: String
+        qrCodeId: String
         wedding: Wedding!
         weddingId: String!
         assets(take: Int, skip: Int): PaginatedAssets!
@@ -24,11 +26,15 @@ export const schema = gql`
     input CreateGalleryInput {
         name: String!
         weddingId: String!
+        qrCodeId: String
+        qrCode: String
     }
 
     input UpdateGalleryInput {
         name: String
         weddingId: String
+        qrCodeId: String
+        qrCode: String
     }
 
     type Mutation {

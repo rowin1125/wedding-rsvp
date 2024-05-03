@@ -11,6 +11,7 @@ import { useHeroContext } from 'src/layouts/AdminLayout/components/AdminContentW
 import { useGalleryPagination } from 'src/pages/GalleryPage/hooks/useGalleryPagination';
 
 import ImagesTab from './components/ImagesTab';
+import QRCodeTab from './components/QRCodeTab/QRCodeTab';
 import SettingsTab from './components/SettingsTab/SettingsTab';
 import { useControlledTabs } from './hooks/useControlledTabs';
 import { useFindGallery } from './hooks/useFindGallery';
@@ -85,8 +86,10 @@ const Gallery = () => {
                         {!gallery && loading && <Loader />}
                         {gallery && !loading && <ImagesTab gallery={gallery} />}
                     </TabPanel>
-                    {/* TODO: Build QR-code generator */}
-                    <TabPanel>2</TabPanel>
+                    <TabPanel>
+                        {!gallery && loading && <Loader />}
+                        {gallery && !loading && <QRCodeTab />}
+                    </TabPanel>
                     <TabPanel>
                         {!gallery && loading && <Loader />}
                         {gallery && !loading && (

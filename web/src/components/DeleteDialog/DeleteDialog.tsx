@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { BsTrash } from 'react-icons/bs';
 
-type DeleteDialogType = {
+export type DeleteDialogType = {
     onDelete: (id: string) => Promise<void>;
     loading?: boolean;
     id: string;
@@ -53,8 +53,8 @@ const DeleteDialog = ({
             <Button
                 colorScheme="red"
                 onClick={onOpen}
-                {...buttonProps}
                 variant={buttonVariant}
+                {...buttonProps}
             >
                 <Icon as={BsTrash} />
                 {buttonLabel && (
@@ -78,7 +78,11 @@ const DeleteDialog = ({
                         <AlertDialogBody>{children}</AlertDialogBody>
 
                         <AlertDialogFooter>
-                            <Button ref={cancelRef} onClick={onClose}>
+                            <Button
+                                ref={cancelRef}
+                                variant="outline"
+                                onClick={onClose}
+                            >
                                 Cancel
                             </Button>
                             <Button

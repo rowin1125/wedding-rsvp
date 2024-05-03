@@ -24,6 +24,8 @@ export const FIND_GALLERY_QUERY = gql`
                 pages
             }
             name
+            qrCode
+            qrCodeId
             weddingId
         }
     }

@@ -1,5 +1,5 @@
+import { createId } from '@paralleldrive/cuid2';
 import type { MutationResolvers, UserRelationResolvers } from 'types/graphql';
-import { v4 } from 'uuid';
 
 import { db } from 'src/lib/db';
 import { mailUser } from 'src/lib/email';
@@ -73,7 +73,7 @@ export const resendActivateUser: MutationResolvers['resendActivateUser'] =
         if (!user) throw new Error('User not found');
 
         if (!user.verifiedToken) {
-            const verifiedToken = v4();
+            const verifiedToken = createId();
             user = await db.user.update({
                 where: { id: user.id },
                 data: {

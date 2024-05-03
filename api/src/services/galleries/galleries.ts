@@ -41,7 +41,11 @@ export const updateGallery: MutationResolvers['updateGallery'] = ({
     input,
 }) => {
     return db.gallery.update({
-        data: removeNulls(input),
+        data: {
+            ...removeNulls(input),
+            qrCodeId: input.qrCodeId ? input.qrCodeId : null,
+            qrCode: input.qrCode ? input.qrCode : null,
+        },
         where: { id },
     });
 };
@@ -54,6 +58,13 @@ export const deleteGallery: MutationResolvers['deleteGallery'] = async ({
     });
     if (!gallery) throw new Error('Gallery not found');
     const bucket = await getStorageClient();
+
+    const qrCodeId = gallery.qrCodeId;
+    if (qrCodeId) {
+        await db.qrCode.delete({
+            where: { id: qrCodeId },
+        });
+    }
 
     try {
         await bucket.deleteFiles({

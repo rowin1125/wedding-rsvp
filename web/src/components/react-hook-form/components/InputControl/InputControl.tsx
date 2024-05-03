@@ -54,7 +54,7 @@ const InputControl = ({
                 <Input
                     {...field}
                     id={name}
-                    isDisabled={isSubmitting}
+                    isDisabled={isSubmitting || inputProps?.isDisabled}
                     borderColor={isValid ? 'success.500' : 'gray.200'}
                     borderRightRadius={
                         !!rightAddon || !!rightElement ? '0' : 'lg'
