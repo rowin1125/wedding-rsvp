@@ -36,16 +36,12 @@ export const createGallery: MutationResolvers['createGallery'] = ({
     });
 };
 
-export const updateGallery: MutationResolvers['updateGallery'] = ({
+export const updateGallery: MutationResolvers['updateGallery'] = async ({
     id,
     input,
 }) => {
     return db.gallery.update({
-        data: {
-            ...removeNulls(input),
-            qrCodeId: input.qrCodeId ? input.qrCodeId : null,
-            qrCode: input.qrCode ? input.qrCode : null,
-        },
+        data: removeNulls(input),
         where: { id },
     });
 };

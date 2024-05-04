@@ -1,21 +1,24 @@
 import React from 'react';
 
-import { Flex, Heading, Image } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
+import { FindGalleryQuery } from 'types/graphql';
 import { InferType } from 'yup';
 
 import CustomChakraFade from 'src/components/CustomChakraFade';
 import Loader from 'src/components/Loader';
 
+import ControlQrCode from '../../ControlQrCode/ControlQrCode';
 import { useQRCodePreview } from '../hooks/useQRCodePreview';
 import { validationSchema } from '../QRCodeForm';
 
 type QRPreviewProps = {
     loading: boolean;
     formType: 'create' | 'update';
+    gallery?: FindGalleryQuery['gallery'];
 };
 
-const QRPreview = ({ loading, formType }: QRPreviewProps) => {
+const QRPreview = ({ loading, formType, gallery }: QRPreviewProps) => {
     const { watch, formState } =
         useFormContext<InferType<typeof validationSchema>>();
     const values = watch();
@@ -25,23 +28,33 @@ const QRPreview = ({ loading, formType }: QRPreviewProps) => {
     const qrIsExample = formType === 'create' || isDirty;
 
     return (
-        <Flex justifyContent="center" alignItems="center" flexDir="column">
-            <Heading as="h2">
-                {qrIsExample ? 'Voorbeeld QR code' : 'QR code'}
-            </Heading>
-            <CustomChakraFade in={loading}>
-                <Loader />
-            </CustomChakraFade>
-            <CustomChakraFade in={!loading}>
-                {qrCode && (
-                    <Image
-                        transition="all 0.2s ease-in-out"
-                        mt={10}
-                        src={qrCode}
-                        alt="QR Code"
-                    />
-                )}
-            </CustomChakraFade>
+        <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            flexDir="column"
+            h="full"
+        >
+            <Box>
+                <Heading as="h2" textAlign="center">
+                    {qrIsExample ? 'Voorbeeld QR code' : 'QR code'}
+                </Heading>
+                <CustomChakraFade in={loading}>
+                    <Loader />
+                </CustomChakraFade>
+                <CustomChakraFade in={!loading}>
+                    {qrCode && (
+                        <Image
+                            transition="all 0.2s ease-in-out"
+                            mt={10}
+                            shadow="xl"
+                            src={qrCode}
+                            alt={`QR code - Album - ${gallery?.name}.png`}
+                            title={`QR code - Album - ${gallery?.name}.png`}
+                        />
+                    )}
+                </CustomChakraFade>
+            </Box>
+            <ControlQrCode gallery={gallery} qrPreview={qrCode} />
         </Flex>
     );
 };

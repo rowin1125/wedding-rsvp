@@ -10,6 +10,7 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
+import { FindGalleryQuery } from 'types/graphql';
 import { number, object, string } from 'yup';
 
 import Loader from 'src/components/Loader';
@@ -27,6 +28,7 @@ type QRCodeFormProps = {
     formType: 'create' | 'update';
     qrCodeId?: string | null;
     loading: boolean;
+    gallery?: FindGalleryQuery['gallery'];
 };
 
 export const validationSchema = object({
@@ -63,6 +65,7 @@ const QRCodeForm = ({
     formType,
     qrCodeId,
     loading: galleryLoading = false,
+    gallery,
 }: QRCodeFormProps) => {
     const {
         qrCode,
@@ -219,6 +222,7 @@ const QRCodeForm = ({
                         <QRPreview
                             loading={waitForQrCode}
                             formType={formType}
+                            gallery={gallery}
                         />
                     </GridItem>
                 </Grid>

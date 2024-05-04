@@ -27,7 +27,7 @@ export const useDeleteQrCode = () => {
         DeleteQrCodeVariables
     >(DELETE_QR_CODE, {
         onCompleted: () => {
-            toast.success('QR code deleted');
+            toast.success('QR code verwijderd!');
         },
         onError: (error) => {
             toast.error('Error deleting QR code: ' + error.message);

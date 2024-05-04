@@ -9,8 +9,6 @@ import {
     ButtonProps,
     Heading,
     Icon,
-    Text,
-    TextProps,
     useDisclosure,
 } from '@chakra-ui/react';
 import { BsTrash } from 'react-icons/bs';
@@ -24,7 +22,6 @@ export type DeleteDialogType = {
     title: string;
     buttonLabel?: string;
     buttonProps?: ButtonProps;
-    buttonLabelProps?: TextProps;
     deleteButtonLabel?: string;
 };
 
@@ -37,7 +34,6 @@ const DeleteDialog = ({
     title,
     buttonLabel,
     buttonProps,
-    buttonLabelProps,
     deleteButtonLabel = 'Weg ermee',
 }: DeleteDialogType) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -56,12 +52,9 @@ const DeleteDialog = ({
                 variant={buttonVariant}
                 {...buttonProps}
             >
-                <Icon as={BsTrash} />
-                {buttonLabel && (
-                    <Text color="white" ml={4} {...buttonLabelProps}>
-                        {buttonLabel}
-                    </Text>
-                )}
+                <Icon as={BsTrash} mr={2} />
+
+                {buttonLabel}
             </Button>
 
             <AlertDialog
