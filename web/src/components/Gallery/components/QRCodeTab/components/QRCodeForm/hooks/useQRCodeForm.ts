@@ -113,7 +113,7 @@ export const useQRCodeForm = ({ formType, qrCodeId }: UseQRCodeFormType) => {
                             baseUrl: `${
                                 process.env.REDWOOD_ENV_VERCEL_URL
                             }${routes.qrCode({
-                                id: initialQrCodeId,
+                                qrId: initialQrCodeId,
                             })}
                             `,
                             expiresAt: data.expiresAt
@@ -152,7 +152,7 @@ export const useQRCodeForm = ({ formType, qrCodeId }: UseQRCodeFormType) => {
                             baseUrl: `${
                                 process.env.REDWOOD_ENV_VERCEL_URL
                             }${routes.qrCode({
-                                id: qrCodeId,
+                                qrId: qrCodeId,
                             })}
                                 `,
                             metadata: {

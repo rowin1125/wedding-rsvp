@@ -52,7 +52,7 @@ export const useQRCodePreview = (
         };
         const qrUrl = values.id
             ? `${process.env.REDWOOD_ENV_VERCEL_URL}${routes.qrCode({
-                  id: values.id,
+                  qrId: values.id,
               })}`
             : 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
