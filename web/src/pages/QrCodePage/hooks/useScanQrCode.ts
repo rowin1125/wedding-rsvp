@@ -19,12 +19,12 @@ export const FIND_SCANNED_QR_CODE_BY_ID = gql`
 `;
 
 export const useScanQrCode = () => {
-    const { id } = useParams();
+    const { galleryId } = useParams();
     const { data, ...query } = useQuery<
         FindScannedQrCodeById,
         FindScannedQrCodeByIdVariables
     >(FIND_SCANNED_QR_CODE_BY_ID, {
-        variables: { id },
+        variables: { id: galleryId },
     });
 
     return {

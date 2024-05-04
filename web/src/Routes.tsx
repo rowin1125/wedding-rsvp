@@ -17,7 +17,7 @@ const Routes = () => {
                     <Route path="/admin/dashboard" page={DashboardPage} name="dashboard" />
                     <Route path="/admin/dagdelen/dag-gasten" page={DayGuestsPage} name="dayGuests" />
                     <Route path="/admin/dagdelen/avond-gasten" page={EveningGuestsPage} name="eveningGuests" />
-                    <Route path="/admin/galerij/{id}" page={GalleryPage} name="gallery" />
+                    <Route path="/admin/galerij/{galleryId}" page={GalleryPage} name="gallery" />
                     <Route path="/admin/galerijen" page={GalleriesPage} name="galleries" />
                 </PrivateSet>
             </Set>

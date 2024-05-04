@@ -20,7 +20,7 @@ export const DELETE_QR_CODE = gql`
 
 export const useDeleteQrCode = () => {
     const { updateGallery, updateGalleryMutationData } = useGalleryForm();
-    const { id: galleryId } = useParams();
+    const { galleryId } = useParams();
 
     const [deleteQrCode, deleteQrMutationData] = useMutation<
         DeleteQrCode,

@@ -50,7 +50,7 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
     const [globalLoading, setGlobalLoading] = useState(false);
 
     const modalDisclosure = useDisclosure();
-    const { id: galleryId } = useParams();
+    const { galleryId } = useParams();
     const validationSchema = object().shape({
         files: validateFile({
             isRequired: true,

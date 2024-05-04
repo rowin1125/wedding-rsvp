@@ -77,7 +77,7 @@ export const deleteGallery: MutationResolvers['deleteGallery'] = async ({
     }
 };
 
-export const DEFAULT_PAGINATION_OFFSET = 40;
+export const DEFAULT_PAGINATION_OFFSET = 28;
 
 export const Gallery: GalleryRelationResolvers = {
     wedding: (_obj, { root }) => {

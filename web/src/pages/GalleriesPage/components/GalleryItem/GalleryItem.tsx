@@ -68,7 +68,7 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
                 filter="brightness(0.7) sepia(0.5)"
                 as={Link}
                 to={routes.gallery({
-                    id: gallery.id,
+                    galleryId: gallery.id,
                 })}
             />
             <Button
@@ -80,7 +80,7 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
                 top={4}
                 as={Link}
                 to={routes.gallery({
-                    id: gallery.id,
+                    galleryId: gallery.id,
                     tab: GALLERY_TABS.SETTINGS,
                 })}
             >
@@ -90,7 +90,7 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
             <Box
                 position="relative"
                 as={Link}
-                to={routes.gallery({ id: gallery.id })}
+                to={routes.gallery({ galleryId: gallery.id })}
             >
                 <Heading color="white">{gallery.name}</Heading>
             </Box>

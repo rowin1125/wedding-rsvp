@@ -27,11 +27,11 @@ export const schema = gql`
     }
 
     type Mutation {
-        requestSigningUrl(gcloudStoragePath: String!): String! @requireAuth
+        requestSigningUrl(gcloudStoragePath: String!): String! @skipAuth
         createAssets(
             input: [CreateAssetInput!]!
             galleryId: String!
-        ): CreateAssetsResponse @requireAuth
+        ): CreateAssetsResponse @skipAuth
         deleteAsset(id: String!): Asset! @requireAuth
     }
 `;

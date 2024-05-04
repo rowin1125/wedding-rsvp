@@ -87,6 +87,29 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
         throw new UserInputError('Wedding not found');
     }
 
+    const galleries = await db.gallery.findMany({
+        where: { weddingId: id },
+    });
+
+    if (galleries.length > 0) {
+        const deleteQrCodePromises = galleries.map((gallery) => {
+            if (!gallery.qrCodeId) return null;
+
+            return db.qrCode.delete({
+                where: { id: gallery.qrCodeId },
+            });
+        });
+
+        try {
+            await Promise.all(deleteQrCodePromises);
+        } catch (error) {
+            console.error(error);
+            throw new UserInputError(
+                'Failed to delete galleries with qr codes'
+            );
+        }
+    }
+
     const bucket = await getStorageClient();
 
     try {

@@ -20,7 +20,7 @@ export const schema = gql`
 
     type Query {
         galleries(weddingId: String!): [Gallery!]! @requireAuth
-        gallery(id: String!): Gallery @requireAuth
+        gallery(id: String!): Gallery @skipAuth
     }
 
     input CreateGalleryInput {

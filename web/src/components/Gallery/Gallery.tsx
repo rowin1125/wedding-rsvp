@@ -47,7 +47,7 @@ const Gallery = () => {
 
             navigate(
                 routes.gallery({
-                    id: gallery?.id || '',
+                    galleryId: gallery?.id || '',
                     ...queryParams,
                     tab: tab,
                 })

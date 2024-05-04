@@ -56,7 +56,7 @@ type UseQRCodeFormType = {
 };
 
 export const useQRCodeForm = ({ formType, qrCodeId }: UseQRCodeFormType) => {
-    const { id: galleryId } = useParams();
+    const { galleryId } = useParams();
     const { currentUser } = useAuth();
     const { qrCode, loading: qrCodeLoading } = useGetQRCode(qrCodeId);
 

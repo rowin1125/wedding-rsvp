@@ -21,9 +21,10 @@ import CreateAssetModal from './components/CreateAssetModal';
 
 type ImagesTabProps = {
     gallery: NonNullable<FindGalleryQuery['gallery']>;
+    isPublic?: boolean;
 };
 
-const ImagesTab = ({ gallery }: ImagesTabProps) => {
+const ImagesTab = ({ gallery, isPublic }: ImagesTabProps) => {
     const { assets, weddingId } = gallery;
     const assetManager = useCreateAssets({ weddingId });
     const { deleteAsset, loading } = useDeleteAsset({
@@ -41,15 +42,17 @@ const ImagesTab = ({ gallery }: ImagesTabProps) => {
 
     return (
         <Box>
-            <Flex justifyContent="space-between">
-                <Button
-                    size={{ base: 'sm', lg: 'md' }}
-                    as={Link}
-                    to={routes.galleries()}
-                    variant="outline"
-                >
-                    {'< Terug naar galerijen'}
-                </Button>
+            <Flex justifyContent={isPublic ? 'flex-end' : 'space-between'}>
+                {!isPublic && (
+                    <Button
+                        size={{ base: 'sm', lg: 'md' }}
+                        as={Link}
+                        to={routes.galleries()}
+                        variant="outline"
+                    >
+                        {'< Terug naar galerijen'}
+                    </Button>
+                )}
                 <Button
                     size={{ base: 'sm', lg: 'md' }}
                     onClick={assetManager.modalDisclosure.onOpen}
@@ -123,6 +126,25 @@ const ImagesTab = ({ gallery }: ImagesTabProps) => {
                         }}
                         deleteLoading={loading}
                     />
+                    <Flex
+                        justifyContent={isPublic ? 'flex-end' : 'space-between'}
+                        mt={6}
+                    >
+                        {!isPublic && (
+                            <Button
+                                size={{ base: 'sm', lg: 'md' }}
+                                as={Link}
+                                to={routes.galleries()}
+                                variant="outline"
+                            >
+                                {'< Terug naar galerijen'}
+                            </Button>
+                        )}
+                        <Button
+                            size={{ base: 'sm', lg: 'md' }}
+                            onClick={assetManager.modalDisclosure.onOpen}
+                        >{`Foto's toevoegen`}</Button>
+                    </Flex>
                     <Pagination
                         currentPage={currentPage}
                         pages={totalPages}

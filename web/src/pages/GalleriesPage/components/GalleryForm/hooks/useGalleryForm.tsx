@@ -55,7 +55,7 @@ export const UPDATE_GALLERY = gql`
 
 export const useGalleryForm = () => {
     const { currentUser } = useAuth();
-    const { id: galleryId } = useParams();
+    const { galleryId } = useParams();
 
     const [createGallery, createGalleryMutationData] = useMutation<
         CreateGalleryMutation,

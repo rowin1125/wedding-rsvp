@@ -32,16 +32,15 @@ export const FIND_GALLERY_QUERY = gql`
 `;
 
 export const useFindGallery = () => {
-    const { offset } = useGalleryPagination();
-    const { id } = useParams();
-    const { setTotalPages } = useGalleryPagination();
+    const { offset, setTotalPages } = useGalleryPagination();
+    const { galleryId } = useParams();
 
     const { data, ...query } = useQuery<
         FindGalleryQuery,
         FindGalleryQueryVariables
     >(FIND_GALLERY_QUERY, {
         variables: {
-            id,
+            id: galleryId,
             take: DEFAULT_PAGINATION_OFFSET,
             skip: offset,
         },
