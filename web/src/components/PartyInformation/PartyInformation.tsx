@@ -11,17 +11,22 @@ import {
 } from '@chakra-ui/react';
 import { BsEnvelopePaperHeart } from 'react-icons/bs';
 
-import banner from '../Banner/images/banner.jpg';
 import ImageTextBlock from '../ImageTextBlock';
-
-import colors from './images/colors.jpg';
-import locatie from './images/locatie.png';
 
 const PartyInformation = () => {
     return (
         <>
-            <Box bgImage={`url(${banner})`}>
-                <ImageTextBlock title="Onze locatie" image={locatie}>
+            <Box
+                bgImage={
+                    'https://images.prismic.io/derow-v1/ZjZpJUMTzAJOCiG1_banner.jpg?auto=format,compress'
+                }
+            >
+                <ImageTextBlock
+                    title="Onze locatie"
+                    image={
+                        'https://images.prismic.io/derow-v1/ZjZrvEMTzAJOCiHF_locatie.png?auto=format,compress'
+                    }
+                >
                     <Heading display={{ base: 'none', lg: 'block' }}>
                         Onze locatie
                     </Heading>
@@ -138,7 +143,12 @@ const PartyInformation = () => {
                 </ImageTextBlock>
             </Box>
 
-            <ImageTextBlock title="Dresscode" image={colors}>
+            <ImageTextBlock
+                title="Dresscode"
+                image={
+                    'https://images.prismic.io/derow-v1/ZjZrs0MTzAJOCiHE_colors.jpg?auto=format,compress'
+                }
+            >
                 <Heading display={{ base: 'none', lg: 'block' }}>
                     Dresscode
                 </Heading>

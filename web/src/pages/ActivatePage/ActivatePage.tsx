@@ -4,7 +4,6 @@ import { Toaster } from '@redwoodjs/web/dist/toast';
 import AuthScreen from 'src/components/AuthScreen';
 
 import ActivateForm from './components/ActivateForm';
-import imageSrc from './images/beach-wedding.jpg';
 
 const ActivatePage = () => {
     return (
@@ -20,7 +19,9 @@ const ActivatePage = () => {
                 />
 
                 <AuthScreen
-                    imageSrc={imageSrc}
+                    imageSrc={
+                        'https://images.prismic.io/derow-v1/ZjZuGEMTzAJOCiHa_beach-wedding.jpg?auto=format,compress'
+                    }
                     title="Account activeren"
                     description="Bijna klaar om je bruiloft te organiseren? Activeer je account en ga aan de slag!"
                 >

@@ -8,9 +8,6 @@ import HomepageHero from 'src/components/marketing/HomepageHero';
 import ImageTextBlock from 'src/components/marketing/ImageTextBlock';
 import SmartLoginButton from 'src/components/marketing/SmartLoginButton';
 
-import dashboardBB from './images/bb.png';
-import weddingRing from './images/WeddingRing.jpg';
-
 const HomePage = () => {
     return (
         <>
@@ -18,7 +15,12 @@ const HomePage = () => {
 
             <HomepageHero />
 
-            <ImageTextBlock imageSrc={weddingRing} gridLayout="7">
+            <ImageTextBlock
+                imageSrc={
+                    'https://images.prismic.io/derow-v1/ZjZox0MTzAJOCiGw_WeddingRing.jpg?auto=format,compress'
+                }
+                gridLayout="7"
+            >
                 <Heading as="h2" size="xl" mb={4}>
                     Alles in 1 overzicht
                 </Heading>
@@ -39,7 +41,13 @@ const HomePage = () => {
                 </Text>
             </ImageTextBlock>
 
-            <ImageTextBlock imageSrc={dashboardBB} gridLayout="7" imageFirst>
+            <ImageTextBlock
+                imageSrc={
+                    'https://images.prismic.io/derow-v1/ZjZoxkMTzAJOCiGv_bb.png?auto=format,compress'
+                }
+                gridLayout="7"
+                imageFirst
+            >
                 <Heading as="h2" size="xl" mb={4}>
                     Een uitgebreid dashboard
                 </Heading>

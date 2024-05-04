@@ -1,11 +1,11 @@
 import { Box, Container, Heading } from '@chakra-ui/react';
 
-import banner from './images/banner.jpg';
-
 const Banner = () => {
     return (
         <Box
-            bgImage={`url(${banner})`}
+            bgImage={
+                'https://images.prismic.io/derow-v1/ZjZpJUMTzAJOCiG1_banner.jpg?auto=format,compress'
+            }
             bgRepeat="repeat-x"
             py={{ base: 20, lg: 28 }}
         >

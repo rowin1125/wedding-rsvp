@@ -11,8 +11,6 @@ import { useGetPageTitle } from 'src/hooks/useGetPageTitle';
 
 import ResolveAssetType from '../ImageGallery/components/ResolveAssetType';
 
-import fallbackImage from './images/Screenshot from 2023-08-25 17-41-23.png';
-
 export type HeroData = {
     title?: string;
     subtitle?: string;
@@ -29,7 +27,7 @@ const Hero = ({
     subtitle,
     fileType = 'image',
     title,
-    image = fallbackImage,
+    image = 'https://images.prismic.io/derow-v1/ZjZmyEMTzAJOCiGi_Screenshotfrom2023-08-2517-41-23.png?auto=format,compress',
     imageProps,
     height = '300px',
     ...props

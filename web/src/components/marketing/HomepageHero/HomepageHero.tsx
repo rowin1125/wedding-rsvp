@@ -6,8 +6,6 @@ import HeroContainerScroll from './components/HeroContainerScroll';
 import HeroTitle from './components/HeroTitle';
 import HeroWebsiteFakeBody from './components/HeroWebsiteFakeBody';
 import HeroWebsiteFakeHeader from './components/HeroWebsiteFakeHeader';
-import imageSrc2 from './images/chairs.jpg';
-import imageSrc from './images/homepage.jpg';
 
 const HomepageHero = () => {
     return (
@@ -18,7 +16,9 @@ const HomepageHero = () => {
                 position="absolute"
                 bgRepeat="no-repeat"
                 bgSize="cover"
-                bgImage={imageSrc2}
+                bgImage={
+                    'https://images.prismic.io/derow-v1/ZjZtaEMTzAJOCiHU_chairs.jpg?auto=format,compress'
+                }
                 filter="blur(5px)"
             />
             <Box inset={0} w="full" position="absolute" bg="blackAlpha.400" />
@@ -27,7 +27,9 @@ const HomepageHero = () => {
                 <HeroContainerScroll titleComponent={<HeroTitle />}>
                     <HeroWebsiteFakeHeader />
                     <Image
-                        src={imageSrc}
+                        src={
+                            'https://images.prismic.io/derow-v1/ZjZtaEMTzAJOCiHV_homepage.jpg?auto=format,compress'
+                        }
                         alt="Grip"
                         w="full"
                         objectFit="cover"

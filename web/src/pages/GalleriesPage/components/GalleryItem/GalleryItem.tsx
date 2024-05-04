@@ -60,7 +60,8 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
             />
             <Box
                 bgImage={
-                    gallery.assets?.items?.[0]?.url ?? '/weddingDrinks.jpg'
+                    gallery.assets?.items?.[0]?.url ??
+                    'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress'
                 }
                 bgSize="cover"
                 inset={0}

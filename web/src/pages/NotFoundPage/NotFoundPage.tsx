@@ -4,8 +4,6 @@ import { Metadata } from '@redwoodjs/web';
 
 import Hero from 'src/components/Hero';
 
-import brokenHeart from '../WeddingRsvpPage/components/images/broken hart.png';
-
 export default () => (
     <Box as="main">
         <Metadata
@@ -49,7 +47,13 @@ export default () => (
                         >
                             4
                         </Heading>
-                        <Image src={brokenHeart} alt="broken heart" h="70px" />
+                        <Image
+                            src={
+                                'https://images.prismic.io/derow-v1/ZjZsKkMTzAJOCiHG_brokenhart.png?auto=format,compress'
+                            }
+                            alt="broken heart"
+                            h="70px"
+                        />
                         <Heading
                             fontSize={{
                                 base: '4xl',

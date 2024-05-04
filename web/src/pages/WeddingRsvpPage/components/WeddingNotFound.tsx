@@ -6,8 +6,6 @@ import { Metadata } from '@redwoodjs/web';
 
 import Hero from 'src/components/Hero';
 
-import brokenHeart from './images/broken hart.png';
-
 const WeddingNotFound = () => {
     return (
         <Box>
@@ -53,7 +51,9 @@ const WeddingNotFound = () => {
                                 4
                             </Heading>
                             <Image
-                                src={brokenHeart}
+                                src={
+                                    'https://images.prismic.io/derow-v1/ZjZsKkMTzAJOCiHG_brokenhart.png?auto=format,compress'
+                                }
                                 alt="broken heart"
                                 h="70px"
                             />

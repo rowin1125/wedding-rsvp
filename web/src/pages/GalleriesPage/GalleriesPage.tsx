@@ -36,7 +36,7 @@ const GalleriesPage = () => {
                 description="Galerijen pagina's"
             />
             <Hero
-                image="/weddingDrinks.jpg"
+                image="https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress"
                 imageProps={{
                     objectPosition: 'top',
                 }}

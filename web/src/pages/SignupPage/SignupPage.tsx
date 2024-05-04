@@ -8,7 +8,6 @@ import { useAuth } from 'src/auth';
 import AuthScreen from 'src/components/AuthScreen';
 
 import SignupForm from './components/SignupForm';
-import weddingImg from './images/WeddingRing.jpg';
 
 const SignupPage = () => {
     const { isAuthenticated } = useAuth();
@@ -28,7 +27,9 @@ const SignupPage = () => {
                     toastOptions={{ className: 'rw-toast', duration: 6000 }}
                 />
                 <AuthScreen
-                    imageSrc={weddingImg}
+                    imageSrc={
+                        'https://images.prismic.io/derow-v1/ZjZox0MTzAJOCiGw_WeddingRing.jpg?auto=format,compress'
+                    }
                     title="Aanmelden"
                     description="Het plannen van je bruiloft was nog nooit zo eenvoudig"
                 >

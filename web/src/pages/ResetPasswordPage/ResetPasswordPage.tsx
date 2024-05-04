@@ -8,7 +8,6 @@ import { useAuth } from 'src/auth';
 import AuthScreen from 'src/components/AuthScreen';
 
 import ResetPasswordForm from './components/ResetPasswordForm';
-import imageSrc from './images/weddingDrinks.jpg';
 
 const ResetPasswordPage = ({ resetToken }: { resetToken: string }) => {
     const { isAuthenticated, validateResetToken } = useAuth();
@@ -43,7 +42,9 @@ const ResetPasswordPage = ({ resetToken }: { resetToken: string }) => {
                     toastOptions={{ className: 'rw-toast', duration: 6000 }}
                 />
                 <AuthScreen
-                    imageSrc={imageSrc}
+                    imageSrc={
+                        'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress'
+                    }
                     title="Bijna klaar"
                     description="Nog even je wachtwoord instellen en dan ben je weer ready"
                 >

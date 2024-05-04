@@ -8,7 +8,6 @@ import { useAuth } from 'src/auth';
 import AuthScreen from 'src/components/AuthScreen';
 
 import ForgotPasswordForm from './components/ForgotPasswordForm';
-import flowerBride from './images/flower-bride.jpg';
 
 const ForgotPasswordPage = () => {
     const { isAuthenticated } = useAuth();
@@ -30,7 +29,9 @@ const ForgotPasswordPage = () => {
                 <AuthScreen
                     title="Geeft niks!"
                     description="Kan gebeuren, vul je email in en we sturen je een link om je wachtwoord te resetten"
-                    imageSrc={flowerBride}
+                    imageSrc={
+                        'https://images.prismic.io/derow-v1/ZjZt7EMTzAJOCiHY_flower-bride.jpg?auto=format,compress'
+                    }
                 >
                     <ForgotPasswordForm />
                 </AuthScreen>

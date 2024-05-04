@@ -10,38 +10,28 @@ import {
     Text,
 } from '@chakra-ui/react';
 
-import aanzoek from '../Hero/images/Screenshot from 2023-08-25 17-41-23.png';
-
-// import calendar from './images/4944549.png';
-import infinityImage from './images/8.png';
-import calendar from './images/89412-200.png';
-import ring from './images/diamond-ring.png';
-import like from './images/like.png';
-import saveTheDate from './images/save-the-date.jpg';
-import start from './images/start.jpg';
-
 const StoryTimeline = () => {
     const items = [
         {
-            image: start,
+            image: 'https://images.prismic.io/derow-v1/ZjZoBkMTzAJOCiGr_start.jpg?auto=format,compress',
             heading: 'Onze ontmoeting',
             text: 'Het begon allemaal begin 2015. We kenden elkaar al een tijdje door het samenwerken bij Spurd, maar op die zekere dag, 5 februari 2015 wisten we het zeker: wij zijn verliefd. ',
             year: '2015',
-            icon: like,
+            icon: 'https://images.prismic.io/derow-v1/ZjZofUMTzAJOCiGt_like.png?auto=format,compress',
         },
         {
-            image: aanzoek,
+            image: 'https://images.prismic.io/derow-v1/ZjZmyEMTzAJOCiGi_Screenshotfrom2023-08-2517-41-23.png?auto=format,compress',
             heading: 'Het aanzoek',
             text: 'Begin 2023 was het moment dat onze droomreis naar Australië en Nieuw-Zeeland werkelijkheid werd. Daar, op die prachtige plek in Nieuw-Zeeland op 8 maart 2023 vroeg Rowin aan Demi: wil je met me trouwen? Ja! Was het antwoord.',
             year: '2023',
-            icon: ring,
+            icon: 'https://images.prismic.io/derow-v1/ZjZoA0MTzAJOCiGo_diamond-ring.png?auto=format,compress',
         },
         {
-            image: saveTheDate,
+            image: 'https://images.prismic.io/derow-v1/ZjZoBUMTzAJOCiGq_save-the-date.jpg?auto=format,compress',
             heading: 'Save the date',
             text: 'En op 16 mei 2024 willen wij onze trouwdag met jullie vieren! Een dag vol liefde, gezelligheid, lachen, lekker eten en feesten. Wij kijken er enorm naar uit. Scroll verder voor meer informatie.',
             year: '2024',
-            icon: calendar,
+            icon: 'https://images.prismic.io/derow-v1/ZjZn_UMTzAJOCiGm_89412-200.png?auto=format,compress',
         },
     ];
     return (
@@ -161,7 +151,9 @@ const StoryTimeline = () => {
                                         alignItems={'center'}
                                     >
                                         <Image
-                                            src={infinityImage}
+                                            src={
+                                                'https://images.prismic.io/derow-v1/ZjZn-EMTzAJOCiGl_8.png?auto=format,compress'
+                                            }
                                             w={{ base: '20px', lg: '40px' }}
                                             h={{ base: '20px', lg: '40px' }}
                                         />

@@ -12,7 +12,7 @@ const GalleryPage = () => {
         initialValues: {
             title: 'Foto galerij',
             subtitle: 'Bekijk hier de foto’s van onze bruiloft',
-            image: '/weddingDrinks.jpg',
+            image: 'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress',
             fileType: 'image',
         },
     });

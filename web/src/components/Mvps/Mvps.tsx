@@ -12,50 +12,41 @@ import {
     Text,
 } from '@chakra-ui/react';
 
-import banner from '../Banner/images/banner.jpg';
-
-import angelique from './images/angelique.jpg';
-import cheyenne from './images/cheyenne.jpg';
-import rajco from './images/rajco.jpg';
-import remco from './images/remco.jpg';
-import tirza from './images/tirza.jpg';
-import xander from './images/xander.jpg';
-
 const Mvps = () => {
     const mvps = [
         {
             type: 'Getuige',
             name: 'Angelique Greuter',
-            image: angelique,
+            image: 'https://images.prismic.io/derow-v1/ZjZtGkMTzAJOCiHM_angelique.jpg?auto=format,compress',
         },
         {
             type: 'Getuige',
             name: 'Cheyenne de Vink',
-            image: cheyenne,
+            image: 'https://images.prismic.io/derow-v1/ZjZtG0MTzAJOCiHN_cheyenne.jpg?auto=format,compress',
             objectPosition: 'center 20%',
         },
         {
             type: 'Getuige',
             name: 'Remco Mol',
-            image: remco,
+            image: 'https://images.prismic.io/derow-v1/ZjZtHUMTzAJOCiHP_remco.jpg?auto=format,compress',
             objectPosition: '70%',
         },
         {
             type: 'Getuige',
             name: 'Rajco Mol',
-            image: rajco,
+            image: 'https://images.prismic.io/derow-v1/ZjZtHEMTzAJOCiHO_rajco.jpg?auto=format,compress',
             objectPosition: 'left',
         },
         {
             type: 'Ceremoniemeester',
             name: 'Xander Greuter',
-            image: xander,
+            image: 'https://images.prismic.io/derow-v1/ZjZtH0MTzAJOCiHR_xander.jpg?auto=format,compress',
             objectPosition: 'right',
         },
         {
             type: 'Ceremoniemeester',
             name: 'Tirza Voss',
-            image: tirza,
+            image: 'https://images.prismic.io/derow-v1/ZjZtHkMTzAJOCiHQ_tirza.jpg?auto=format,compress',
         },
     ];
 
@@ -63,7 +54,9 @@ const Mvps = () => {
         <Box
             mt={{ base: 10, lg: 20 }}
             py={{ base: 10, lg: 20 }}
-            bgImage={`url(${banner})`}
+            bgImage={
+                'https://images.prismic.io/derow-v1/ZjZpJUMTzAJOCiG1_banner.jpg?auto=format,compress'
+            }
             bgRepeat="repeat-x reapet-y"
             id="mvp"
         >

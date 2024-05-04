@@ -8,7 +8,6 @@ import { useAuth } from 'src/auth';
 import AuthScreen from 'src/components/AuthScreen';
 
 import LoginForm from './components/LoginForm';
-import imageSrc from './images/weddingWhiteFlowers.jpg';
 
 const LoginPage = () => {
     const { isAuthenticated } = useAuth();
@@ -28,7 +27,9 @@ const LoginPage = () => {
                     toastOptions={{ className: 'rw-toast', duration: 6000 }}
                 />
                 <AuthScreen
-                    imageSrc={imageSrc}
+                    imageSrc={
+                        'https://images.prismic.io/derow-v1/ZjZuNUMTzAJOCiHb_weddingWhiteFlowers.jpg?auto=format,compress'
+                    }
                     title="Inloggen"
                     description="Het plannen van je bruiloft was nog nooit zo eenvoudig"
                 >

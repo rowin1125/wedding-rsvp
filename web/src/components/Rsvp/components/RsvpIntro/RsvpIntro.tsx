@@ -3,16 +3,11 @@ import React from 'react';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Grid, GridItem, Heading, Image } from '@chakra-ui/react';
 
-import rsvpBg from '../../images/banner.jpg';
-import image1 from '../../images/image-1.jpg';
-import image2 from '../../images/image-2.jpg';
-import image3 from '../../images/image-3.jpg';
-
 const RsvpIntro = () => {
     return (
         <>
             <Box
-                bgImage={`url(${rsvpBg})`}
+                bgImage={`https://images.prismic.io/derow-v1/ZjZpJUMTzAJOCiG1_banner.jpg?auto=format,compress`}
                 bgPosition="center"
                 bgSize="cover"
                 bgRepeat="repeat-y"
@@ -47,7 +42,9 @@ const RsvpIntro = () => {
                 >
                     <Image
                         w="full"
-                        src={image3}
+                        src={
+                            'https://images.prismic.io/derow-v1/ZjZpKkMTzAJOCiG6_image-3.jpg?auto=format,compress'
+                        }
                         h={{ base: '150px', lg: '360px' }}
                         objectFit="cover"
                         objectPosition="center"
@@ -63,7 +60,9 @@ const RsvpIntro = () => {
                         <Image
                             w="full"
                             h="full"
-                            src={image2}
+                            src={
+                                'https://images.prismic.io/derow-v1/ZjZpKUMTzAJOCiG5_image-2.jpg?auto=format,compress'
+                            }
                             objectFit="cover"
                             objectPosition="top"
                             filter="grayscale(1)"
@@ -77,7 +76,9 @@ const RsvpIntro = () => {
                 <GridItem colSpan={{ base: 3, lg: 2 }} w="full">
                     <Image
                         w="full"
-                        src={image1}
+                        src={
+                            'https://images.prismic.io/derow-v1/ZjZpKEMTzAJOCiG4_image-1.jpg?auto=format,compress'
+                        }
                         h={{ base: '150px', lg: '360px' }}
                         objectFit="cover"
                         objectPosition="center"

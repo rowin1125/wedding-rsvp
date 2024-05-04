@@ -59,7 +59,9 @@ const Gallery = () => {
         setHeroData?.({
             title: gallery?.name,
             subtitle: 'Jouw unieke momenten vastgelegd op beeld.',
-            image: gallery?.assets?.items?.[0]?.url ?? '/weddingDrinks.jpg',
+            image:
+                gallery?.assets?.items?.[0]?.url ??
+                'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress',
             fileType: gallery?.assets?.items?.[0]?.fileType ?? 'image',
         });
     }, [gallery?.assets, gallery?.name, setHeroData]);
