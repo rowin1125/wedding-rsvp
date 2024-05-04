@@ -71,6 +71,10 @@ const Hero = ({
                     fontWeight="normal"
                     fontSize={{ base: '40px', lg: '80px' }}
                     color="white"
+                    textAlign={{
+                        base: 'center',
+                        lg: 'start',
+                    }}
                 >
                     {heroTitle}
                 </Heading>

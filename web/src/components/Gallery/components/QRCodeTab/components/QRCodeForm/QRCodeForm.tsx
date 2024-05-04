@@ -139,8 +139,18 @@ const QRCodeForm = ({
                             <Text fontWeight="semibold" fontSize="xl">
                                 QR uiterlijk
                             </Text>
-                            <Flex w="full" justifyContent="space-between">
-                                <Box w={'48%'}>
+                            <Flex
+                                w="full"
+                                justifyContent="space-between"
+                                flexDir={{
+                                    base: 'column',
+                                    lg: 'row',
+                                }}
+                            >
+                                <Box
+                                    w={{ base: '95%', lg: '48%' }}
+                                    mb={{ base: 4, lg: 'unset' }}
+                                >
                                     <InputControl
                                         name="metadata.color.dark.color"
                                         label="QR Code kleur"
@@ -152,12 +162,18 @@ const QRCodeForm = ({
                                         }}
                                     />
                                     <SwitchControl
-                                        mt={4}
+                                        mt={{
+                                            base: 2,
+                                            lg: 4,
+                                        }}
                                         name="metadata.color.dark.isTransparent"
                                         label="Transparant?"
                                     />
                                 </Box>
-                                <Box w={'48%'}>
+                                <Box
+                                    w={{ base: '95%', lg: '48%' }}
+                                    mb={{ base: 4, lg: 'unset' }}
+                                >
                                     <InputControl
                                         name="metadata.color.light.color"
                                         label="Achtergrondkleur"
@@ -169,8 +185,11 @@ const QRCodeForm = ({
                                         }}
                                     />
                                     <SwitchControl
-                                        mt={4}
-                                        ml={4}
+                                        mt={{
+                                            base: 2,
+                                            lg: 4,
+                                        }}
+                                        ml={{ lg: 4 }}
                                         name="metadata.color.light.isTransparent"
                                         label="Transparant?"
                                     />
