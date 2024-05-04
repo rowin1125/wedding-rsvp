@@ -22,7 +22,7 @@ const Routes = () => {
                 </PrivateSet>
             </Set>
             <Set wrap={GeneralLayout}>
-                <Route path="/api/qr/{id}" page={QrCodePage} name="qrCode" />
+                <Route path="/api/qr/{qrId}" page={QrCodePage} name="qrCode" />
                 <Route path="/{weddingId}/galerij/{galleryId}" page={PublicGalleryPage} name="publicGallery" />
                 <Route path="/{weddingId}/uitnodiging/{weddingInvitationId}" page={UpdateWeddingInvitationPage} name="updateWeddingInvitation" />
                 <Route path="/bruiloft/{weddingId}/{invitationType}" page={WeddingRsvpPage} name="weddingRsvp" />
