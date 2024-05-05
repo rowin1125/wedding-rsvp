@@ -104,7 +104,9 @@ const QRCodeForm = ({
             <FormProvider {...methods}>
                 <Grid
                     gridTemplateColumns="repeat(12, 1fr)"
-                    gap={8}
+                    gap={{
+                        lg: 8,
+                    }}
                     w="full"
                     mt={6}
                 >
@@ -148,7 +150,7 @@ const QRCodeForm = ({
                                 }}
                             >
                                 <Box
-                                    w={{ base: '95%', lg: '48%' }}
+                                    w={{ base: '100%', lg: '48%' }}
                                     mb={{ base: 4, lg: 'unset' }}
                                 >
                                     <InputControl
@@ -171,7 +173,7 @@ const QRCodeForm = ({
                                     />
                                 </Box>
                                 <Box
-                                    w={{ base: '95%', lg: '48%' }}
+                                    w={{ base: '100%', lg: '48%' }}
                                     mb={{ base: 4, lg: 'unset' }}
                                 >
                                     <InputControl
