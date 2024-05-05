@@ -56,6 +56,8 @@ const Gallery = () => {
     });
 
     useEffect(() => {
+        if (!gallery) return;
+
         setHeroData?.({
             title: gallery?.name,
             subtitle: 'Jouw unieke momenten vastgelegd op beeld',
@@ -64,7 +66,7 @@ const Gallery = () => {
                 'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress',
             fileType: gallery?.assets?.items?.[0]?.fileType ?? 'image',
         });
-    }, [gallery?.assets, gallery?.name, setHeroData]);
+    }, [gallery, gallery?.assets, gallery?.name, setHeroData]);
 
     return (
         <Box>
