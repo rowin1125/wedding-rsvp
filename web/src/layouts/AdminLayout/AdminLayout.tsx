@@ -10,6 +10,8 @@ import Footer from 'src/components/Footer/Footer';
 import FooterMenu from 'src/components/FooterMenu/FooterMenu';
 import Sidebar from 'src/components/Sidebar/Sidebar';
 
+import SamsungAlert from './components/SamsungAlert';
+
 type AdminLayoutProps = {
     children?: React.ReactNode;
 };
@@ -30,6 +32,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
     return (
         <Box>
+            <SamsungAlert />
             <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
             <Box as="main">
                 <Flex justifyContent="space-between" position="relative">

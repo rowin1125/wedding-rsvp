@@ -73,7 +73,7 @@ const Hero = ({
                     color="white"
                     textAlign={{
                         base: 'center',
-                        lg: 'start',
+                        lg: 'center',
                     }}
                 >
                     {heroTitle}

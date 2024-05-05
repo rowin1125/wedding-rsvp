@@ -93,7 +93,9 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
                 as={Link}
                 to={routes.gallery({ galleryId: gallery.id })}
             >
-                <Heading color="white">{gallery.name}</Heading>
+                <Heading color="white" textAlign="center">
+                    {gallery.name}
+                </Heading>
             </Box>
         </GridItem>
     );
