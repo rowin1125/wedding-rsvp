@@ -18,7 +18,13 @@ const SamsungAlert = () => {
         <>
             {invalidBrowser && (
                 <>
-                    <Alert status="error" justifyContent="center">
+                    <Alert
+                        status="error"
+                        justifyContent="center"
+                        position="fixed"
+                        top={0}
+                        zIndex={100}
+                    >
                         <AlertIcon />
                         Deze website werkt niet goed in de Samsung Internet
                         browser. Gebruik een andere browser zoals Chrome.

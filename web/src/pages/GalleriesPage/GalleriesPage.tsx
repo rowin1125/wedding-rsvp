@@ -59,7 +59,7 @@ const GalleriesPage = () => {
                         Maak nog een album aan
                     </Button>
                 </Flex>
-                {loading && <Loader />}
+                {loading && !hasGallery && <Loader />}
                 {!hasGallery && !loading && <CreateNewGallery />}
                 <Grid gridTemplateColumns="repeat(3, 1fr)" gap={6} mt={10}>
                     {galleries?.map((gallery) => (
