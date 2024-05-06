@@ -3,6 +3,8 @@ import React from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import { MotionValue, motion } from 'framer-motion';
 
+import { toast } from '@redwoodjs/web/dist/toast';
+
 type HeroCardProps = {
     rotate: MotionValue<number>;
     scale: MotionValue<number>;
@@ -117,6 +119,12 @@ const HeroCard = ({ rotate, scale, children }: HeroCardProps) => {
                     h={{
                         base: 6,
                         lg: 6,
+                    }}
+                    cursor="pointer"
+                    onClick={() => {
+                        toast.success('Heee afblijven, dat is mijn tablet!', {
+                            duration: 2000,
+                        });
                     }}
                     bg="primary.100"
                     rounded="full"
