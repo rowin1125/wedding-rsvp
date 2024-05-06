@@ -11,6 +11,7 @@ import { Metadata } from '@redwoodjs/web';
 import GuestInvitationModal from 'src/components/GuestDataTable/components/GuestInvitationModal';
 import { GuestDataTable } from 'src/components/GuestDataTable/GuestDataTable';
 import Hero from 'src/components/Hero';
+import Loader from 'src/components/Loader';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 import { useGetWeddingInvitationsByWeddingId } from 'src/hooks/useGetWeddingInvitationsByWeddingId';
 import AdminContentWrapper from 'src/layouts/AdminLayout/components/AdminContentWrapper';
@@ -141,9 +142,7 @@ const EveningGuestsPage = () => {
         'Dieet wensen': weddingInvitation.dietaryWishes || 'Geen',
     }));
 
-    if (!data || loading) return null;
-
-    const presentGuests = data.reduce((acc, curr) => {
+    const presentGuests = data?.reduce((acc, curr) => {
         if (curr.Aanwezig === 'Nee') return acc;
 
         return acc + curr.Aantal;
@@ -171,7 +170,8 @@ const EveningGuestsPage = () => {
                     onClose={handleOnClose}
                     invitationId={invitationId}
                 />
-                <GuestDataTable columns={columns} data={data} />
+                {!data && loading && <Loader />}
+                {data && <GuestDataTable columns={columns} data={data} />}
             </AdminContentWrapper>
         </>
     );
