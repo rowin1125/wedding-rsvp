@@ -6,7 +6,7 @@ import Countdown from 'src/components/Countdown/Countdown';
 import DataDisplay from 'src/components/DataDisplay/DataDisplay';
 import Hero from 'src/components/Hero';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
-import AdminContentWrapper from 'src/layouts/AdminLayout/components/AdminContentWrapper';
+import AppContentWrapper from 'src/layouts/AppLayout/components/AppContentWrapper';
 
 import DayPresence from './components/DayPresence';
 import EveningPresence from './components/EveningPresence';
@@ -29,7 +29,7 @@ const DashboardPage = () => {
         <>
             <Metadata title="Dashboard" description="Dashboard page" />
             <Hero />
-            <AdminContentWrapper>
+            <AppContentWrapper>
                 <Heading fontWeight="bold" as="h2" size="h2">
                     Overzicht van de bruiloft van {wedding?.name}
                 </Heading>
@@ -81,7 +81,7 @@ const DashboardPage = () => {
                     <DayPresence />
                     <EveningPresence />
                 </Grid>
-            </AdminContentWrapper>
+            </AppContentWrapper>
         </>
     );
 };

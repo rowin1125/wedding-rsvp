@@ -14,7 +14,7 @@ import Hero from 'src/components/Hero';
 import Loader from 'src/components/Loader';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 import { useGetWeddingInvitationsByWeddingId } from 'src/hooks/useGetWeddingInvitationsByWeddingId';
-import AdminContentWrapper from 'src/layouts/AdminLayout/components/AdminContentWrapper';
+import AppContentWrapper from 'src/layouts/AppLayout/components/AppContentWrapper';
 
 import { DayGuestType } from '../DayGuestsPage/DayGuestsPage';
 
@@ -153,7 +153,7 @@ const EveningGuestsPage = () => {
             <Metadata title="EveningGuests" description="EveningGuests page" />
             <Hero />
 
-            <AdminContentWrapper>
+            <AppContentWrapper>
                 <Heading mb={8}>
                     Avondgasten{' '}
                     <Box as="span" fontWeight="black">
@@ -172,7 +172,7 @@ const EveningGuestsPage = () => {
                 />
                 {!data && loading && <Loader />}
                 {data && <GuestDataTable columns={columns} data={data} />}
-            </AdminContentWrapper>
+            </AppContentWrapper>
         </>
     );
 };

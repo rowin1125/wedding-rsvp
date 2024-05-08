@@ -4,7 +4,7 @@ import { Box, BoxProps } from '@chakra-ui/react';
 
 import { HeroData } from 'src/components/Hero/Hero';
 
-type AdminContentWrapperProps = {
+type AppContentWrapperProps = {
     children: React.ReactNode;
     setHeroData?: (data: HeroData) => void;
 } & BoxProps;
@@ -24,10 +24,10 @@ export const useHeroContext = () => {
     return context;
 };
 
-const AdminContentWrapper = ({
+const AppContentWrapper = ({
     setHeroData,
     ...props
-}: AdminContentWrapperProps) => {
+}: AppContentWrapperProps) => {
     return (
         <HeroContext.Provider
             value={{
@@ -41,4 +41,4 @@ const AdminContentWrapper = ({
     );
 };
 
-export default AdminContentWrapper;
+export default AppContentWrapper;

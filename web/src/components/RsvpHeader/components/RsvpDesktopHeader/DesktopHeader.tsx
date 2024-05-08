@@ -23,39 +23,23 @@ import { CiMail, CiPhone } from 'react-icons/ci';
 import { SlMenu } from 'react-icons/sl';
 import { InvitationType } from 'types/graphql';
 
-import { navigate, routes, useLocation, useParams } from '@redwoodjs/router';
-import { toast } from '@redwoodjs/web/dist/toast';
+import { useLocation, useParams } from '@redwoodjs/router';
 
-import { useAuth } from 'src/auth';
 import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
-import RedwoodLink from 'src/components/RedwoodLink/RedwoodLink';
-import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
 import {
     fakeLinks,
     handleLinkClick,
-} from '../MobileMenuDrawer/MobileMenuDrawer';
+} from '../RsvpMobileMenuDrawer/MobileMenuDrawer';
 
 const DesktopHeader = () => {
-    const { logOut, currentUser, loading } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { weddingId, weddingInvitationId } = useParams();
-    const { wedding } = useGetWeddingById(weddingId);
     const { weddingInvitation } =
         useGetGuestInvitationById(weddingInvitationId);
     const btnRef = React.useRef(null);
     const { pathname } = useLocation();
 
-    const handleLogout = () => {
-        toast.success('Je bent uitgelogd');
-        logOut();
-        onClose();
-    };
-
-    const handleLoginRoute = () => {
-        navigate(routes.login());
-        onClose();
-    };
     let invitationType: InvitationType;
 
     if (!weddingInvitation?.invitationType || pathname.includes('bruiloft')) {
@@ -74,37 +58,7 @@ const DesktopHeader = () => {
             w="full"
             py={{ base: 2, lg: 0 }}
         >
-            {wedding && (
-                <RedwoodLink
-                    to={routes.weddingRsvp({
-                        weddingId: wedding?.id || '',
-                        invitationType: invitationType === 'DAY' ? 'F' : 'E',
-                    })}
-                    title="Naar home"
-                    display={'flex'}
-                    alignItems="center"
-                    _hover={{ textDecoration: 'none' }}
-                >
-                    <Flex alignItems="center" justifyContent="center" w="full">
-                        <Image
-                            src={'/Bruiloft buddy logo.png'}
-                            width={16}
-                            alt="Demi & Rowin"
-                        />
-                        <Text
-                            ml={4}
-                            color="secondary.900"
-                            fontWeight="semibold"
-                            fontSize={{
-                                base: '2xl',
-                                xl: '3xl',
-                            }}
-                        >
-                            Bruiloft Buddy
-                        </Text>
-                    </Flex>
-                </RedwoodLink>
-            )}
+            <Box />
             <Flex justifyContent="space" alignItems="center">
                 {fakeLinks.map((link) => (
                     <Link
@@ -130,7 +84,7 @@ const DesktopHeader = () => {
                     colorScheme="primary"
                     onClick={onOpen}
                 >
-                    <Icon as={SlMenu} color="black" fontSize="2xl" />
+                    <Icon as={SlMenu} color="secondary.900" fontSize="2xl" />
                 </Button>
                 <Drawer
                     isOpen={isOpen}
@@ -155,9 +109,7 @@ const DesktopHeader = () => {
                                 alt="Demi & Rowin"
                                 style={{ objectFit: 'contain' }}
                             />
-                            <Heading mt={4} fontSize="3xl">
-                                Onze speciale dag
-                            </Heading>
+                            <Heading mt={4}>Onze speciale dag</Heading>
                         </DrawerHeader>
 
                         <DrawerBody>
@@ -165,7 +117,12 @@ const DesktopHeader = () => {
                                 Wij kijken er ontzetten naar uit om onze
                                 speciale dag met jullie te delen.
                             </Text>
-                            <Heading mt={10}>
+                            <Heading
+                                mt={10}
+                                as="h3"
+                                size="h3"
+                                textAlign="center"
+                            >
                                 Contactgegevens ceremoniemeesters
                             </Heading>
                             <Text>
@@ -232,33 +189,9 @@ const DesktopHeader = () => {
                             </Box>
                         </DrawerBody>
                         <DrawerFooter>
-                            {currentUser ? (
-                                <Flex>
-                                    <Button
-                                        colorScheme="gray"
-                                        onClick={handleLogout}
-                                        mr={8}
-                                    >
-                                        Uitloggen
-                                    </Button>
-                                    <Button
-                                        as={RedwoodLink}
-                                        to={routes.dashboard()}
-                                        _hover={{ textDecoration: 'none' }}
-                                        colorScheme="body"
-                                    >
-                                        Dashboard
-                                    </Button>
-                                </Flex>
-                            ) : (
-                                <Button
-                                    colorScheme="body"
-                                    onClick={handleLoginRoute}
-                                    isLoading={loading}
-                                >
-                                    Inloggen
-                                </Button>
-                            )}
+                            <Button colorScheme="body" onClick={onClose}>
+                                Sluiten
+                            </Button>
                         </DrawerFooter>
                     </DrawerContent>
                 </Drawer>

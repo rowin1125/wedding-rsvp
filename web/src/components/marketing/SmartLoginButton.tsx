@@ -1,35 +1,66 @@
 import React from 'react';
 
-import { Button, ButtonProps } from '@chakra-ui/react';
+import { Button, ButtonProps, Flex, FlexProps } from '@chakra-ui/react';
 
 import { routes, Link } from '@redwoodjs/router';
 
 import { useAuth } from 'src/auth';
 
-type SmartLoginButtonProps = ButtonProps;
+import RedwoodLink from '../RedwoodLink';
+import { RedwoodLinkProps } from '../RedwoodLink/RedwoodLink';
 
-const SmartLoginButton = (props: SmartLoginButtonProps) => {
-    const { currentUser } = useAuth();
+type SmartLoginButtonProps = {
+    loginLinkProps?: RedwoodLinkProps;
+    signupButtonProps?: ButtonProps;
+    loggedInButtonProps?: ButtonProps;
+} & FlexProps;
+
+const SmartLoginButton = ({
+    loginLinkProps,
+    signupButtonProps,
+    loggedInButtonProps,
+    ...props
+}: SmartLoginButtonProps) => {
+    const { currentUser, loading } = useAuth();
     if (currentUser)
         return (
-            <Button
-                as={Link}
-                to={routes.dashboard()}
-                colorScheme="secondary"
-                {...props}
-            >
-                Ga naar dashboard
-            </Button>
+            <Flex {...props}>
+                <Button
+                    as={Link}
+                    to={routes.dashboard()}
+                    colorScheme="secondary"
+                    isLoading={loading}
+                    isDisabled={loading}
+                    {...loggedInButtonProps}
+                >
+                    Ga naar App
+                </Button>
+            </Flex>
         );
     return (
-        <Button
-            as={Link}
-            to={routes.signup()}
-            colorScheme="secondary"
-            {...props}
-        >
-            {props.children}
-        </Button>
+        <Flex {...props}>
+            <RedwoodLink
+                to={routes.login()}
+                colorScheme="primary"
+                color="inherit"
+                alignSelf="center"
+                fontWeight="semibold"
+                mx={4}
+                {...loginLinkProps}
+            >
+                {props.children ?? 'Inloggen'}
+            </RedwoodLink>
+            <Button
+                as={Link}
+                to={routes.signup()}
+                colorScheme="secondary"
+                isLoading={loading}
+                isDisabled={loading}
+                {...signupButtonProps}
+            >
+                {'Registreren'}
+            </Button>
+        </Flex>
     );
 };
 

@@ -12,11 +12,11 @@ import Sidebar from 'src/components/Sidebar/Sidebar';
 
 import SamsungAlert from './components/SamsungAlert';
 
-type AdminLayoutProps = {
+type AppLayoutProps = {
     children?: React.ReactNode;
 };
 
-const AdminLayout = ({ children }: AdminLayoutProps) => {
+const AppLayout = ({ children }: AppLayoutProps) => {
     const { currentUser, loading } = useAuth();
     const { pathname } = useLocation();
 
@@ -50,4 +50,4 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     );
 };
 
-export default AdminLayout;
+export default AppLayout;

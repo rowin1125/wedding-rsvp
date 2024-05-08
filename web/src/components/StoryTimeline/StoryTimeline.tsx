@@ -115,7 +115,7 @@ const StoryTimeline = () => {
                                 pl={isTextFirst ? { base: 0, lg: 10 } : 0}
                                 pr={isTextFirst ? 0 : { base: 0, lg: 10 }}
                                 borderLeftWidth={{ base: 1, lg: 0 }}
-                                borderColor="#F1E7DB"
+                                borderColor="body.500"
                                 py={10}
                                 position="relative"
                             >

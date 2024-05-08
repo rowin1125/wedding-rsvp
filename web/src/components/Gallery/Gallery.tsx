@@ -7,7 +7,7 @@ import { navigate, routes, useLocation } from '@redwoodjs/router';
 import Loader from 'src/components/Loader';
 import { generateURL } from 'src/helpers/generateURL/generateURL';
 import { useIsDevice } from 'src/hooks/useIsDevice';
-import { useHeroContext } from 'src/layouts/AdminLayout/components/AdminContentWrapper';
+import { useHeroContext } from 'src/layouts/AppLayout/components/AppContentWrapper';
 import { useGalleryPagination } from 'src/pages/GalleryPage/hooks/useGalleryPagination';
 
 import ImagesTab from './components/ImagesTab';

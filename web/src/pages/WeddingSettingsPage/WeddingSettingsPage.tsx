@@ -2,7 +2,7 @@ import { Metadata } from '@redwoodjs/web';
 
 import Hero from 'src/components/Hero';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
-import AdminContentWrapper from 'src/layouts/AdminLayout/components/AdminContentWrapper';
+import AppContentWrapper from 'src/layouts/AppLayout/components/AppContentWrapper';
 
 import CreateWeddingForm from './components/CreateWeddingForm/CreateWeddingForm';
 import UpdateWeddingForm from './components/UpdateWeddingForm/UpdateWeddingForm';
@@ -18,9 +18,9 @@ const WeddingSettingsPage = () => {
                 description="Bruiloft instellingen pagina"
             />
             <Hero />
-            <AdminContentWrapper>
+            <AppContentWrapper>
                 {noWedding ? <CreateWeddingForm /> : <UpdateWeddingForm />}
-            </AdminContentWrapper>
+            </AppContentWrapper>
         </>
     );
 };

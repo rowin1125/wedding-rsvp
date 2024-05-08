@@ -54,7 +54,9 @@ const HeroWebsiteFakeBody = () => {
                                     uitnodigingen tot gastenlijst en van RSVP's
                                     tot cadeaulijst.`}
                 </Text>
-                <SmartLoginButton mt={10}>Maak nu je website</SmartLoginButton>
+                <SmartLoginButton justifyContent="center" mt={10}>
+                    Maak nu je website
+                </SmartLoginButton>
             </Box>
         </Flex>
     );

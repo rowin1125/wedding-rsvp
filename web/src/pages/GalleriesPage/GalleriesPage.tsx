@@ -16,7 +16,7 @@ import { Metadata } from '@redwoodjs/web';
 
 import Hero from 'src/components/Hero';
 import Loader from 'src/components/Loader';
-import AdminContentWrapper from 'src/layouts/AdminLayout/components/AdminContentWrapper';
+import AppContentWrapper from 'src/layouts/AppLayout/components/AppContentWrapper';
 
 import CreateNewGallery from './components/CreateNewGallery';
 import GalleryForm from './components/GalleryForm';
@@ -45,7 +45,7 @@ const GalleriesPage = () => {
                 h="300px"
             />
 
-            <AdminContentWrapper>
+            <AppContentWrapper>
                 <Flex w="full" justifyContent="space-between" mb={4}>
                     <Button
                         size={{ base: 'sm', lg: 'md' }}
@@ -66,7 +66,7 @@ const GalleriesPage = () => {
                         <GalleryItem key={gallery.id} gallery={gallery} />
                     ))}
                 </Grid>
-            </AdminContentWrapper>
+            </AppContentWrapper>
             <Modal isOpen={isOpen} onClose={onClose} size="xl">
                 <ModalOverlay />
                 <ModalContent>

@@ -41,7 +41,7 @@ const WeddingRsvpPage = () => {
             <Metadata title="Uitnodiging" description="WeddingRsvp page" />
             <Flex
                 justifyContent="space-between"
-                mx={{ base: 4, xl: 0 }}
+                mx={{ base: 0, xl: 0 }}
                 position="relative"
             >
                 {isConnectedToWedding && (

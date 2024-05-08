@@ -3,7 +3,7 @@ import { Metadata } from '@redwoodjs/web';
 import Gallery from 'src/components/Gallery';
 import Hero from 'src/components/Hero';
 import { useControlHero } from 'src/components/Hero/hooks/useControlHero';
-import AdminContentWrapper from 'src/layouts/AdminLayout/components/AdminContentWrapper';
+import AppContentWrapper from 'src/layouts/AppLayout/components/AppContentWrapper';
 
 import { GalleryPaginationProvider } from './hooks/useGalleryPagination';
 
@@ -22,11 +22,11 @@ const GalleryPage = () => {
             <Metadata title="Galerij pagina" description="Gallery page" />
 
             <Hero {...heroData} />
-            <AdminContentWrapper p={0} setHeroData={setHeroData}>
+            <AppContentWrapper p={0} setHeroData={setHeroData}>
                 <GalleryPaginationProvider>
                     <Gallery />
                 </GalleryPaginationProvider>
-            </AdminContentWrapper>
+            </AppContentWrapper>
         </>
     );
 };

@@ -28,7 +28,6 @@ import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
-import RedwoodLink from 'src/components/RedwoodLink';
 
 export const fakeLinks = [
     { link: 'story', label: 'Story' },
@@ -118,34 +117,23 @@ const MobileMenuDrawer = () => {
     return (
         <>
             <Center
-                justifyContent="space-between"
+                justifyContent="flex-end"
                 w={{ base: 'full', lg: 'auto' }}
                 py={{ base: 0, lg: 0 }}
                 display={{ base: 'flex', lg: 'none' }}
             >
-                <Flex justifyContent="center" w="full">
-                    <RedwoodLink
-                        to="/"
-                        title="Naar home"
-                        display={'flex'}
-                        alignItems="center"
-                        _hover={{ textDecoration: 'none' }}
-                    >
-                        <Image
-                            src={'/Bruiloft buddy logo.png'}
-                            width={16}
-                            alt="Demi & Rowin"
-                        />
-                    </RedwoodLink>
-                </Flex>
                 <Button
                     ref={btnRef}
-                    display={{ base: 'block', lg: 'none' }}
+                    display={{ base: 'flex', lg: 'none' }}
                     variant="ghost"
+                    alignItems="center"
                     colorScheme="body"
                     onClick={onOpen}
                 >
-                    <Icon as={SlMenu} color="black" fontSize="2xl" />
+                    <Text mr={4} as="span">
+                        Behulpzame links
+                    </Text>
+                    <Icon as={SlMenu} color="body.900" fontSize="sm" />
                 </Button>
                 <Drawer
                     isOpen={isOpen}
@@ -155,7 +143,7 @@ const MobileMenuDrawer = () => {
                 >
                     <DrawerOverlay />
                     <DrawerContent bg="white" color="white">
-                        <DrawerCloseButton color="white" bg="body.500" />
+                        <DrawerCloseButton color="white" bg="body.900" />
                         <DrawerHeader
                             display="flex"
                             justifyContent="center"
