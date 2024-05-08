@@ -30,9 +30,9 @@ import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/u
 import {
     fakeLinks,
     handleLinkClick,
-} from '../RsvpMobileMenuDrawer/MobileMenuDrawer';
+} from '../RsvpMobileMenuDrawer/RsvpMobileMenuDrawer';
 
-const DesktopHeader = () => {
+const RsvpDesktopHeader = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { weddingId, weddingInvitationId } = useParams();
     const { weddingInvitation } =
@@ -200,4 +200,4 @@ const DesktopHeader = () => {
     );
 };
 
-export default DesktopHeader;
+export default RsvpDesktopHeader;

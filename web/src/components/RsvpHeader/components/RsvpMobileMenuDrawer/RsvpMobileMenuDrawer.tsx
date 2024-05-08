@@ -86,7 +86,7 @@ export const handleLinkClick = async (
     callBack?.();
 };
 
-const MobileMenuDrawer = () => {
+const RsvpMobileMenuDrawer = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const btnRef = React.useRef(null);
     const { logOut, currentUser } = useAuth();
@@ -307,4 +307,4 @@ const MobileMenuDrawer = () => {
     );
 };
 
-export default MobileMenuDrawer;
+export default RsvpMobileMenuDrawer;

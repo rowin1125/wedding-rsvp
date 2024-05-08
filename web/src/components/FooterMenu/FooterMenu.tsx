@@ -10,6 +10,8 @@ import { RiDashboard3Line } from 'react-icons/ri';
 
 import { routes } from '@redwoodjs/router';
 
+import { useAuth } from 'src/auth';
+
 import FooterDrawer from './components/FooterDrawer';
 import FooterMenuItem from './components/FooterMenuItem';
 import FooterMenuItemChild from './components/FooterMenuItemChild';
@@ -19,6 +21,7 @@ export const footerMenuHeight = '70px';
 const FooterMenu = () => {
     const { isOpen, onToggle, onClose } = useDisclosure();
     const btnRef = React.useRef(null);
+    const { currentUser } = useAuth();
 
     return (
         <Box mt={footerMenuHeight} display={{ base: 'block', lg: 'none' }}>
@@ -58,22 +61,29 @@ const FooterMenu = () => {
                             Avond gasten
                         </FooterMenuItemChild>
                     </FooterMenuItem>
-
-                    <FooterMenuItem title="RSVP" icon={CgWebsite}>
-                        <FooterMenuItemChild
-                            icon={BiSun}
-                            to={routes.dayGuests()}
-                        >
-                            RSVP Dag
-                        </FooterMenuItemChild>
-                        <FooterMenuItemChild
-                            icon={BsFillMoonStarsFill}
-                            divider={false}
-                            to={routes.eveningGuests()}
-                        >
-                            RSVP Avond
-                        </FooterMenuItemChild>
-                    </FooterMenuItem>
+                    {currentUser?.weddingId && (
+                        <FooterMenuItem title="RSVP" icon={CgWebsite}>
+                            <FooterMenuItemChild
+                                icon={BiSun}
+                                to={routes.weddingRsvp({
+                                    invitationType: 'F',
+                                    weddingId: currentUser.weddingId,
+                                })}
+                            >
+                                RSVP Dag
+                            </FooterMenuItemChild>
+                            <FooterMenuItemChild
+                                icon={BsFillMoonStarsFill}
+                                divider={false}
+                                to={routes.weddingRsvp({
+                                    invitationType: 'E',
+                                    weddingId: currentUser.weddingId,
+                                })}
+                            >
+                                RSVP Avond
+                            </FooterMenuItemChild>
+                        </FooterMenuItem>
+                    )}
 
                     <FooterMenuItem
                         icon={BiPhotoAlbum}

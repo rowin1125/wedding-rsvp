@@ -58,6 +58,9 @@ export const useNavigationAnimation = ({
                     duration: 0.05,
                     color: '#6e5744',
                 })
+                .to(mobileNavbarRef.current, {
+                    color: colors.secondary[900],
+                })
                 .reversed(true);
             // ScrollTrigger for triggering animations
             ScrollTrigger.create({
