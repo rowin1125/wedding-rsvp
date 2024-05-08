@@ -20,6 +20,7 @@ import { SlMenu } from 'react-icons/sl';
 
 import { routes } from '@redwoodjs/router';
 
+import SmartLoginButton from 'src/components/marketing/SmartLoginButton';
 import RedwoodLink from 'src/components/RedwoodLink';
 import { truncateText } from 'src/helpers/textHelpers/truncateText/truncateText';
 
@@ -170,6 +171,10 @@ const MobileMenuDrawer = ({ mobileNavbarRef }: MobileMenuDrawerProps) => {
                                 </AccordionDirectLink>
                             );
                         })}
+                        <SmartLoginButton
+                            mt={4}
+                            loggedInButtonProps={{ w: 'full' }}
+                        />
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>

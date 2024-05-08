@@ -14,10 +14,11 @@ const Header = () => {
     const { isDesktop } = useIsDevice();
     const { pathname } = useLocation();
     const { weddingId } = useParams();
-    const { currentUser } = useAuth();
+    const { currentUser, loading } = useAuth();
 
-    const isInvitationRoute = pathname.includes(`/bruiloft/${weddingId}`);
-    const headerNeedsSidebarAdjustment = !!currentUser?.id && isInvitationRoute;
+    const isInvitationRoute = pathname.includes(`/bruiloft/${weddingId}/rsvp`);
+    const headerNeedsSidebarAdjustment =
+        currentUser?.weddingId === weddingId && !loading && isInvitationRoute;
 
     const { navBarRef, navigationListRef, mobileNavbarRef } =
         useNavigationAnimation({

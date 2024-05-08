@@ -38,7 +38,13 @@ const SmartLoginButton = ({
             </Flex>
         );
     return (
-        <Flex {...props}>
+        <Flex
+            flexDir={{
+                base: 'column',
+                lg: 'row',
+            }}
+            {...props}
+        >
             <RedwoodLink
                 to={routes.login()}
                 colorScheme="primary"
@@ -46,6 +52,15 @@ const SmartLoginButton = ({
                 alignSelf="center"
                 fontWeight="semibold"
                 mx={4}
+                textAlign="center"
+                w={{
+                    base: 'full',
+                    lg: 'auto',
+                }}
+                mb={{
+                    base: 4,
+                    lg: 0,
+                }}
                 {...loginLinkProps}
             >
                 {props.children ?? 'Inloggen'}

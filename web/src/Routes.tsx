@@ -27,7 +27,10 @@ const Routes = () => {
                 <Route prerender path="/" page={HomePage} name="home" />
                 <Route prerender notfound page={NotFoundPage} />
 
-                <Route path="/bruiloft/{weddingId}/{invitationType}" page={WeddingRsvpPage} name="weddingRsvp" />
+                <Route path="/bruiloft/{weddingId}/rsvp/{invitationType}" page={WeddingRsvpPage} name="weddingRsvp" />
+                {/* Old route, can be removed after 01-06-2024 */}
+                <Route redirect="/bruiloft/{weddingId}/rsvp/{invitationType}" path="/bruiloft/{weddingId}/{invitationType}" />
+
                 <Route path="/bruiloft/{weddingId}/uitnodiging/{weddingInvitationId}" page={UpdateWeddingInvitationPage} name="updateWeddingInvitation" />
                 {/* Old route, can be removed after 01-06-2024 */}
                 <Route redirect="/bruiloft/{weddingId}/uitnodiging/{weddingInvitationId}" path="/{weddingId}/uitnodiging/{weddingInvitationId}" />

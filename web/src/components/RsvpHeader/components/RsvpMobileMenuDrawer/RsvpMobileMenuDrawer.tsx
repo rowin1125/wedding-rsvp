@@ -8,7 +8,6 @@ import {
     DrawerBody,
     DrawerCloseButton,
     DrawerContent,
-    DrawerFooter,
     DrawerHeader,
     DrawerOverlay,
     Flex,
@@ -24,7 +23,6 @@ import { SlMenu } from 'react-icons/sl';
 import { InvitationType } from 'types/graphql';
 
 import { navigate, routes, useLocation, useParams } from '@redwoodjs/router';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
@@ -89,18 +87,8 @@ export const handleLinkClick = async (
 const RsvpMobileMenuDrawer = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const btnRef = React.useRef(null);
-    const { logOut, currentUser } = useAuth();
+    const { currentUser } = useAuth();
     const { pathname } = useLocation();
-
-    const handleLogut = () => {
-        logOut();
-        toast.success('Je bent uitgelogd');
-    };
-
-    const handleLoginNavigation = () => {
-        navigate(routes.login());
-        onClose();
-    };
 
     const { weddingId, weddingInvitationId } = useParams();
     const { weddingInvitation } =
@@ -274,32 +262,6 @@ const RsvpMobileMenuDrawer = () => {
                                 </Flex>
                             </Box>
                         </DrawerBody>
-                        <DrawerFooter zIndex={4}>
-                            <Flex>
-                                {currentUser ? (
-                                    <Button
-                                        colorScheme="body"
-                                        mr={6}
-                                        variant="outline"
-                                        onClick={handleLogut}
-                                    >
-                                        Log uit
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        colorScheme="body"
-                                        mr={6}
-                                        variant="outline"
-                                        onClick={handleLoginNavigation}
-                                    >
-                                        Login
-                                    </Button>
-                                )}
-                                <Button colorScheme="body" onClick={onClose}>
-                                    Sluiten
-                                </Button>
-                            </Flex>
-                        </DrawerFooter>
                     </DrawerContent>
                 </Drawer>
             </Center>
