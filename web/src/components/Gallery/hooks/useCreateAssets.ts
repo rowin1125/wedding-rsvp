@@ -93,7 +93,9 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
             for (const file of values.files) {
                 const fileType = file.type;
                 const uniqueId = createId();
-                const gcloudStoragePath = `${weddingId}/${galleryId}/${uniqueId}`;
+                const gcloudStoragePath = `${weddingId}/${galleryId}/${uniqueId}.${
+                    fileType.split('/')[1]
+                }`;
 
                 const url = await requestSigningUrl({
                     variables: {

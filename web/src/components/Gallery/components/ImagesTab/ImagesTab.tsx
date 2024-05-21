@@ -64,7 +64,7 @@ const ImagesTab = ({ gallery, isPublic }: ImagesTabProps) => {
                     alignItems="center"
                     flexDir="column"
                 >
-                    <Heading textAlign="center">
+                    <Heading textAlign="center" mt={{ base: 4, lg: 0 }}>
                         Voeg de eerste fotos toe:{' '}
                     </Heading>
                     <Flex my={10} justifyContent="center">
