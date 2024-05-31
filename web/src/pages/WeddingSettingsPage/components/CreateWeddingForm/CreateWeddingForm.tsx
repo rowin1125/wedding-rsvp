@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Box, Flex, Heading, VStack } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -34,9 +34,16 @@ const CreateWeddingForm = () => {
             ),
     });
 
+    const initialDate = useMemo(() => {
+        const date = new Date();
+        date.setMonth(date.getMonth() + 3);
+
+        return date.toISOString().split('T')[0];
+    }, []);
+
     const initialValues = {
         name: 'Demi & Rowin',
-        date: '2024-05-16',
+        date: initialDate,
         dayInvitationAmount: '0',
         eveningInvitationAmount: '0',
     };

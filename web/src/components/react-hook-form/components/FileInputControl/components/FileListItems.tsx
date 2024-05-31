@@ -104,7 +104,7 @@ const FileListItems = ({
                                 bg="blackAlpha.500"
                                 zIndex={2}
                             >
-                                <Loader color="white" />
+                                <Loader color="white" hideMargin />
                             </Flex>
                         )}
                         {isUploaded && (

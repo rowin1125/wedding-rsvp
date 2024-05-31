@@ -47,7 +47,7 @@ const UpdateWeddingForm = () => {
 
     const initialValues = {
         name: wedding?.name || '',
-        date: initialDate || '',
+        date: initialDate || new Date().toISOString().split('T')[0],
         dayInvitationAmount: String(wedding?.dayInvitationAmount) || '0',
         eveningInvitationAmount:
             String(wedding?.eveningInvitationAmount) || '0',
