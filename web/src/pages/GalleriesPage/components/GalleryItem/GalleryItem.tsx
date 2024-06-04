@@ -40,6 +40,7 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
                 fileType={gallery.assets?.items?.[0]?.fileType ?? 'image'}
                 imageProps={{
                     src: gallery.assets?.items?.[0]?.url,
+                    thumbnailUrl: gallery.assets?.items?.[0]?.thumbnailUrl,
                     alt: gallery.name,
                     objectFit: 'cover',
                     width: '100%',

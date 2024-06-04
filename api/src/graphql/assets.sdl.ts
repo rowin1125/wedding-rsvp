@@ -7,6 +7,8 @@ export const schema = gql`
         fileType: String!
         metadata: JSONObject!
         url: String!
+        thumbnailUrl: String!
+        previewUrl: String!
         createdAt: DateTime!
         updatedAt: DateTime!
     }

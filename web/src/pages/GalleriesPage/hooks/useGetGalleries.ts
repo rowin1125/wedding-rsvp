@@ -14,6 +14,7 @@ export const GET_GALLERIES_BY_WEDDING_ID = gql`
                     id
                     url
                     fileType
+                    thumbnailUrl
                 }
             }
         }

@@ -63,10 +63,24 @@ export const deleteGallery: MutationResolvers['deleteGallery'] = async ({
     }
 
     try {
-        await bucket.deleteFiles({
+        const deleteRegularFiles = bucket.deleteFiles({
             prefix: gallery.gcloudStoragePath,
             force: true,
         });
+        const deleteThumbnailFiles = bucket.deleteFiles({
+            prefix: `resized/thumbnail/${gallery.gcloudStoragePath}`,
+            force: true,
+        });
+        const deletePreviewFiles = bucket.deleteFiles({
+            prefix: `resized/preview/${gallery.gcloudStoragePath}`,
+            force: true,
+        });
+
+        await Promise.all([
+            deleteRegularFiles,
+            deleteThumbnailFiles,
+            deletePreviewFiles,
+        ]);
 
         return db.gallery.delete({
             where: { id },

@@ -81,6 +81,7 @@ type SliderWrapperProps = {
     transitionTime?: number;
     transitionType?: 'slide' | 'fade';
     zoomAnimation?: boolean;
+    loop?: boolean;
     customControls?: (
         slidePrev: (
             speed?: number | undefined,
@@ -110,6 +111,7 @@ const SliderWrapper = ({
     transitionTime,
     transitionType,
     zoomAnimation,
+    loop,
     disableAutoPlay,
     customControls: customControls,
     ...props
@@ -143,13 +145,14 @@ const SliderWrapper = ({
     } else {
         shouldLoop = hasMultipleSlides && slidesPerViewMobile < totalSlides;
     }
+    if (loop !== undefined) shouldLoop = loop;
 
     const handleArrowKeys = useCallback((e: KeyboardEvent) => {
         if (e.key === 'ArrowRight') {
-            sliderRef.current?.slidePrev();
+            sliderRef.current?.slideNext();
         }
         if (e.key === 'ArrowLeft') {
-            sliderRef.current?.slideNext();
+            sliderRef.current?.slidePrev();
         }
     }, []);
 

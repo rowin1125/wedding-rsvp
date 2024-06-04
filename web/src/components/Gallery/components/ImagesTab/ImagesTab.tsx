@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { Box, Button, Flex, Heading, Icon } from '@chakra-ui/react';
-import { BiPhotoAlbum, BiPlus } from 'react-icons/bi';
+import { Box, Button, Flex } from '@chakra-ui/react';
 import { FindGalleryQuery } from 'types/graphql';
 
 import { routes } from '@redwoodjs/router';
@@ -18,6 +17,7 @@ import { useCreateAssets } from '../../hooks/useCreateAssets';
 import { useDeleteAsset } from '../../hooks/useDeleteAsset';
 
 import CreateAssetModal from './components/CreateAssetModal';
+import NoAssets from './components/NoAssets';
 
 type ImagesTabProps = {
     gallery: NonNullable<FindGalleryQuery['gallery']>;
@@ -59,58 +59,7 @@ const ImagesTab = ({ gallery, isPublic }: ImagesTabProps) => {
                 >{`Foto's toevoegen`}</Button>
             </Flex>
             {!hasAssets && (
-                <Flex
-                    justifyContent="center"
-                    alignItems="center"
-                    flexDir="column"
-                >
-                    <Heading textAlign="center" mt={{ base: 4, lg: 0 }}>
-                        Voeg de eerste fotos toe:{' '}
-                    </Heading>
-                    <Flex my={10} justifyContent="center">
-                        <Button
-                            variant="ghost"
-                            h={{
-                                base: '200px',
-                                lg: '400px',
-                            }}
-                            w={{
-                                base: '200px',
-                                lg: '400px',
-                            }}
-                            borderColor="secondary.500"
-                            borderStyle="dashed"
-                            borderWidth="1px"
-                            justifyContent="center"
-                            onClick={assetManager.modalDisclosure.onOpen}
-                            alignItems="center"
-                            transition="all 0.3s ease"
-                            _hover={{
-                                bg: 'primary.600',
-                            }}
-                            _active={{
-                                bg: 'primary.800',
-                            }}
-                        >
-                            <Icon
-                                as={BiPhotoAlbum}
-                                fontSize={{
-                                    base: '75px',
-                                    lg: '150px',
-                                }}
-                                color="secondary.500"
-                            />
-                            <Icon
-                                as={BiPlus}
-                                fontSize={{
-                                    base: '75px',
-                                    lg: '150px',
-                                }}
-                                color="secondary.500"
-                            />
-                        </Button>
-                    </Flex>
-                </Flex>
+                <NoAssets modalDisclosure={assetManager.modalDisclosure} />
             )}
             {hasAssets && (
                 <>

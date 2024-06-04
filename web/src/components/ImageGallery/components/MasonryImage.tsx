@@ -77,6 +77,7 @@ const MasonryImage = ({
                 fileType={image.fileType}
                 imageProps={{
                     src: image.url,
+                    thumbnailUrl: image.thumbnailUrl,
                     mb: 2,
                     w: 'full',
                     h: 'full',

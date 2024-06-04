@@ -112,6 +112,7 @@ const GridGallery = ({
                         <ResolveAssetType
                             imageProps={{
                                 src: image.url,
+                                thumbnailUrl: image.thumbnailUrl,
                                 w: 'full',
                                 h: 'full',
                                 objectFit: 'cover',

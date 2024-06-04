@@ -16,6 +16,7 @@ export type HeroData = {
     subtitle?: string;
     image?: string;
     fileType?: string;
+    previewUrl?: string;
 };
 
 type HeroProps = {
@@ -28,6 +29,7 @@ const Hero = ({
     fileType = 'image',
     title,
     image = 'https://images.prismic.io/derow-v1/ZjZmyEMTzAJOCiGi_Screenshotfrom2023-08-2517-41-23.png?auto=format,compress',
+    previewUrl,
     imageProps,
     height = '300px',
     ...props
@@ -44,6 +46,7 @@ const Hero = ({
                     w: 'full',
                     h: 'full',
                     src: image,
+                    previewUrl: previewUrl,
                     objectFit: 'cover',
                     objectPosition: 'center',
                     filter: 'brightness(0.7)',

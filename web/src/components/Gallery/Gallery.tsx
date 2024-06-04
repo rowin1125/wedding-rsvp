@@ -64,6 +64,7 @@ const Gallery = () => {
             image:
                 gallery?.assets?.items?.[0]?.url ??
                 'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress',
+            previewUrl: gallery?.assets?.items?.[0]?.previewUrl,
             fileType: gallery?.assets?.items?.[0]?.fileType ?? 'image',
         });
     }, [gallery, gallery?.assets, gallery?.name, setHeroData]);

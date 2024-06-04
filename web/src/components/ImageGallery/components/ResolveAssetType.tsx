@@ -1,11 +1,16 @@
 import React, { ReactNode, VideoHTMLAttributes } from 'react';
 
-import { Box, BoxProps, Icon, Image, ImageProps } from '@chakra-ui/react';
+import { Box, BoxProps, Icon, ImageProps } from '@chakra-ui/react';
 import { BiImage, BiVideo } from 'react-icons/bi';
+
+import ResizableImage from 'src/components/ResizableImage/ResizableImage';
 
 type ResolveAssetTypeProps = {
     fileType: string;
-    imageProps?: ImageProps;
+    imageProps?: ImageProps & {
+        thumbnailUrl?: string;
+        previewUrl?: string;
+    };
     videoProps?: BoxProps &
         VideoHTMLAttributes<HTMLVideoElement> & {
             locked?: boolean;
@@ -26,7 +31,7 @@ const ResolveAssetType = ({
 
         return (
             <>
-                <Image loading="lazy" {...imageProps} />
+                <ResizableImage loading="lazy" {...imageProps} />
                 <Icon
                     as={BiImage}
                     position="absolute"

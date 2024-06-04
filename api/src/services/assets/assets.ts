@@ -88,14 +88,12 @@ export const requestSigningUrl: MutationResolvers['requestSigningUrl'] =
         try {
             const bucket = await getStorageClient();
 
-            const [url] = await bucket
-                .file(`${gcloudStoragePath}`)
-                .getSignedUrl({
-                    action: 'write',
-                    version: 'v4',
-                    expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-                    contentType: 'application/octet-stream',
-                });
+            const [url] = await bucket.file(gcloudStoragePath).getSignedUrl({
+                action: 'write',
+                version: 'v4',
+                expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+                contentType: 'application/octet-stream',
+            });
 
             return url;
         } catch (err) {
@@ -121,6 +119,24 @@ export const deleteAsset: MutationResolvers['deleteAsset'] = async ({ id }) => {
 
     try {
         await file.delete();
+
+        try {
+            const thumbnailFile = bucket.file(
+                `resized/thumbnail/${asset.gcloudStoragePath}`
+            );
+            const previewFile = bucket.file(
+                `resized/preview/${asset.gcloudStoragePath}`
+            );
+            if (thumbnailFile) {
+                await thumbnailFile.delete();
+            }
+            if (previewFile) {
+                await previewFile.delete();
+            }
+        } catch (error) {
+            console.info('No resized images found');
+        }
+
         const deletedAssets = await db.asset.delete({
             where: { id },
         });
@@ -134,5 +150,19 @@ export const deleteAsset: MutationResolvers['deleteAsset'] = async ({ id }) => {
 export const Asset: AssetRelationResolvers = {
     gallery: (_obj, { root }) => {
         return db.asset.findUnique({ where: { id: root?.id } }).gallery();
+    },
+    previewUrl: (obj, { root }) => {
+        const googleDomain = root.url.split(
+            process.env.GCLOUD_STORAGE_BUCKET
+        )[0];
+
+        return `${googleDomain}${process.env.GCLOUD_STORAGE_BUCKET}/resized/preview/${root.gcloudStoragePath}`;
+    },
+    thumbnailUrl: (obj, { root }) => {
+        const googleDomain = root.url.split(
+            process.env.GCLOUD_STORAGE_BUCKET
+        )[0];
+
+        return `${googleDomain}${process.env.GCLOUD_STORAGE_BUCKET}/resized/thumbnail/${root.gcloudStoragePath}`;
     },
 };

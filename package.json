@@ -3,7 +3,9 @@
   "workspaces": {
     "packages": [
       "api",
-      "web"
+      "web",
+      "functions/images-resize-function",
+      "functions/all-images-resize-function"
     ]
   },
   "devDependencies": {

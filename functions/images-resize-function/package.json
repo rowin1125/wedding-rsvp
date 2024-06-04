@@ -1,0 +1,33 @@
+{
+    "name": "images-resize-function",
+    "packageManager": "yarn@3.6.1",
+    "version": "0.0.1",
+    "private": true,
+    "engines": {
+        "yarn": "3.6.1"
+    },
+    "module": "esnext",
+    "main": "dist/function.js",
+    "scripts": {
+        "start": "functions-framework --target resizeImages --port 8081",
+        "gcp-build": "tsc --project tsconfig.json"
+    },
+    "dependencies": {
+        "@google-cloud/functions-framework": "^3.4.0",
+        "@google-cloud/storage": "^7.11.1",
+        "dotenv": "^16.4.5",
+        "file-type": "16.5.3",
+        "sharp": "^0.33.4"
+    },
+    "devDependencies": {
+        "typescript": "^5.4.5"
+    },
+    "browserslist": {
+        "development": [
+            "last 1 version"
+        ],
+        "production": [
+            "defaults"
+        ]
+    }
+}

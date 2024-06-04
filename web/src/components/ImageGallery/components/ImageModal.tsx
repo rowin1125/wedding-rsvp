@@ -79,6 +79,7 @@ const ImageModal = ({
                         slidesPerViewMobile={1}
                         showControls
                         initialSlide={initialIndex}
+                        loop={false}
                         customControls={(
                             slidePrev,
                             slideNext,
@@ -89,7 +90,10 @@ const ImageModal = ({
                                 p={4}
                                 position="absolute"
                                 alignItems="center"
-                                bottom={0}
+                                bottom={{
+                                    base: '70px',
+                                    lg: 0,
+                                }}
                                 left={0}
                                 right={0}
                                 w="full"
@@ -107,11 +111,15 @@ const ImageModal = ({
                                         colorScheme="secondary"
                                         mr={3}
                                         onClick={() => slidePrev()}
+                                        isDisabled={currentIndex === 0}
                                     >
                                         Vorige
                                     </Button>
                                     <Button
                                         colorScheme="secondary"
+                                        isDisabled={
+                                            currentIndex === totalSlides - 1
+                                        }
                                         onClick={() => slideNext()}
                                     >
                                         Volgende
@@ -127,7 +135,8 @@ const ImageModal = ({
                                     <ResolveAssetType
                                         fileType={image.fileType}
                                         imageProps={{
-                                            src: image.url,
+                                            src: image.previewUrl,
+                                            previewUrl: image.previewUrl,
                                             w: 'full',
                                             h: 'full',
                                             objectFit: 'contain',

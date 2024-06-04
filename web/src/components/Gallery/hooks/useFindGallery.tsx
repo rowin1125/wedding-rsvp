@@ -19,6 +19,8 @@ export const FIND_GALLERY_QUERY = gql`
                     gcloudStoragePath
                     fileType
                     metadata
+                    thumbnailUrl
+                    previewUrl
                 }
                 count
                 pages
