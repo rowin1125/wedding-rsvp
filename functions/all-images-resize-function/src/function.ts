@@ -20,8 +20,12 @@ async function resizeSingleImage(fileName: string, buffer: Buffer) {
 
     const thumbnailImage = await sharp(buffer)
         .resize({ width: 400 })
+        .withMetadata()
         .toBuffer();
-    const previewImage = await sharp(buffer).resize({ width: 1024 }).toBuffer();
+    const previewImage = await sharp(buffer)
+        .resize({ width: 1024 })
+        .withMetadata()
+        .toBuffer();
 
     // TODO: After everything is in place, replace everything within 1 folder like: `weddingId/galleryId/uniqueId/(original/thumbnail/preview)image.jpg`
     const thumbnailFileName = `${resizeName}/thumbnail/${fileName}`;
@@ -42,25 +46,30 @@ export const resizeAllImages: HttpFunction = async (req, res) => {
     const allResizedFiles = files.filter((file) =>
         file.name.includes(resizeName)
     );
-    console.log('files', files);
 
     for (const file of files) {
         const name = file.name;
-
-        const [buffer] = await file.download();
-        const type = await fileType.fromBuffer(buffer);
-
-        if (!type || !type.mime.startsWith('image/')) continue;
         if (name.includes(resizeName)) continue;
-
         const isAlreadyResized = allResizedFiles.some((resizedFile) =>
             resizedFile.name.includes(name)
         );
-        if (isAlreadyResized) continue;
+        if (isAlreadyResized) {
+            console.log('Already resized:', name);
+            continue;
+        }
 
+        console.info('Downloading file:', name);
+        const [buffer] = await file.download();
+        const type = await fileType.fromBuffer(buffer);
+
+        const isImage = type && type.mime.startsWith('image/');
+        if (!isImage) continue;
+
+        console.log('Resizing file:', name);
         await resizeSingleImage(name, buffer);
         resizedCount++;
     }
 
+    console.log(`Finished ✅ - Resized ${resizedCount} images`);
     res.status(200).send(`Resized ${resizedCount} images`);
 };
