@@ -18,6 +18,10 @@ export const schema = gql`
         count: Int!
     }
 
+    type DownloadGalleryResponse {
+        url: String!
+    }
+
     type Query {
         galleries(weddingId: String!): [Gallery!]! @requireAuth
         gallery(id: String!): Gallery @skipAuth
@@ -42,5 +46,6 @@ export const schema = gql`
         updateGallery(id: String!, input: UpdateGalleryInput!): Gallery!
             @requireAuth
         deleteGallery(id: String!): Gallery! @requireAuth
+        downloadGallery(id: String!): DownloadGalleryResponse! @requireAuth
     }
 `;

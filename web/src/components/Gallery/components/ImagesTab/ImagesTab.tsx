@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { DownloadIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex } from '@chakra-ui/react';
 import { FindGalleryQuery } from 'types/graphql';
 
@@ -18,6 +19,7 @@ import { useDeleteAsset } from '../../hooks/useDeleteAsset';
 
 import CreateAssetModal from './components/CreateAssetModal';
 import NoAssets from './components/NoAssets';
+import { useDownloadGallery } from './hooks/useDownloadGallery';
 
 type ImagesTabProps = {
     gallery: NonNullable<FindGalleryQuery['gallery']>;
@@ -30,6 +32,8 @@ const ImagesTab = ({ gallery, isPublic }: ImagesTabProps) => {
     const { deleteAsset, loading } = useDeleteAsset({
         id: gallery.id,
     });
+
+    const { downloadGallery, loading: downloadLoading } = useDownloadGallery();
 
     const { currentPage, setCurrentPage, totalPages, offset } =
         useGalleryPagination();
@@ -53,10 +57,26 @@ const ImagesTab = ({ gallery, isPublic }: ImagesTabProps) => {
                         {'< Terug naar galerijen'}
                     </Button>
                 )}
-                <Button
-                    size={{ base: 'sm', lg: 'md' }}
-                    onClick={assetManager.modalDisclosure.onOpen}
-                >{`Foto's toevoegen`}</Button>
+                <Flex>
+                    {!isPublic && (
+                        <Button
+                            variant="solid"
+                            mr={4}
+                            colorScheme="tertiary"
+                            isLoading={downloadLoading}
+                            onClick={async () => {
+                                await downloadGallery(gallery.id);
+                            }}
+                        >
+                            <DownloadIcon color="white" mr={2} />
+                            Download galerij
+                        </Button>
+                    )}
+                    <Button
+                        size={{ base: 'sm', lg: 'md' }}
+                        onClick={assetManager.modalDisclosure.onOpen}
+                    >{`Foto's toevoegen`}</Button>
+                </Flex>
             </Flex>
             {!hasAssets && (
                 <NoAssets modalDisclosure={assetManager.modalDisclosure} />

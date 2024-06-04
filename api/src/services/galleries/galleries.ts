@@ -11,6 +11,8 @@ import { UserInputError } from '@redwoodjs/graphql-server';
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { db } from 'src/lib/db';
 
+const archiver = require('archiver');
+
 export const galleries: QueryResolvers['galleries'] = () => {
     return db.gallery.findMany();
 };
@@ -89,6 +91,68 @@ export const deleteGallery: MutationResolvers['deleteGallery'] = async ({
         console.error(error);
         throw new UserInputError('Failed to delete gallery');
     }
+};
+
+export const downloadGallery: MutationResolvers['downloadGallery'] = async ({
+    id,
+}) => {
+    const gallery = await db.gallery.findUnique({
+        where: { id },
+    });
+
+    if (!gallery) {
+        throw new Error('Gallery not found');
+    }
+
+    const bucket = await getStorageClient();
+
+    const [files] = await bucket.getFiles({
+        prefix: gallery.gcloudStoragePath,
+    });
+
+    if (files.length === 0) {
+        throw new Error('No files found in the gallery');
+    }
+
+    const archiveFolderName = 'archive';
+    const zipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}.zip`;
+    const zipFile = bucket.file(zipFileName);
+
+    // Create a zip archive and upload to Cloud Storage
+    const zipStream = zipFile.createWriteStream();
+
+    const archive = archiver('zip', {
+        zlib: { level: 9 }, // Set compression level
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    archive.on('error', (err: any) => {
+        throw new Error(`Error creating zip archive: ${err}`);
+    });
+
+    archive.pipe(zipStream);
+
+    for (const file of files) {
+        const fileStream = file.createReadStream();
+        archive.append(fileStream, { name: file.name });
+    }
+
+    await new Promise((resolve, reject) => {
+        zipStream.on('close', resolve);
+        zipStream.on('error', reject);
+        archive.finalize();
+    });
+
+    // Generate a signed URL
+    const [signedUrl] = await zipFile.getSignedUrl({
+        version: 'v4',
+        action: 'read',
+        expires: Date.now() + 1000 * 60 * 60, // 1 hour
+    });
+
+    return {
+        url: signedUrl,
+    };
 };
 
 export const DEFAULT_PAGINATION_OFFSET = 28;
