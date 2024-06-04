@@ -1,7 +1,16 @@
 import React, { useMemo } from 'react';
 
-import { DeleteIcon } from '@chakra-ui/icons';
-import { Box, IconButton, useDisclosure } from '@chakra-ui/react';
+import { DeleteIcon, DownloadIcon } from '@chakra-ui/icons';
+import {
+    Box,
+    IconButton,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    useDisclosure,
+} from '@chakra-ui/react';
+import { BiDotsVertical } from 'react-icons/bi';
 
 import { useAuth } from 'src/auth';
 import { useIsDevice } from 'src/hooks/useIsDevice';
@@ -44,6 +53,10 @@ const MasonryImage = ({
     if (!image || !image.id) return null;
     const isOwner = hasRole(WEDDING_OWNER);
 
+    const handleDownload = async () => {
+        window.open(image.url);
+    };
+
     return (
         <Box
             w="full"
@@ -53,25 +66,37 @@ const MasonryImage = ({
             position="relative"
             height={randomHeight}
         >
-            {deleteCallback && currentUser && isOwner && (
-                <IconButton
-                    position="absolute"
-                    top={2}
-                    right={2}
+            <Menu>
+                <MenuButton
+                    as={IconButton}
+                    aria-label="Options"
+                    icon={<BiDotsVertical />}
                     variant="solid"
-                    colorScheme="red"
-                    isLoading={deleteLoading}
-                    isDisabled={deleteLoading}
-                    aria-label="Remove file"
-                    onClick={() => deleteCallback(image.id)}
+                    position="absolute"
+                    right={2}
+                    top={2}
                     zIndex={1}
-                    size={{
-                        base: 'sm',
-                        lg: 'md',
-                    }}
-                    icon={<DeleteIcon color="white" />}
+                    isDisabled={deleteLoading}
+                    isLoading={deleteLoading}
                 />
-            )}
+                <MenuList>
+                    <MenuItem
+                        icon={<DownloadIcon color="blue.500" />}
+                        onClick={handleDownload}
+                        isDisabled={deleteLoading}
+                    >
+                        Download origineel
+                    </MenuItem>
+                    {deleteCallback && currentUser && isOwner && (
+                        <MenuItem
+                            icon={<DeleteIcon color="red.500" />}
+                            onClick={() => deleteCallback(image.id)}
+                        >
+                            Verwijder bestand
+                        </MenuItem>
+                    )}
+                </MenuList>
+            </Menu>
 
             <ResolveAssetType
                 fileType={image.fileType}
