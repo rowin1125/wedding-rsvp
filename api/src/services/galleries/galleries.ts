@@ -109,6 +109,8 @@ export const downloadGallery: MutationResolvers['downloadGallery'] = async ({
     const [files] = await bucket.getFiles({
         prefix: gallery.gcloudStoragePath,
     });
+    const totalFilesSize = files.length || 0;
+    let currentSize = 0;
 
     if (files.length === 0) {
         throw new Error('No files found in the gallery');
@@ -133,8 +135,10 @@ export const downloadGallery: MutationResolvers['downloadGallery'] = async ({
     archive.pipe(zipStream);
 
     for (const file of files) {
+        console.info(`Added file ${currentSize + 1} of ${totalFilesSize}`);
         const fileStream = file.createReadStream();
         archive.append(fileStream, { name: file.name });
+        currentSize += 1;
     }
 
     await new Promise((resolve, reject) => {
