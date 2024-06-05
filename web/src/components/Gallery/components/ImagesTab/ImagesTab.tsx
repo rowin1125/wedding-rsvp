@@ -6,6 +6,7 @@ import { FindGalleryQuery } from 'types/graphql';
 
 import { routes } from '@redwoodjs/router';
 import { Link } from '@redwoodjs/router';
+import { toast } from '@redwoodjs/web/dist/toast';
 
 import ImageGallery from 'src/components/ImageGallery/ImageGallery';
 import Pagination from 'src/components/Pagination';
@@ -65,6 +66,12 @@ const ImagesTab = ({ gallery, isPublic }: ImagesTabProps) => {
                             colorScheme="tertiary"
                             isLoading={downloadLoading}
                             onClick={async () => {
+                                toast.success(
+                                    'Galerij wordt gedownload, dit kan even duren ⏳️ 😴',
+                                    {
+                                        duration: 10000,
+                                    }
+                                );
                                 await downloadGallery(gallery.id);
                             }}
                         >
