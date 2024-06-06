@@ -1,4 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
+import faktory from 'faktory-worker';
 import type {
     QueryResolvers,
     MutationResolvers,
@@ -10,8 +11,6 @@ import { UserInputError } from '@redwoodjs/graphql-server';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { db } from 'src/lib/db';
-
-const archiver = require('archiver');
 
 export const galleries: QueryResolvers['galleries'] = () => {
     return db.gallery.findMany();
@@ -104,59 +103,22 @@ export const downloadGallery: MutationResolvers['downloadGallery'] = async ({
         throw new Error('Gallery not found');
     }
 
-    const bucket = await getStorageClient();
-
-    const [files] = await bucket.getFiles({
-        prefix: gallery.gcloudStoragePath,
+    const client = await faktory.connect({
+        url: process.env.FAKTORY_URL,
+        password: process.env.FAKTORY_PASSWORD,
+        port: 7419,
     });
-    const totalFilesSize = files.length || 0;
-    let currentSize = 0;
+    await client.job('downloadAllFiles', { id }).push();
+    await client.close();
 
-    if (files.length === 0) {
-        throw new Error('No files found in the gallery');
-    }
-
-    const archiveFolderName = 'archive';
-    const zipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}.zip`;
-    const zipFile = bucket.file(zipFileName);
-
-    // Create a zip archive and upload to Cloud Storage
-    const zipStream = zipFile.createWriteStream();
-
-    const archive = archiver('zip', {
-        zlib: { level: 9 }, // Set compression level
+    await db.gallery.update({
+        where: { id },
+        data: {
+            downloadPending: true,
+        },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    archive.on('error', (err: any) => {
-        throw new Error(`Error creating zip archive: ${err}`);
-    });
-
-    archive.pipe(zipStream);
-
-    for (const file of files) {
-        console.info(`Added file ${currentSize + 1} of ${totalFilesSize}`);
-        const fileStream = file.createReadStream();
-        archive.append(fileStream, { name: file.name });
-        currentSize += 1;
-    }
-
-    await new Promise((resolve, reject) => {
-        zipStream.on('close', resolve);
-        zipStream.on('error', reject);
-        archive.finalize();
-    });
-
-    // Generate a signed URL
-    const [signedUrl] = await zipFile.getSignedUrl({
-        version: 'v4',
-        action: 'read',
-        expires: Date.now() + 1000 * 60 * 60, // 1 hour
-    });
-
-    return {
-        url: signedUrl,
-    };
+    return 'Download aangevraagd. Ververs de pagina na enkele minuten om de downloadlink te zien. Deze link 1 dag geldig.';
 };
 
 export const DEFAULT_PAGINATION_OFFSET = 28;
@@ -166,7 +128,7 @@ export const Gallery: GalleryRelationResolvers = {
         return db.gallery.findUnique({ where: { id: root?.id } }).wedding();
     },
     assets: async (_obj, { root }) => {
-        const data = await db.gallery
+        const items = await db.gallery
             .findUnique({ where: { id: root?.id } })
             .assets({
                 skip: _obj?.skip || 0,
@@ -184,7 +146,7 @@ export const Gallery: GalleryRelationResolvers = {
         );
 
         return {
-            items: data,
+            items,
             count,
             pages,
         };

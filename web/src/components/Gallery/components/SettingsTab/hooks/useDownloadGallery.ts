@@ -3,9 +3,7 @@ import { toast } from '@redwoodjs/web/dist/toast';
 
 export const DOWNLOAD_GALLERY_MUTATION = gql`
     mutation DownloadGalleryMutation($id: String!) {
-        downloadGallery(id: $id) {
-            url
-        }
+        downloadGallery(id: $id)
     }
 `;
 
@@ -14,7 +12,7 @@ export const useDownloadGallery = () => {
         DOWNLOAD_GALLERY_MUTATION,
         {
             onCompleted: (data) => {
-                window.open(data.downloadGallery.url, '_blank');
+                toast.success(data.downloadGallery);
             },
             onError: (error) => {
                 toast.error('Error downloading gallery: ' + error.message);

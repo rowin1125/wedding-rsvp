@@ -5,6 +5,9 @@ export const schema = gql`
         gcloudStoragePath: String!
         qrCode: String
         qrCodeId: String
+        downloadUrl: String
+        downloadRequestAt: DateTime
+        downloadPending: Boolean!
         wedding: Wedding!
         weddingId: String!
         assets(take: Int, skip: Int): PaginatedAssets!
@@ -16,10 +19,6 @@ export const schema = gql`
         items: [Asset]!
         pages: Int!
         count: Int!
-    }
-
-    type DownloadGalleryResponse {
-        url: String!
     }
 
     type Query {
@@ -46,6 +45,6 @@ export const schema = gql`
         updateGallery(id: String!, input: UpdateGalleryInput!): Gallery!
             @requireAuth
         deleteGallery(id: String!): Gallery! @requireAuth
-        downloadGallery(id: String!): DownloadGalleryResponse! @requireAuth
+        downloadGallery(id: String!): String! @requireAuth
     }
 `;

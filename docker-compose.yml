@@ -1,19 +1,25 @@
 services:
-  db:
-    image: postgres
-    restart: always
-    ports:
-      - 5433:5432
-    environment:
-      POSTGRES_USER: rowin
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: bruiloft-buddy_development
+    db:
+        image: postgres
+        restart: always
+        ports:
+            - 5433:5432
+        environment:
+            POSTGRES_USER: rowin
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: bruiloft-buddy_development
+    faktory:
+        image: contribsys/faktory
+        restart: always
+        ports:
+            - 7419:7419
+            - 7420:7420
 
 networks:
-  default:
-    name: bruiloft-buddy-rsvp
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.59.0/24
+    default:
+        name: bruiloft-buddy-rsvp
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 192.168.59.0/24

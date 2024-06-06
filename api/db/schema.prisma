@@ -91,16 +91,19 @@ model UserRole {
 }
 
 model Gallery {
-    id                String   @id @default(cuid())
+    id                String    @id @default(cuid())
     name              String
     gcloudStoragePath String
-    qrCode            String?  @unique @db.Text
+    qrCode            String?   @unique @db.Text
     qrCodeId          String?
-    wedding           Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    downloadUrl       String?
+    downloadRequestAt DateTime?
+    downloadPending   Boolean   @default(false)
+    wedding           Wedding   @relation(fields: [weddingId], references: [id], onDelete: Cascade)
     weddingId         String
     assets            Asset[]
-    createdAt         DateTime @default(now())
-    updatedAt         DateTime @updatedAt
+    createdAt         DateTime  @default(now())
+    updatedAt         DateTime  @updatedAt
 }
 
 model Asset {

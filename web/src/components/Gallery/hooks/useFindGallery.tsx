@@ -29,6 +29,9 @@ export const FIND_GALLERY_QUERY = gql`
             qrCode
             qrCodeId
             weddingId
+            downloadUrl
+            downloadRequestAt
+            downloadPending
         }
     }
 `;
