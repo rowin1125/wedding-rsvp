@@ -1,8 +1,0 @@
-{
-    "functions": {
-      "api/src/functions/graphql.*": {
-        "maxDuration": 300,
-        "runtime": "@vercel/redwood"
-      }
-    }
-  }
