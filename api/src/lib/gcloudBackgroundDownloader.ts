@@ -83,6 +83,7 @@ const gzipFiles = async (gallery: Gallery): Promise<string | undefined> => {
         archive.pipe(zipStream);
 
         console.log('Appending files to archive');
+        let fileCount = 0;
         files.forEach((file) => {
             const fileStream = file.createReadStream();
             fileStream.on('error', (err) => {
@@ -91,9 +92,14 @@ const gzipFiles = async (gallery: Gallery): Promise<string | undefined> => {
                     new Error(`Error reading file ${file.name}: ${err.message}`)
                 );
             });
+            fileStream.on('end', () => {
+                console.log(`Finished reading file: ${file.name}`);
+            });
             archive.append(fileStream, { name: file.name });
+            fileCount++;
         });
 
+        console.log(`Total files appended: ${fileCount}`);
         console.log('Finalizing archive');
         archive.finalize();
     });

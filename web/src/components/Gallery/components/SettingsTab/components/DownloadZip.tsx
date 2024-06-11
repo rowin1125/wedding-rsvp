@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { DownloadIcon } from '@chakra-ui/icons';
-import { Heading, Alert, AlertIcon, Button, Box, Text } from '@chakra-ui/react';
+import {
+    Heading,
+    Alert,
+    AlertIcon,
+    Button,
+    Box,
+    Text,
+    Tooltip,
+    Icon,
+} from '@chakra-ui/react';
+import { TbReload } from 'react-icons/tb';
 import { FindGalleryQuery } from 'types/graphql';
 
 import { useDownloadGallery } from '../hooks/useDownloadGallery';
@@ -13,6 +23,12 @@ type DownloadZipProps = {
 const DownloadZip = ({ gallery }: DownloadZipProps) => {
     const { downloadGallery, loading: downloadLoading } = useDownloadGallery();
     const [requestDownload, setRequestDownload] = useState(false);
+
+    useEffect(() => {
+        if (!gallery || !gallery.downloadPending) return;
+
+        setRequestDownload(gallery.downloadPending);
+    }, [gallery, gallery.downloadPending]);
 
     const downloadRequestAt = gallery.downloadRequestAt
         ? new Date(gallery.downloadRequestAt)
@@ -104,7 +120,7 @@ const DownloadZip = ({ gallery }: DownloadZipProps) => {
                 mr={4}
                 colorScheme="tertiary"
                 isLoading={downloadLoading}
-                isDisabled={requestDownload || gallery.downloadPending}
+                isDisabled={requestDownload}
                 onClick={async () => {
                     setRequestDownload(true);
                     await downloadGallery(gallery.id);
@@ -113,6 +129,21 @@ const DownloadZip = ({ gallery }: DownloadZipProps) => {
                 <DownloadIcon color="white" mr={2} />
                 Vraag download aan
             </Button>
+            {requestDownload && (
+                <Tooltip
+                    label="Reload de pagina om de download link te zien. Dit kan enkele minuten duren. Indien dit na een lange periode nog niet werkt kun je een nieuwe download forceren. Indien dit niet werkt, neem dan contact op met de beheerder."
+                    aria-label="Reload de pagina om de download link te zien. Dit kan enkele minuten duren. Indien dit na een lange periode nog niet werkt kun je een nieuwe download forceren. Indien dit niet werkt, neem dan contact op met de beheerder."
+                >
+                    <Button
+                        variant="link"
+                        color="blue.500"
+                        onClick={() => setRequestDownload(false)}
+                    >
+                        <Icon as={TbReload} color="blue.500" mr={2} />
+                        Forceer nog een download
+                    </Button>
+                </Tooltip>
+            )}
         </Box>
     );
 };
