@@ -52,39 +52,51 @@ const gzipFiles = async (gallery: Gallery): Promise<string | undefined> => {
         zlib: { level: 9 }, // Set compression level
     });
 
-    archive.on('error', (err: Error) => {
-        throw new Error(`Error creating zip archive: ${err}`);
-    });
+    return new Promise((resolve, reject) => {
+        archive.on('error', (err: Error) => {
+            console.error(`Error creating zip archive: ${err}`);
+            reject(new Error(`Error creating zip archive: ${err.message}`));
+        });
 
-    console.log('Created archive stream');
-    archive.pipe(zipStream);
+        zipStream.on('error', (err) => {
+            console.error(`Error writing zip file: ${err}`);
+            reject(new Error(`Error writing zip file: ${err.message}`));
+        });
 
-    console.log('Appending files to archive');
-    for (const file of files) {
-        const fileStream = file.createReadStream();
-        archive.append(fileStream, { name: file.name });
-    }
+        zipStream.on('close', async () => {
+            try {
+                console.log('Create signed URL for download');
+                const [downloadUrl] = await zipFile.getSignedUrl({
+                    version: 'v4',
+                    action: 'read',
+                    expires: Date.now() + ONE_DAY_TIME, // 1 day
+                });
+                console.log('Download URL:', downloadUrl);
+                resolve(downloadUrl);
+            } catch (error) {
+                console.error(`Error getting signed URL: ${error}`);
+                reject(error);
+            }
+        });
 
-    try {
+        console.log('Created archive stream');
+        archive.pipe(zipStream);
+
+        console.log('Appending files to archive');
+        files.forEach((file) => {
+            const fileStream = file.createReadStream();
+            fileStream.on('error', (err) => {
+                console.error(`Error reading file ${file.name}: ${err}`);
+                reject(
+                    new Error(`Error reading file ${file.name}: ${err.message}`)
+                );
+            });
+            archive.append(fileStream, { name: file.name });
+        });
+
         console.log('Finalizing archive');
-        await new Promise((resolve, reject) => {
-            zipStream.on('close', resolve);
-            zipStream.on('error', reject);
-            archive.finalize();
-        });
-
-        console.log('Create signed URL for download');
-        const [downloadUrl] = await zipFile.getSignedUrl({
-            version: 'v4',
-            action: 'read',
-            expires: Date.now() + ONE_DAY_TIME, // 1 day
-        });
-        console.log('Download URL:', downloadUrl);
-
-        return downloadUrl;
-    } catch (error) {
-        console.error(`Error creating zip archive: ${error}`);
-    }
+        archive.finalize();
+    });
 };
 
 const deleteOldArchives = async () => {
