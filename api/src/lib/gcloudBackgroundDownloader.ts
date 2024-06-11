@@ -22,6 +22,7 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
     const downloadUrl = await gzipFiles(gallery);
     if (!downloadUrl) throw new Error('Error creating zip archive');
 
+    console.log('Updating gallery download URL');
     await db.gallery.update({
         where: { id },
         data: {
@@ -43,6 +44,7 @@ const gzipFiles = async (gallery: Gallery): Promise<string | undefined> => {
 
     const archiveFolderName = ARCHIVE_PREFIX;
     const zipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}.zip`;
+    console.log('Zip created at:', zipFileName);
     const zipFile = bucket.file(zipFileName);
 
     const zipStream = zipFile.createWriteStream();
@@ -54,25 +56,30 @@ const gzipFiles = async (gallery: Gallery): Promise<string | undefined> => {
         throw new Error(`Error creating zip archive: ${err}`);
     });
 
+    console.log('Created archive stream');
     archive.pipe(zipStream);
 
+    console.log('Appending files to archive');
     for (const file of files) {
         const fileStream = file.createReadStream();
         archive.append(fileStream, { name: file.name });
     }
 
     try {
+        console.log('Finalizing archive');
         await new Promise((resolve, reject) => {
             zipStream.on('close', resolve);
             zipStream.on('error', reject);
             archive.finalize();
         });
 
+        console.log('Create signed URL for download');
         const [downloadUrl] = await zipFile.getSignedUrl({
             version: 'v4',
             action: 'read',
             expires: Date.now() + ONE_DAY_TIME, // 1 day
         });
+        console.log('Download URL:', downloadUrl);
 
         return downloadUrl;
     } catch (error) {
