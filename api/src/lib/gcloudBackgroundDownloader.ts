@@ -20,6 +20,7 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
 
     await deleteOldArchives();
     const downloadUrl = await gzipFiles(gallery);
+    if (!downloadUrl) throw new Error('Error creating zip archive');
 
     await db.gallery.update({
         where: { id },
@@ -33,7 +34,7 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
     logger.info('Gallery download URL has been updated');
 };
 
-const gzipFiles = async (gallery: Gallery): Promise<string> => {
+const gzipFiles = async (gallery: Gallery): Promise<string | undefined> => {
     const bucket = await getStorageClient();
 
     const [files] = await bucket.getFiles({
@@ -54,32 +55,29 @@ const gzipFiles = async (gallery: Gallery): Promise<string> => {
     });
 
     archive.pipe(zipStream);
-    let currentFileIndex = 0;
 
     for (const file of files) {
         const fileStream = file.createReadStream();
         archive.append(fileStream, { name: file.name });
-        console.log(
-            `Added file ${currentFileIndex + 1} to archive of ${
-                files.length
-            } files`
-        );
-        currentFileIndex += 1;
     }
 
-    await new Promise((resolve, reject) => {
-        zipStream.on('close', resolve);
-        zipStream.on('error', reject);
-        archive.finalize();
-    });
+    try {
+        await new Promise((resolve, reject) => {
+            zipStream.on('close', resolve);
+            zipStream.on('error', reject);
+            archive.finalize();
+        });
 
-    const [downloadUrl] = await zipFile.getSignedUrl({
-        version: 'v4',
-        action: 'read',
-        expires: Date.now() + ONE_DAY_TIME, // 1 day
-    });
+        const [downloadUrl] = await zipFile.getSignedUrl({
+            version: 'v4',
+            action: 'read',
+            expires: Date.now() + ONE_DAY_TIME, // 1 day
+        });
 
-    return downloadUrl;
+        return downloadUrl;
+    } catch (error) {
+        console.error(`Error creating zip archive: ${error}`);
+    }
 };
 
 const deleteOldArchives = async () => {
