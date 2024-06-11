@@ -101,7 +101,10 @@ const gzipFiles = async (gallery: Gallery): Promise<string | undefined> => {
 
         console.log(`Total files appended: ${fileCount}`);
         console.log('Finalizing archive');
-        archive.finalize();
+        archive.finalize().catch((error) => {
+            console.error(`Error finalizing archive: ${error}`);
+            reject(new Error(`Error finalizing archive: ${error.message}`));
+        });
     });
 };
 
