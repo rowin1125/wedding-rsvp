@@ -54,10 +54,17 @@ const gzipFiles = async (gallery: Gallery): Promise<string> => {
     });
 
     archive.pipe(zipStream);
+    let currentFileIndex = 0;
 
     for (const file of files) {
         const fileStream = file.createReadStream();
         archive.append(fileStream, { name: file.name });
+        console.log(
+            `Added file ${currentFileIndex + 1} to archive of ${
+                files.length
+            } files`
+        );
+        currentFileIndex += 1;
     }
 
     await new Promise((resolve, reject) => {
