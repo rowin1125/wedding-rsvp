@@ -4,7 +4,10 @@ module.exports = {
             name: 'faktoryWorker',
             script: 'yarn',
             args: 'rw exec faktoryWorker',
-            interpreter: 'bash',
+            interpreter: '/usr/bin/env',
+            env: {
+                NODE_ENV: 'production',
+            },
         },
     ],
 };
