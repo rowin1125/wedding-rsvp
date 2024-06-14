@@ -95,6 +95,18 @@ const createAndMergeZips = async (
         expires: Date.now() + ONE_DAY_TIME, // 1 day
     });
 
+    try {
+        // delete batch zip files
+        const deletePromises = zipFiles.map((zipFile) => zipFile.delete());
+        await Promise.allSettled(deletePromises);
+        logger.info('Batch zip files deleted');
+    } catch (err) {
+        const error = err as Error;
+        const errorMessage = `Error deleting batch zip files: ${error.message}`;
+        console.error(errorMessage);
+        logger.error(errorMessage);
+    }
+
     logger.info(`Final zip file created with download URL: ${downloadUrl}`);
 
     return downloadUrl;
