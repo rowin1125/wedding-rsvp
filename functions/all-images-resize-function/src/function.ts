@@ -50,6 +50,7 @@ export const resizeAllImages: HttpFunction = async (req, res) => {
     for (const file of files) {
         const name = file.name;
         if (name.includes(resizeName)) continue;
+        if (name.includes('archive')) continue;
         const isAlreadyResized = allResizedFiles.some((resizedFile) =>
             resizedFile.name.includes(name)
         );

@@ -71,7 +71,8 @@ do-migrate-create:
 do-deploy-resize-function:
 	@yarn workspace images-resize-function gcp-build
 	@echo "🚀 Build images-resize-function"
-	@cd functions/images-resize-function && gcloud functions deploy resizeImages --runtime nodejs20 --gen2 --region europe-west4 --allow-unauthenticated --memory 256Mi --trigger-bucket=bruiloft_buddy_dev --entry-point=resizeImages --env-vars-file .env.yaml && cd ../..
+	@cd functions/images-resize-function && gcloud functions deploy resizeImages-dev --runtime nodejs20 --gen2 --region europe-west4 --allow-unauthenticated --memory 256Mi --trigger-bucket=bruiloft_buddy_dev --entry-point=resizeImages --env-vars-file .env.yaml && cd ../..
+	@cd functions/images-resize-function && gcloud functions deploy resizeImages-prod --runtime nodejs20 --gen2 --region europe-west4 --allow-unauthenticated --memory 256Mi --trigger-bucket=bruiloft_buddy_prod --entry-point=resizeImages --env-vars-file .env.yaml && cd ../..
 
 do-deploy-resize-all-function:
 	@yarn workspace all-images-resize-function gcp-build

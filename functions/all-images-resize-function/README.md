@@ -10,12 +10,12 @@ Be aware that the function will resize all images in the bucket specified in the
 ## Local setup
 1. Install the dependencies:
 ```bash
-yarn workspace functions/all-images-resize-function install
+yarn workspace all-images-resize-function install
 ```
 2. Set the environment variables:
 3. Run the function:
 ```bash
-yarn workspace functions/all-images-resize-function build && yarn workspace functions/all-images-resize-function start
+yarn workspace all-images-resize-function gcp-build && yarn workspace all-images-resize-function start
 ```
 4. Visit `http://localhost:8081` to run the function.
 
