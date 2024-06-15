@@ -13,6 +13,15 @@ module.exports = {
             },
         },
         {
+            name: 'cron',
+            script: 'yarn',
+            args: 'rw exec cron',
+            interpreter: '/usr/bin/env',
+            env_production: {
+                NODE_ENV: 'production',
+            },
+        },
+        {
             name: 'Bruiloft Buddy App',
             script: 'yarn',
             args: 'rw dev',

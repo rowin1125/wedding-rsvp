@@ -218,7 +218,7 @@ const mergeZips = (
     });
 };
 
-const deleteOldArchives = async () => {
+export const deleteOldArchives = async () => {
     const bucket = await getStorageClient();
     const [allArchiveFiles] = await bucket.getFiles({
         prefix: ARCHIVE_PREFIX,

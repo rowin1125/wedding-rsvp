@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { downloadInBackground } from 'api/src/lib/gcloudBackgroundDownloader';
 import { logger } from 'api/src/lib/logger';
 import faktory from 'faktory-worker';
@@ -9,7 +8,7 @@ faktory.register('downloadAllFiles', async (taskArgs: any) => {
     await downloadInBackground(taskArgs);
 });
 
-export default async ({ _args }: any) => {
+export default async () => {
     const worker = await faktory
         .work({
             url: process.env.FAKTORY_URL,
