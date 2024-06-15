@@ -5,7 +5,7 @@ import { CronJob } from 'cron';
 
 export default async () => {
     // Schedule a RedwoodJS script to run every day at midnight
-    const job = new CronJob('*/1 * * * *', function () {
+    const job = new CronJob('0 */4 * * *', function () {
         logger.info('Running cron job');
 
         exec('yarn rw exec deleteOldGcloudZips', (error, stdout, stderr) => {
