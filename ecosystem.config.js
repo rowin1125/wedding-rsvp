@@ -27,5 +27,11 @@ module.exports = {
             args: 'rw dev',
             interpreter: '/usr/bin/env',
         },
+        {
+            name: 'Prisma Studio',
+            script: 'yarn',
+            args: 'rw prisma studio',
+            interpreter: '/usr/bin/env',
+        },
     ],
 };

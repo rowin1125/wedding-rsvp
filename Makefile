@@ -81,3 +81,12 @@ do-deploy-resize-all-function:
 	@yarn workspace all-images-resize-function gcp-build
 	@echo "🚀 Build all-images-resize-function"
 	@cd functions/all-images-resize-function && gcloud functions deploy resizeImages --runtime nodejs20 --gen2 --timeout=3000 --region europe-west4 --allow-unauthenticated --memory 256Mi --trigger-http --entry-point=resizeImages --env-vars-file .env.yaml && cd ../..
+
+
+##
+## VPS commands
+##
+
+# Restart pm2
+pm2-restart:
+	@pm2 restart ecosystem.config.js --only faktoryWorker,cron
