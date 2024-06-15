@@ -5,9 +5,18 @@ module.exports = {
             script: 'yarn',
             args: 'rw exec faktoryWorker',
             interpreter: '/usr/bin/env',
-            env: {
+            env_production: {
                 NODE_ENV: 'production',
             },
+            env_development: {
+                NODE_ENV: 'development',
+            },
+        },
+        {
+            name: 'Bruiloft Buddy App',
+            script: 'yarn',
+            args: 'rw dev',
+            interpreter: '/usr/bin/env',
         },
     ],
 };

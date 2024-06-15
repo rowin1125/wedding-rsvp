@@ -43,6 +43,7 @@ init: intro
 	@docker-compose up -d
 	@yarn rw prisma migrate deploy
 	@yarn rw prisma db seed
+	@pm2 start ecosystem.config.js
 
 # Reset the database
 do-db-reset:
@@ -50,6 +51,7 @@ do-db-reset:
 	@docker-compose up -d
 	@yarn rw prisma migrate deploy
 	@yarn rw prisma db seed
+	@pm2 restart ecosystem.config.js
 
 # Reset the database and create a new migration
 do-db-reset-and-create-migration:
@@ -58,6 +60,7 @@ do-db-reset-and-create-migration:
 	@yarn rw prisma migrate dev
 	@yarn rw prisma migrate deploy
 	@yarn rw prisma db seed
+	@pm2 restart ecosystem.config.js
 
 # Seed the database
 do-seed:
