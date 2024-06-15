@@ -173,7 +173,7 @@ const mergeZips = (
     const finalZipFile = bucket.file(finalZipFileName);
     const finalZipStream = finalZipFile.createWriteStream();
     const archive = archiver('zip', {
-        zlib: { level: 9 }, // Set compression level
+        zlib: { level: 0 }, // Set compression level
     });
 
     return new Promise((resolve, reject) => {
