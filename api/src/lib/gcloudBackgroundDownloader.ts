@@ -120,7 +120,7 @@ const createBatchZip = (
     const zipFile = bucket.file(zipFileName);
     const zipStream = zipFile.createWriteStream();
     const archive = archiver('zip', {
-        zlib: { level: 9 }, // Set compression level
+        zlib: { level: 6 }, // Set compression level
     });
 
     return new Promise((resolve, reject) => {
