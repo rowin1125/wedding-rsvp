@@ -66,9 +66,9 @@ const createAndMergeZips = async (
 
     for (let i = 0; i < files.length; i += batchSize) {
         const batchFiles = files.slice(i, i + batchSize);
-        const batchZipFileName = `${archiveFolderName}/${
-            gallery.gcloudStoragePath
-        }/${gallery.name}_part${Math.floor(i / batchSize) + 1}.zip`;
+        const startIdx = i + 1;
+        const endIdx = Math.min(i + batchSize, files.length);
+        const batchZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}_photos-${startIdx}-${endIdx}.zip`;
 
         logger.info(
             `Creating batch zip file: ${batchZipFileName} with ${batchFiles.length} files`
@@ -82,7 +82,7 @@ const createAndMergeZips = async (
         zipFiles.push(batchZipFile);
     }
 
-    const finalZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}_final.zip`;
+    const finalZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}.zip`;
     logger.info(
         `Merging batch zip files into final zip file: ${finalZipFileName}`
     );
