@@ -153,7 +153,10 @@ const createBatchZip = (
                 logger.error(errorMessage);
                 reject(new Error(errorMessage));
             });
-            archive.append(fileStream, { name: file.name });
+
+            const fileName = file.name.split('/').pop() ?? file.name;
+
+            archive.append(fileStream, { name: fileName });
         });
 
         archive.finalize().catch((error) => {
@@ -199,6 +202,8 @@ const mergeZips = (
         archive.pipe(finalZipStream);
 
         zipFiles.forEach((zipFile) => {
+            const fileName = zipFile.name.split('/').pop() ?? zipFile.name; // Get just the file name
+
             const fileStream = zipFile.createReadStream();
             fileStream.on('error', (err) => {
                 const errorMessage = `Error reading zip file ${zipFile.name}: ${err.message}`;
@@ -206,7 +211,8 @@ const mergeZips = (
                 logger.error(errorMessage);
                 reject(new Error(errorMessage));
             });
-            archive.append(fileStream, { name: zipFile.name });
+
+            archive.append(fileStream, { name: fileName }); // Append with just the file name
         });
 
         archive.finalize().catch((error) => {
