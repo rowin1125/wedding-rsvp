@@ -1,6 +1,3 @@
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
 import { performance } from 'perf_hooks'; // Node.js performance hooks
 
 import { File, Bucket } from '@google-cloud/storage';
@@ -69,11 +66,9 @@ const createAndMergeZips = async (
     });
     logger.info(`Found ${files.length} files in gallery: ${gallery.name}`);
 
-    const batchSize = 50;
+    const batchSize = 100;
     const archiveFolderName = ARCHIVE_PREFIX;
     const zipFiles: File[] = [];
-
-    const batchPromises = [];
 
     for (let i = 0; i < files.length; i += batchSize) {
         const batchFiles = files.slice(i, i + batchSize);
@@ -81,26 +76,27 @@ const createAndMergeZips = async (
         const endIdx = Math.min(i + batchSize, files.length);
         const batchZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}_photos-${startIdx}-${endIdx}.zip`;
 
-        logger.info(`Starting batch zip creation: ${batchZipFileName}`);
-
-        batchPromises.push(
-            createBatchZip(
-                batchFiles,
-                batchZipFileName,
-                bucket,
-                startIdx,
-                files.length
-            )
+        logger.info(
+            `Creating batch zip file: ${batchZipFileName} with ${batchFiles.length} files`
         );
+
+        const batchZipFile = await createBatchZip(
+            batchFiles,
+            batchZipFileName,
+            bucket,
+            startIdx,
+            files.length
+        );
+        zipFiles.push(batchZipFile);
     }
 
-    zipFiles.push(...(await Promise.all(batchPromises)));
     const finalZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}.zip`;
     logger.info(
         `Merging batch zip files into final zip file: ${finalZipFileName}`
     );
 
     const finalZipFile = await mergeZips(zipFiles, finalZipFileName, bucket);
+
     const [downloadUrl] = await finalZipFile.getSignedUrl({
         version: 'v4',
         action: 'read',
@@ -108,12 +104,12 @@ const createAndMergeZips = async (
     });
 
     try {
-        await Promise.allSettled(zipFiles.map((zipFile) => zipFile.delete()));
+        const deletePromises = zipFiles.map((zipFile) => zipFile.delete());
+        await Promise.allSettled(deletePromises);
         logger.info('Batch zip files deleted');
     } catch (err) {
-        const errorMessage = `Error deleting batch zip files: ${
-            (err as Error).message
-        }`;
+        const error = err as Error;
+        const errorMessage = `Error deleting batch zip files: ${error.message}`;
         logger.error(errorMessage);
     }
 
@@ -128,32 +124,31 @@ const createBatchZip = (
     startIdx: number,
     totalFiles: number
 ): Promise<File> => {
-    const localZipPath = path.join(os.tmpdir(), path.basename(zipFileName));
-    const output = fs.createWriteStream(localZipPath);
-    const archive = archiver('zip', { zlib: { level: 6 } });
+    const zipFile = bucket.file(zipFileName);
+    const zipStream = zipFile.createWriteStream();
+    const archive = archiver('zip', {
+        zlib: { level: 6 }, // Set compression level
+    });
 
     return new Promise((resolve, reject) => {
-        archive.on('error', (err) => {
+        archive.on('error', (err: Error) => {
             const errorMessage = `Error creating zip archive: ${err.message}`;
             logger.error(errorMessage);
             reject(new Error(errorMessage));
         });
 
-        output.on('error', (err) => {
+        zipStream.on('error', (err) => {
             const errorMessage = `Error writing zip file: ${err.message}`;
             logger.error(errorMessage);
             reject(new Error(errorMessage));
         });
 
-        output.on('close', async () => {
-            logger.info(`Batch zip file created: ${localZipPath}`);
-            const zipFile = bucket.file(zipFileName);
-            await zipFile.save(fs.readFileSync(localZipPath));
-            fs.unlinkSync(localZipPath); // delete the local zip file after upload
+        zipStream.on('close', () => {
+            logger.info(`Batch zip file created: ${zipFileName}`);
             resolve(zipFile);
         });
 
-        archive.pipe(output);
+        archive.pipe(zipStream);
 
         files.forEach((file, index) => {
             const fileStream = file.createReadStream();
@@ -192,91 +187,55 @@ const mergeZips = (
     finalZipFileName: string,
     bucket: Bucket
 ): Promise<File> => {
-    const localFinalZipPath = path.join(
-        os.tmpdir(),
-        path.basename(finalZipFileName)
-    );
-    const output = fs.createWriteStream(localFinalZipPath);
-    const archive = archiver('zip', { zlib: { level: 0 } });
+    const finalZipFile = bucket.file(finalZipFileName);
+    const finalZipStream = finalZipFile.createWriteStream();
+    const archive = archiver('zip', {
+        zlib: { level: 0 }, // Set compression level
+    });
 
     return new Promise((resolve, reject) => {
-        archive.on('error', (err) => {
+        archive.on('error', (err: Error) => {
             const errorMessage = `Error merging zip archives: ${err.message}`;
             logger.error(errorMessage);
             reject(new Error(errorMessage));
         });
 
-        output.on('error', (err) => {
+        finalZipStream.on('error', (err) => {
             const errorMessage = `Error writing final zip file: ${err.message}`;
             logger.error(errorMessage);
             reject(new Error(errorMessage));
         });
 
-        output.on('close', () => {
-            logger.info(`Final zip file created: ${localFinalZipPath}`);
-            const finalZipFile = bucket.file(finalZipFileName);
-            finalZipFile
-                .save(fs.readFileSync(localFinalZipPath))
-                .then(() => {
-                    fs.unlinkSync(localFinalZipPath); // delete the local final zip file after upload
-                    resolve(finalZipFile);
-                })
-                .catch((err) => {
-                    const errorMessage = `Error uploading final zip file: ${err.message}`;
-                    logger.error(errorMessage);
-                    reject(new Error(errorMessage));
-                });
+        finalZipStream.on('close', () => {
+            logger.info(`Final zip file created: ${finalZipFileName}`);
+            resolve(finalZipFile);
         });
 
-        archive.pipe(output);
-
-        let remainingCount = zipFiles.length;
+        archive.pipe(finalZipStream);
 
         zipFiles.forEach((zipFile) => {
-            const localZipPath = path.join(
-                os.tmpdir(),
-                path.basename(zipFile.name)
-            );
-            zipFile
-                .download({ destination: localZipPath })
-                .then(() => {
-                    const fileStream = fs.createReadStream(localZipPath);
-                    archive.append(fileStream, {
-                        name: zipFile.name.split('/').pop() ?? zipFile.name,
-                    });
+            const fileStream = zipFile.createReadStream();
+            fileStream.on('error', (err) => {
+                const errorMessage = `Error reading zip file ${zipFile.name}: ${err.message}`;
+                logger.error(errorMessage);
+                reject(new Error(errorMessage));
+            });
+            archive.append(fileStream, { name: zipFile.name });
+        });
 
-                    fileStream.on('end', () => {
-                        logger.info(`Merged zip file: ${zipFile.name}`);
-                        fs.unlinkSync(localZipPath); // delete the local batch zip file after merging
-                        remainingCount--;
-
-                        if (remainingCount === 0) {
-                            archive.finalize().catch((error) => {
-                                const errorMessage = `Error finalizing merged archive: ${error.message}`;
-                                logger.error(errorMessage);
-                                reject(new Error(errorMessage));
-                            });
-                        }
-                    });
-
-                    fileStream.on('error', (err) => {
-                        const errorMessage = `Error reading zip file ${zipFile.name}: ${err.message}`;
-                        logger.error(errorMessage);
-                        reject(new Error(errorMessage));
-                    });
-                })
-                .catch((err) => {
-                    const errorMessage = `Error downloading zip file ${zipFile.name}: ${err.message}`;
-                    logger.error(errorMessage);
-                    reject(new Error(errorMessage));
-                });
+        archive.finalize().catch((error) => {
+            const errorMessage = `Error finalizing merged archive: ${error.message}`;
+            logger.error(errorMessage);
+            reject(new Error(errorMessage));
         });
     });
 };
 
 export const deleteOldArchives = async () => {
     const bucket = await getStorageClient();
-    const [allArchiveFiles] = await bucket.getFiles({ prefix: ARCHIVE_PREFIX });
+    const [allArchiveFiles] = await bucket.getFiles({
+        prefix: ARCHIVE_PREFIX,
+    });
 
     logger.info(`Found ${allArchiveFiles.length} old archive files`);
 
@@ -284,35 +243,37 @@ export const deleteOldArchives = async () => {
         if (!file.metadata.timeCreated) return true;
 
         const createdAt = new Date(file.metadata.timeCreated);
-        return Date.now() - createdAt.getTime() > ONE_DAY_TIME;
+        const now = new Date();
+        const diff = now.getTime() - createdAt.getTime();
+        return diff > ONE_DAY_TIME;
     });
 
     logger.info(
         `Deleting ${archivesOlderThan1Day.length} archives older than 1 day`
     );
 
-    try {
-        await Promise.allSettled(
-            archivesOlderThan1Day.map(async (file) => {
-                const galleryId = file.name.split('/')[2];
-                await file.delete();
-                logger.info(`Deleted archive file: ${file.name}`);
+    const oldArchivePromises = archivesOlderThan1Day.map(async (file) => {
+        const [_archivesFolder, _weddingId, galleryId] = file.name.split('/');
 
-                return db.gallery.update({
-                    where: { id: galleryId },
-                    data: {
-                        downloadUrl: null,
-                        downloadRequestAt: null,
-                        downloadPending: false,
-                    },
-                });
-            })
-        );
+        await file.delete();
+        logger.info(`Deleted archive file: ${file.name}`);
+
+        return db.gallery.update({
+            where: { id: galleryId },
+            data: {
+                downloadUrl: null,
+                downloadRequestAt: null,
+                downloadPending: false,
+            },
+        });
+    });
+
+    try {
+        await Promise.allSettled(oldArchivePromises);
         logger.info('Old archives deletion process completed');
     } catch (err) {
-        const errorMessage = `Error deleting old archives: ${
-            (err as Error).message
-        }`;
+        const error = err as Error;
+        const errorMessage = `Error deleting old archives: ${error.message}`;
         logger.error(errorMessage);
         throw new Error(errorMessage);
     }
