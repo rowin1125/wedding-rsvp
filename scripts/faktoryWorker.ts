@@ -2,6 +2,7 @@ import { downloadInBackground } from 'api/src/lib/gcloudBackgroundDownloader';
 import { logger } from 'api/src/lib/logger';
 import faktory from 'faktory-worker';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 faktory.register('downloadAllFiles', async (taskArgs: any) => {
     logger.info('running downloadAllFiles in background worker');
 

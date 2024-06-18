@@ -1,3 +1,6 @@
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { performance } from 'perf_hooks'; // Node.js performance hooks
 
 import { File, Bucket } from '@google-cloud/storage';
@@ -123,9 +126,9 @@ const createBatchZip = (
     startIdx: number,
     totalFiles: number
 ): Promise<File> => {
-    const zipFile = bucket.file(zipFileName);
-    const zipStream = zipFile.createWriteStream();
-    const archive = archiver('zip', { zlib: { level: 3 } });
+    const localZipPath = path.join(os.tmpdir(), path.basename(zipFileName));
+    const output = fs.createWriteStream(localZipPath);
+    const archive = archiver('zip', { zlib: { level: 6 } });
 
     return new Promise((resolve, reject) => {
         archive.on('error', (err) => {
@@ -134,18 +137,21 @@ const createBatchZip = (
             reject(new Error(errorMessage));
         });
 
-        zipStream.on('error', (err) => {
+        output.on('error', (err) => {
             const errorMessage = `Error writing zip file: ${err.message}`;
             logger.error(errorMessage);
             reject(new Error(errorMessage));
         });
 
-        zipStream.on('close', () => {
-            logger.info(`Batch zip file created: ${zipFileName}`);
+        output.on('close', async () => {
+            logger.info(`Batch zip file created: ${localZipPath}`);
+            const zipFile = bucket.file(zipFileName);
+            await zipFile.save(fs.readFileSync(localZipPath));
+            fs.unlinkSync(localZipPath); // delete the local zip file after upload
             resolve(zipFile);
         });
 
-        archive.pipe(zipStream);
+        archive.pipe(output);
 
         files.forEach((file, index) => {
             const fileStream = file.createReadStream();
@@ -181,8 +187,11 @@ const mergeZips = (
     finalZipFileName: string,
     bucket: Bucket
 ): Promise<File> => {
-    const finalZipFile = bucket.file(finalZipFileName);
-    const finalZipStream = finalZipFile.createWriteStream();
+    const localFinalZipPath = path.join(
+        os.tmpdir(),
+        path.basename(finalZipFileName)
+    );
+    const output = fs.createWriteStream(localFinalZipPath);
     const archive = archiver('zip', { zlib: { level: 0 } });
 
     return new Promise((resolve, reject) => {
@@ -192,44 +201,70 @@ const mergeZips = (
             reject(new Error(errorMessage));
         });
 
-        finalZipStream.on('error', (err) => {
+        output.on('error', (err) => {
             const errorMessage = `Error writing final zip file: ${err.message}`;
             logger.error(errorMessage);
             reject(new Error(errorMessage));
         });
 
-        finalZipStream.on('close', () => {
-            logger.info(`Final zip file created: ${finalZipFileName}`);
-            resolve(finalZipFile);
+        output.on('close', () => {
+            logger.info(`Final zip file created: ${localFinalZipPath}`);
+            const finalZipFile = bucket.file(finalZipFileName);
+            finalZipFile
+                .save(fs.readFileSync(localFinalZipPath))
+                .then(() => {
+                    fs.unlinkSync(localFinalZipPath); // delete the local final zip file after upload
+                    resolve(finalZipFile);
+                })
+                .catch((err) => {
+                    const errorMessage = `Error uploading final zip file: ${err.message}`;
+                    logger.error(errorMessage);
+                    reject(new Error(errorMessage));
+                });
         });
 
-        archive.pipe(finalZipStream);
+        archive.pipe(output);
 
-        zipFiles.forEach((zipFile, index) => {
-            const fileStream = zipFile.createReadStream();
-            fileStream.on('error', (err) => {
-                const errorMessage = `Error reading zip file ${zipFile.name}: ${err.message}`;
-                logger.error(errorMessage);
-                reject(new Error(errorMessage));
-            });
+        let remainingCount = zipFiles.length;
 
-            archive.append(fileStream, {
-                name: zipFile.name.split('/').pop() ?? zipFile.name,
-            });
+        zipFiles.forEach((zipFile) => {
+            const localZipPath = path.join(
+                os.tmpdir(),
+                path.basename(zipFile.name)
+            );
+            zipFile
+                .download({ destination: localZipPath })
+                .then(() => {
+                    const fileStream = fs.createReadStream(localZipPath);
+                    archive.append(fileStream, {
+                        name: zipFile.name.split('/').pop() ?? zipFile.name,
+                    });
 
-            fileStream.on('end', () => {
-                logger.info(
-                    `Merged zip file ${index + 1}/${zipFiles.length}: ${
-                        zipFile.name
-                    }`
-                );
-            });
-        });
+                    fileStream.on('end', () => {
+                        logger.info(`Merged zip file: ${zipFile.name}`);
+                        fs.unlinkSync(localZipPath); // delete the local batch zip file after merging
+                        remainingCount--;
 
-        archive.finalize().catch((error) => {
-            const errorMessage = `Error finalizing merged archive: ${error.message}`;
-            logger.error(errorMessage);
-            reject(new Error(errorMessage));
+                        if (remainingCount === 0) {
+                            archive.finalize().catch((error) => {
+                                const errorMessage = `Error finalizing merged archive: ${error.message}`;
+                                logger.error(errorMessage);
+                                reject(new Error(errorMessage));
+                            });
+                        }
+                    });
+
+                    fileStream.on('error', (err) => {
+                        const errorMessage = `Error reading zip file ${zipFile.name}: ${err.message}`;
+                        logger.error(errorMessage);
+                        reject(new Error(errorMessage));
+                    });
+                })
+                .catch((err) => {
+                    const errorMessage = `Error downloading zip file ${zipFile.name}: ${err.message}`;
+                    logger.error(errorMessage);
+                    reject(new Error(errorMessage));
+                });
         });
     });
 };
