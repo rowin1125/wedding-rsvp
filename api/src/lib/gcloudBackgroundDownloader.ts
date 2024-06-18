@@ -64,7 +64,7 @@ const createAndMergeZips = async (
     });
     logger.info(`Found ${files.length} files in gallery: ${gallery.name}`);
 
-    const batchSize = 100;
+    const batchSize = 50;
     const archiveFolderName = ARCHIVE_PREFIX;
     const zipFiles: File[] = [];
 
