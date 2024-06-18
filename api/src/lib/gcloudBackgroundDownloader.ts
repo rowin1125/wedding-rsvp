@@ -76,11 +76,16 @@ const createAndMergeZips = async (
         const endIdx = Math.min(i + batchSize, files.length);
         const batchZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}_photos-${startIdx}-${endIdx}.zip`;
 
-        logger.info(
-            `Creating batch zip file: ${batchZipFileName} with ${batchFiles.length} files`
-        );
+        logger.info(`Starting batch zip creation: ${batchZipFileName}`);
+
         batchPromises.push(
-            createBatchZip(batchFiles, batchZipFileName, bucket)
+            createBatchZip(
+                batchFiles,
+                batchZipFileName,
+                bucket,
+                startIdx,
+                files.length
+            )
         );
     }
 
@@ -114,7 +119,9 @@ const createAndMergeZips = async (
 const createBatchZip = (
     files: File[],
     zipFileName: string,
-    bucket: Bucket
+    bucket: Bucket,
+    startIdx: number,
+    totalFiles: number
 ): Promise<File> => {
     const zipFile = bucket.file(zipFileName);
     const zipStream = zipFile.createWriteStream();
@@ -140,7 +147,7 @@ const createBatchZip = (
 
         archive.pipe(zipStream);
 
-        files.forEach((file) => {
+        files.forEach((file, index) => {
             const fileStream = file.createReadStream();
             fileStream.on('error', (err) => {
                 const errorMessage = `Error reading file ${file.name}: ${err.message}`;
@@ -150,6 +157,14 @@ const createBatchZip = (
 
             archive.append(fileStream, {
                 name: file.name.split('/').pop() ?? file.name,
+            });
+
+            fileStream.on('end', () => {
+                logger.info(
+                    `Added file ${startIdx + index + 1}/${totalFiles} to zip: ${
+                        file.name
+                    }`
+                );
             });
         });
 
@@ -190,7 +205,7 @@ const mergeZips = (
 
         archive.pipe(finalZipStream);
 
-        zipFiles.forEach((zipFile) => {
+        zipFiles.forEach((zipFile, index) => {
             const fileStream = zipFile.createReadStream();
             fileStream.on('error', (err) => {
                 const errorMessage = `Error reading zip file ${zipFile.name}: ${err.message}`;
@@ -200,6 +215,14 @@ const mergeZips = (
 
             archive.append(fileStream, {
                 name: zipFile.name.split('/').pop() ?? zipFile.name,
+            });
+
+            fileStream.on('end', () => {
+                logger.info(
+                    `Merged zip file ${index + 1}/${zipFiles.length}: ${
+                        zipFile.name
+                    }`
+                );
             });
         });
 
