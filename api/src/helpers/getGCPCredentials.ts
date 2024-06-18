@@ -23,6 +23,9 @@ export const getStorageClient = async (bucketName?: string) => {
     const storageClient = new Storage({
         ...getGCPCredentials(),
         timeout: 60000,
+        retryOptions: {
+            autoRetry: true,
+        },
     });
     const finalBucketName =
         bucketName ?? process.env.GCLOUD_STORAGE_BUCKET ?? 'bruiloft_buddy_dev';
