@@ -58,6 +58,8 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
     endDownloadInBackground();
 };
 
+let totalFilesAdded = 0;
+
 const createAndMergeZips = async (
     gallery: Gallery
 ): Promise<string | undefined> => {
@@ -166,8 +168,11 @@ const createBatchZip = (
             });
 
             fileStream.on('end', () => {
+                totalFilesAdded++;
                 logger.info(
-                    `Added file ${startIdx + index + 1}/${totalFiles} to zip: ${
+                    `Added file ${startIdx + index}/${
+                        files.length
+                    } - ${totalFilesAdded}/${totalFiles} - files added in total to zip: ${
                         file.name
                     }`
                 );
