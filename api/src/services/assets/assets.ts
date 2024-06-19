@@ -61,6 +61,7 @@ export const createAssets: MutationResolvers['createAssets'] = async ({
             const metaData = {} as Prisma.JsonObject;
 
             assetArray.push({
+                id: imageData.uuid,
                 url,
                 metadata: metaData,
                 galleryId: galleryId,
