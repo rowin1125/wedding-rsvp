@@ -48,7 +48,9 @@ export default async () => {
                         where: { id: asset.id },
                         data: {
                             gcloudStoragePath: `${name}.${type.ext}`,
-                            url: `https://storage.googleapis.com/${process.env.GCLOUD_STORAGE_BUCKET}/${name}.${type.ext}`,
+                            url: `https://storage.googleapis.com/${encodeURIComponent(
+                                `${process.env.GCLOUD_STORAGE_BUCKET}/${name}.${type.ext}`
+                            )}`,
                         },
                     });
 
