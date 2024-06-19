@@ -1,8 +1,9 @@
-import { performance } from 'perf_hooks'; // Node.js performance hooks
+import { performance } from 'perf_hooks';
 
 import { File, Bucket } from '@google-cloud/storage';
 import { Gallery } from '@prisma/client';
 import archiver from 'archiver';
+import Bottleneck from 'bottleneck';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 
@@ -17,8 +18,10 @@ const logTime = (label: string) => {
     };
 };
 
-const ONE_DAY_TIME = 1000 * 60 * 60 * 24; // 1 day
+const ONE_DAY_TIME = 1000 * 60 * 60 * 24;
 const ARCHIVE_PREFIX = 'archive';
+const MAX_CONCURRENT_UPLOADS = 20;
+let totalFilesAdded = 0;
 
 export const downloadInBackground = async ({ id }: { id: string }) => {
     const endDownloadInBackground = logTime('downloadInBackground');
@@ -53,9 +56,8 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
 
     logger.info('Gallery download URL has been updated in the database');
     endDownloadInBackground();
+    totalFilesAdded = 0;
 };
-
-let totalFilesAdded = 0;
 
 const createAndMergeZips = async (
     gallery: Gallery
@@ -84,7 +86,6 @@ const createAndMergeZips = async (
             batchFiles,
             batchZipFileName,
             bucket,
-            startIdx,
             files.length
         );
         zipFiles.push(batchZipFile);
@@ -100,7 +101,7 @@ const createAndMergeZips = async (
     const [downloadUrl] = await finalZipFile.getSignedUrl({
         version: 'v4',
         action: 'read',
-        expires: Date.now() + ONE_DAY_TIME, // 1 day
+        expires: Date.now() + ONE_DAY_TIME,
     });
 
     try {
@@ -117,17 +118,21 @@ const createAndMergeZips = async (
     return downloadUrl;
 };
 
-const createBatchZip = (
+const createBatchZip = async (
     files: File[],
     zipFileName: string,
     bucket: Bucket,
-    startIdx: number,
     totalFiles: number
 ): Promise<File> => {
     const zipFile = bucket.file(zipFileName);
     const zipStream = zipFile.createWriteStream();
     const archive = archiver('zip', {
-        zlib: { level: 6 }, // Set compression level
+        zlib: { level: 3 },
+    });
+
+    const limiter = new Bottleneck({
+        maxConcurrent: MAX_CONCURRENT_UPLOADS,
+        minTime: 0, // Minimum time between requests
     });
 
     return new Promise((resolve, reject) => {
@@ -150,35 +155,41 @@ const createBatchZip = (
 
         archive.pipe(zipStream);
 
-        files.forEach((file, index) => {
-            const fileStream = file.createReadStream();
-            fileStream.on('error', (err) => {
-                const errorMessage = `Error reading file ${file.name}: ${err.message}`;
+        const addFileToArchive = (file: File) => {
+            return new Promise<void>((resolve, reject) => {
+                const fileStream = file.createReadStream();
+
+                fileStream.on('error', (err) => {
+                    const errorMessage = `Error reading file ${file.name}: ${err.message}`;
+                    logger.error(errorMessage);
+                    reject(new Error(errorMessage));
+                });
+
+                fileStream.on('end', () => {
+                    totalFilesAdded++;
+                    logger.info(
+                        `Added file - ${totalFilesAdded}/${totalFiles} - files added in total to zip: ${file.name}`
+                    );
+                    resolve(); // Resolve the promise here, after the file processing is complete
+                });
+
+                archive.append(fileStream, {
+                    name: file.name.split('/').pop() ?? file.name,
+                });
+            });
+        };
+
+        const addFilePromises = files.map((file) =>
+            limiter.schedule(() => addFileToArchive(file))
+        );
+
+        Promise.all(addFilePromises)
+            .then(() => archive.finalize())
+            .catch((error) => {
+                const errorMessage = `Error finalizing archive: ${error.message}`;
                 logger.error(errorMessage);
                 reject(new Error(errorMessage));
             });
-
-            archive.append(fileStream, {
-                name: file.name.split('/').pop() ?? file.name,
-            });
-
-            fileStream.on('end', () => {
-                totalFilesAdded++;
-                logger.info(
-                    `Added file ${startIdx + index}/${
-                        files.length
-                    } - ${totalFilesAdded}/${totalFiles} - files added in total to zip: ${
-                        file.name
-                    }`
-                );
-            });
-        });
-
-        archive.finalize().catch((error) => {
-            const errorMessage = `Error finalizing archive: ${error.message}`;
-            logger.error(errorMessage);
-            reject(new Error(errorMessage));
-        });
     });
 };
 
@@ -190,7 +201,7 @@ const mergeZips = (
     const finalZipFile = bucket.file(finalZipFileName);
     const finalZipStream = finalZipFile.createWriteStream();
     const archive = archiver('zip', {
-        zlib: { level: 0 }, // Set compression level
+        zlib: { level: 0 },
     });
 
     return new Promise((resolve, reject) => {
@@ -237,44 +248,10 @@ export const deleteOldArchives = async () => {
         prefix: ARCHIVE_PREFIX,
     });
 
-    logger.info(`Found ${allArchiveFiles.length} old archive files`);
+    logger.info(`Found old archive files, starting deletion`);
 
-    const archivesOlderThan1Day = allArchiveFiles.filter((file) => {
-        if (!file.metadata.timeCreated) return true;
+    const deletePromises = allArchiveFiles.map((file) => file.delete());
+    await Promise.allSettled(deletePromises);
 
-        const createdAt = new Date(file.metadata.timeCreated);
-        const now = new Date();
-        const diff = now.getTime() - createdAt.getTime();
-        return diff > ONE_DAY_TIME;
-    });
-
-    logger.info(
-        `Deleting ${archivesOlderThan1Day.length} archives older than 1 day`
-    );
-
-    const oldArchivePromises = archivesOlderThan1Day.map(async (file) => {
-        const [_archivesFolder, _weddingId, galleryId] = file.name.split('/');
-
-        await file.delete();
-        logger.info(`Deleted archive file: ${file.name}`);
-
-        return db.gallery.update({
-            where: { id: galleryId },
-            data: {
-                downloadUrl: null,
-                downloadRequestAt: null,
-                downloadPending: false,
-            },
-        });
-    });
-
-    try {
-        await Promise.allSettled(oldArchivePromises);
-        logger.info('Old archives deletion process completed');
-    } catch (err) {
-        const error = err as Error;
-        const errorMessage = `Error deleting old archives: ${error.message}`;
-        logger.error(errorMessage);
-        throw new Error(errorMessage);
-    }
+    logger.info('Old archives deleted');
 };

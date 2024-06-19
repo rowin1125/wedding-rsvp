@@ -8738,6 +8738,7 @@ __metadata:
     "@types/node": ^20.14.2
     "@types/nodemailer": ^6.4.10
     "@types/uuid": ^9.0.8
+    bottleneck: ^2.19.5
     cron: ^3.1.7
     faktory-worker: ^4.5.1
     nodemailer: ^6.9.5
@@ -9698,6 +9699,13 @@ __metadata:
   version: 1.0.0
   resolution: "boolbase@npm:1.0.0"
   checksum: e4b53deb4f2b85c52be0e21a273f2045c7b6a6ea002b0e139c744cb6f95e9ec044439a52883b0d74dedd1ff3da55ed140cfdddfed7fb0cccbed373de5dce1bcf
+  languageName: node
+  linkType: hard
+
+"bottleneck@npm:^2.19.5":
+  version: 2.19.5
+  resolution: "bottleneck@npm:2.19.5"
+  checksum: b0f72e45b2e0f56a21ba720183f16bef8e693452fb0495d997fa354e42904353a94bd8fd429868e6751bc85e54b6755190519eed5a0ae0a94a5185209ae7c6d0
   languageName: node
   linkType: hard
 
