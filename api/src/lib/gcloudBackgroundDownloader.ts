@@ -273,12 +273,13 @@ const mergeZips = (
 
         zipFiles.forEach((zipFile) => {
             const fileStream = zipFile.createReadStream();
+            const name = zipFile.name.split('/').pop() ?? zipFile.name;
             fileStream.on('error', (err) => {
                 const errorMessage = `Error reading zip file ${zipFile.name}: ${err.message}`;
                 logger.error(errorMessage);
                 reject(new Error(errorMessage));
             });
-            archive.append(fileStream, { name: zipFile.name });
+            archive.append(fileStream, { name });
         });
 
         archive.finalize().catch((error) => {
