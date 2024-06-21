@@ -8,6 +8,7 @@ import Bottleneck from 'bottleneck';
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 
 import { db } from './db';
+import { mailUser } from './email';
 import { logger } from './logger';
 
 const logTime = (label: string) => {
@@ -27,7 +28,17 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
     const endDownloadInBackground = logTime('downloadInBackground');
     logger.info(`Starting download in background for gallery ID: ${id}`);
 
-    const gallery = await db.gallery.findUnique({ where: { id } });
+    const gallery = await db.gallery.findUnique({
+        where: { id },
+        include: {
+            wedding: {
+                include: {
+                    user: true,
+                },
+            },
+        },
+    });
+
     if (!gallery) {
         const errorMessage = `Gallery with ID: ${id} not found`;
         logger.error(errorMessage);
@@ -54,9 +65,38 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
         },
     });
 
+    if (gallery?.wedding?.user?.email) {
+        await mailUser({
+            to: [
+                {
+                    name: `Foto gallerij: ${gallery.name}`,
+                    email: gallery.wedding.user.email,
+                },
+            ],
+            templateId: 6,
+            params: {
+                downloadUrl,
+                websiteUrl: process.env.REDWOOD_ENV_VERCEL_URL,
+            },
+        });
+    }
     logger.info('Gallery download URL has been updated in the database');
     endDownloadInBackground();
     totalFilesAdded = 0;
+};
+
+const revertDownloadRequest = async ({ id }: { id: string }) => {
+    try {
+        await db.gallery.update({
+            where: { id },
+            data: {
+                downloadPending: false,
+            },
+        });
+        logger.info(`Gallery download request reverted for gallery: ${id}`);
+    } catch (error) {
+        logger.error(`Error reverting download request for gallery: ${id}`);
+    }
 };
 
 const createAndMergeZips = async (
@@ -72,23 +112,29 @@ const createAndMergeZips = async (
     const archiveFolderName = ARCHIVE_PREFIX;
     const zipFiles: File[] = [];
 
-    for (let i = 0; i < files.length; i += batchSize) {
-        const batchFiles = files.slice(i, i + batchSize);
-        const startIdx = i + 1;
-        const endIdx = Math.min(i + batchSize, files.length);
-        const batchZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}_photos-${startIdx}-${endIdx}.zip`;
+    try {
+        for (let i = 0; i < files.length; i += batchSize) {
+            const batchFiles = files.slice(i, i + batchSize);
+            const startIdx = i + 1;
+            const endIdx = Math.min(i + batchSize, files.length);
+            const batchZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}_photos-${startIdx}-${endIdx}.zip`;
 
-        logger.info(
-            `Creating batch zip file: ${batchZipFileName} with ${batchFiles.length} files`
-        );
+            logger.info(
+                `Creating batch zip file: ${batchZipFileName} with ${batchFiles.length} files`
+            );
 
-        const batchZipFile = await createBatchZip(
-            batchFiles,
-            batchZipFileName,
-            bucket,
-            files.length
-        );
-        zipFiles.push(batchZipFile);
+            const batchZipFile = await createBatchZip(
+                batchFiles,
+                batchZipFileName,
+                bucket,
+                files.length
+            );
+            zipFiles.push(batchZipFile);
+        }
+    } catch (err) {
+        await revertDownloadRequest({ id: gallery.id });
+        const error = err as Error;
+        logger.error(`Error creating batch zip files: ${error.message}`);
     }
 
     const finalZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}.zip`;
@@ -109,6 +155,7 @@ const createAndMergeZips = async (
         await Promise.allSettled(deletePromises);
         logger.info('Batch zip files deleted');
     } catch (err) {
+        await revertDownloadRequest({ id: gallery.id });
         const error = err as Error;
         const errorMessage = `Error deleting batch zip files: ${error.message}`;
         logger.error(errorMessage);

@@ -25,20 +25,6 @@ export async function mailUser(options: MailUserOptions) {
     apiKey.apiKey = process.env.SENDINBLUE_API_KEY?.toString();
 
     const transEmailApi = new Sib.TransactionalEmailsApi();
-    const bcc =
-        process.env.NODE_ENV === 'development'
-            ? [
-                  {
-                      name: 'Demi & Rowin',
-                      email: 'rowinmol648@gmail.com',
-                  },
-              ]
-            : [
-                  {
-                      name: 'Demi & Rowin',
-                      email: 'demi.rowin@gmail.com',
-                  },
-              ];
 
     const emailOptions = {
         ...options,
@@ -46,7 +32,6 @@ export async function mailUser(options: MailUserOptions) {
             name: 'Demi & Rowin',
             email: 'demi.rowin@gmail.com',
         },
-        bcc,
     };
 
     return (

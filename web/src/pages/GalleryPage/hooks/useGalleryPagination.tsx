@@ -37,7 +37,7 @@ export const useGalleryPagination = () => {
     return context;
 };
 
-export const DEFAULT_PAGINATION_OFFSET = 28;
+export const DEFAULT_PAGINATION_OFFSET = 48;
 
 export const GalleryPaginationProvider = ({
     children,
