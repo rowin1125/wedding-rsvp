@@ -48,7 +48,7 @@ const DownloadZip = ({ gallery }: DownloadZipProps) => {
         ? new Date(latestDownloadRequest?.createdAt).getTime() + thirtyMinutes >
               new Date().getTime() &&
           latestDownloadRequest?.status !== 'SUCCESS'
-        : true;
+        : false;
 
     const maxDownloadsReached =
         gallery.totalDownloadRequests >= gallery.maxAllowedDownloads;
