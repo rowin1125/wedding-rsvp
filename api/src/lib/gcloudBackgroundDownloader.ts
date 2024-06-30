@@ -64,6 +64,17 @@ export const downloadInBackground = async ({
         throw new Error(errorMessage);
     }
 
+    // Set any galleryDownloadRequest with the same galleryId to FAILED
+    await db.galleryDownloadRequest.updateMany({
+        where: {
+            galleryId,
+            status: 'PENDING',
+        },
+        data: {
+            status: 'FAILED',
+        },
+    });
+
     await db.galleryDownloadRequest.update({
         where: { id: downloadId },
         data: {
