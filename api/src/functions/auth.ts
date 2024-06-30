@@ -10,7 +10,7 @@ import {
 import { db } from 'src/lib/db';
 import { activateUserEmail } from 'src/services/users/users';
 
-import { mailUser } from '../lib/email';
+import { EMAIL_TEMPLATES_MAP, mailUser } from '../lib/email';
 
 export const handler = async (
     event: APIGatewayProxyEvent,
@@ -25,7 +25,7 @@ export const handler = async (
                         email: user.email,
                     },
                 ],
-                templateId: 2,
+                templateId: EMAIL_TEMPLATES_MAP.PASSWORD_RESET,
                 params: {
                     recoverUrl: `${process.env.REDWOOD_ENV_VERCEL_URL}/wachtwoord-herstellen?resetToken=${resetToken}`,
                 },

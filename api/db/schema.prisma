@@ -91,19 +91,35 @@ model UserRole {
 }
 
 model Gallery {
-    id                String    @id @default(cuid())
-    name              String
-    gcloudStoragePath String
-    qrCode            String?   @unique @db.Text
-    qrCodeId          String?
-    downloadUrl       String?
-    downloadRequestAt DateTime?
-    downloadPending   Boolean   @default(false)
-    wedding           Wedding   @relation(fields: [weddingId], references: [id], onDelete: Cascade)
-    weddingId         String
-    assets            Asset[]
-    createdAt         DateTime  @default(now())
-    updatedAt         DateTime  @updatedAt
+    id                      String                   @id @default(cuid())
+    name                    String
+    gcloudStoragePath       String
+    qrCode                  String?                  @unique @db.Text
+    qrCodeId                String?
+    wedding                 Wedding                  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId               String
+    assets                  Asset[]
+    createdAt               DateTime                 @default(now())
+    updatedAt               DateTime                 @updatedAt
+    galleryDownloadRequests GalleryDownloadRequest[]
+    maxAllowedDownloads     Int                      @default(5)
+}
+
+enum GalleryDownloadRequestStatus {
+    PENDING
+    SUCCESS
+    FAILED
+}
+
+model GalleryDownloadRequest {
+    id          String                       @id @default(cuid())
+    gallery     Gallery                      @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+    galleryId   String
+    status      GalleryDownloadRequestStatus
+    validUntil  DateTime?
+    downloadUrl String?
+    createdAt   DateTime                     @default(now())
+    updatedAt   DateTime                     @updatedAt
 }
 
 model Asset {

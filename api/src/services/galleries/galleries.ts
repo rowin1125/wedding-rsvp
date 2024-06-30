@@ -11,6 +11,7 @@ import { UserInputError } from '@redwoodjs/graphql-server';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { db } from 'src/lib/db';
+import { ONE_DAY_TIME } from 'src/lib/gcloudBackgroundDownloader';
 
 export const galleries: QueryResolvers['galleries'] = () => {
     return db.gallery.findMany();
@@ -97,26 +98,48 @@ export const downloadGallery: MutationResolvers['downloadGallery'] = async ({
 }) => {
     const gallery = await db.gallery.findUnique({
         where: { id },
+        include: {
+            galleryDownloadRequests: {
+                select: {
+                    id: true,
+                },
+            },
+        },
     });
 
     if (!gallery) {
         throw new Error('Gallery not found');
     }
 
+    // TODO: Build in a feature to upgrade this on an user basis
+    if (gallery.galleryDownloadRequests.length >= gallery.maxAllowedDownloads) {
+        throw new Error('Maximum number of download requests reached');
+    }
+
+    const downloadRequest = await db.galleryDownloadRequest.create({
+        data: {
+            gallery: {
+                connect: {
+                    id: gallery.id,
+                },
+            },
+            status: 'PENDING',
+            validUntil: new Date(Date.now() + ONE_DAY_TIME),
+        },
+    });
+
     const client = await faktory.connect({
         url: process.env.FAKTORY_URL,
         password: process.env.FAKTORY_PASSWORD,
         port: 7419,
     });
-    await client.job('downloadAllFiles', { id }).push();
+    await client
+        .job('downloadAllFiles', {
+            galleryId: id,
+            downloadId: downloadRequest.id,
+        })
+        .push();
     await client.close();
-
-    await db.gallery.update({
-        where: { id },
-        data: {
-            downloadPending: true,
-        },
-    });
 
     return 'Download aangevraagd. Ververs de pagina na enkele minuten om de downloadlink te zien. Deze link 1 dag geldig.';
 };
@@ -124,6 +147,20 @@ export const downloadGallery: MutationResolvers['downloadGallery'] = async ({
 export const DEFAULT_PAGINATION_OFFSET = 28;
 
 export const Gallery: GalleryRelationResolvers = {
+    totalDownloadRequests: async (_obj, { root }) => {
+        return db.galleryDownloadRequest.count({
+            where: { galleryId: root?.id },
+        });
+    },
+    galleryDownloadRequests: async (_obj, { root }) => {
+        return db.gallery
+            .findUnique({ where: { id: root?.id } })
+            .galleryDownloadRequests({
+                orderBy: {
+                    createdAt: 'desc',
+                },
+            });
+    },
     wedding: (_obj, { root }) => {
         return db.gallery.findUnique({ where: { id: root?.id } }).wedding();
     },

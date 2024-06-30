@@ -5,14 +5,14 @@ export const schema = gql`
         gcloudStoragePath: String!
         qrCode: String
         qrCodeId: String
-        downloadUrl: String
-        downloadRequestAt: DateTime
-        downloadPending: Boolean!
         wedding: Wedding!
         weddingId: String!
         assets(take: Int, skip: Int): PaginatedAssets!
         createdAt: DateTime!
         updatedAt: DateTime!
+        galleryDownloadRequests: [GalleryDownloadRequest]!
+        maxAllowedDownloads: Int!
+        totalDownloadRequests: Int!
     }
 
     type PaginatedAssets {

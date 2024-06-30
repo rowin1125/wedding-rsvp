@@ -29,9 +29,15 @@ export const FIND_GALLERY_QUERY = gql`
             qrCode
             qrCodeId
             weddingId
-            downloadUrl
-            downloadRequestAt
-            downloadPending
+            totalDownloadRequests
+            maxAllowedDownloads
+            galleryDownloadRequests {
+                createdAt
+                updatedAt
+                status
+                validUntil
+                downloadUrl
+            }
         }
     }
 `;

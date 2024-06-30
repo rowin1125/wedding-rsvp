@@ -5,7 +5,7 @@ import type {
 } from 'types/graphql';
 
 import { db } from 'src/lib/db';
-import { mailUser } from 'src/lib/email';
+import { EMAIL_TEMPLATES_MAP, mailUser } from 'src/lib/email';
 
 export const weddingInvitations: QueryResolvers['weddingInvitations'] = ({
     weddingId,
@@ -69,7 +69,7 @@ export const createWeddingInvitation: MutationResolvers['createWeddingInvitation
                         email: input.email,
                     },
                 ],
-                templateId: 1,
+                templateId: EMAIL_TEMPLATES_MAP.RSVP_CONFIRMATION,
                 params: {
                     name:
                         input.weddingGuests[0].name ??

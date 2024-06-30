@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import { DownloadIcon } from '@chakra-ui/icons';
 import {
     Heading,
+    Box,
     Alert,
     AlertIcon,
-    Button,
-    Box,
     Text,
-    Tooltip,
+    Button,
     Icon,
+    Tooltip,
 } from '@chakra-ui/react';
 import { TbReload } from 'react-icons/tb';
 import { FindGalleryQuery } from 'types/graphql';
@@ -21,67 +20,113 @@ type DownloadZipProps = {
 };
 
 const DownloadZip = ({ gallery }: DownloadZipProps) => {
-    const { downloadGallery, loading: downloadLoading } = useDownloadGallery();
+    const { downloadGallery, loading: downloadLoading } = useDownloadGallery(
+        gallery.id
+    );
     const [requestDownload, setRequestDownload] = useState(false);
+    const latestDownloadRequest = gallery.galleryDownloadRequests[0];
 
     useEffect(() => {
-        if (!gallery || !gallery.downloadPending) return;
+        if (!latestDownloadRequest) return;
 
-        setRequestDownload(gallery.downloadPending);
-    }, [gallery, gallery.downloadPending]);
+        setRequestDownload(latestDownloadRequest.status === 'PENDING');
+    }, [latestDownloadRequest]);
 
-    const downloadRequestAt = gallery.downloadRequestAt
-        ? new Date(gallery.downloadRequestAt)
-        : new Date();
-    const downloadLink = gallery.downloadUrl;
-    const hours = ('0' + downloadRequestAt.getHours()).slice(-2);
-    const minutes = ('0' + downloadRequestAt.getMinutes()).slice(-2);
-    const seconds = ('0' + downloadRequestAt.getSeconds()).slice(-2);
+    const downloadLink = latestDownloadRequest?.downloadUrl || null;
+    const createdAt = new Date(latestDownloadRequest?.createdAt ?? new Date());
 
-    const initialDate = downloadRequestAt;
-    const validTillDate = new Date(
-        initialDate.setHours(initialDate.getHours() + 24)
-    );
+    const hours = ('0' + createdAt.getHours()).slice(-2);
+    const minutes = ('0' + createdAt.getMinutes()).slice(-2);
+    const seconds = ('0' + createdAt.getSeconds()).slice(-2);
 
-    const isValid = validTillDate > new Date();
+    const isValid = latestDownloadRequest?.validUntil
+        ? new Date(latestDownloadRequest?.validUntil) > new Date()
+        : false;
+
+    const thirtyMinutes = 30 * 60 * 1000;
+    const latestDownloadRequestIsWithin30Min = latestDownloadRequest
+        ? new Date(latestDownloadRequest?.createdAt).getTime() + thirtyMinutes >
+              new Date().getTime() &&
+          latestDownloadRequest?.status !== 'SUCCESS'
+        : true;
+
+    const maxDownloadsReached =
+        gallery.totalDownloadRequests >= gallery.maxAllowedDownloads;
 
     return (
         <Box>
             <Heading as="h2" size="h2">
                 Download opties
             </Heading>
-            {!isValid && !!downloadLink && (
-                <Alert status="warning" my={6}>
+            {/* No download */}
+            {!latestDownloadRequest && (
+                <Alert status="info" my={6}>
                     <AlertIcon />
-                    <Text>
-                        De download link is verlopen. Vraag een nieuwe download
-                        aan.
-                    </Text>
+                    <Box>
+                        <Text>
+                            Je hebt nog geen download aangevraagd. Vraag een
+                            download aan om de galerij te downloaden. Dit kan
+                            enkele minuten duren, afhankelijk van de grootte van
+                            de galerij.
+                        </Text>
+                        <br />
+                        <Text>
+                            In totaal heb je{' '}
+                            <strong>{gallery.maxAllowedDownloads}</strong>{' '}
+                            downloads tegoed. Als je meer downloads nodig hebt,
+                            neem dan contact op via de klantenservice.
+                        </Text>
+                    </Box>
                 </Alert>
             )}
-            {!!downloadLink && isValid && (
-                <>
+            {/* Pending download */}
+            {latestDownloadRequest &&
+                latestDownloadRequest.status === 'PENDING' && (
+                    <Alert status="info" my={6}>
+                        <AlertIcon />
+                        <Box>
+                            <Text fontSize="xs" fontStyle="italic">
+                                <strong>Aangevraagd op:</strong>{' '}
+                                {createdAt.toLocaleDateString()} - {hours}:
+                                {minutes}:{seconds}
+                            </Text>
+                            <br />
+                            <Text>
+                                Je download is nog niet klaar. Dit kan enkele
+                                minuten duren, afhankelijk van de grootte van de
+                                galerij.
+                            </Text>
+                            <br />
+                            <Text>
+                                In totaal heb je{' '}
+                                <strong>{gallery.maxAllowedDownloads}</strong>{' '}
+                                downloads tegoed. Als je meer downloads nodig
+                                hebt, neem dan contact op via de klantenservice.
+                            </Text>
+                        </Box>
+                    </Alert>
+                )}
+            {/* Completed download */}
+            {latestDownloadRequest &&
+                latestDownloadRequest.status === 'SUCCESS' &&
+                downloadLink && (
                     <Alert status="success" my={6}>
                         <AlertIcon />
                         <Box>
-                            {gallery.downloadRequestAt && (
-                                <Text fontSize="xs" fontStyle="italic">
-                                    <strong>Zip bestand van:</strong>{' '}
-                                    {new Date(
-                                        gallery.downloadRequestAt
-                                    ).toLocaleDateString()}{' '}
-                                    - {hours}:{minutes}:{seconds}
-                                </Text>
-                            )}
-                            {gallery.downloadRequestAt && (
-                                <Text fontSize="xs" fontStyle="italic">
-                                    <strong>Geldig tot:</strong>{' '}
-                                    {new Date(
-                                        validTillDate
-                                    ).toLocaleDateString()}{' '}
-                                    - {hours}:{minutes}:{seconds}
-                                </Text>
-                            )}
+                            <Text fontSize="xs" fontStyle="italic">
+                                <strong>Zip bestand van:</strong>{' '}
+                                {createdAt.toLocaleDateString()} - {hours}:
+                                {minutes}:{seconds}
+                            </Text>
+                            <Text fontSize="xs" fontStyle="italic">
+                                <strong>Geldig tot:</strong>{' '}
+                                {new Date(
+                                    latestDownloadRequest.validUntil
+                                        ? latestDownloadRequest.validUntil
+                                        : latestDownloadRequest.createdAt
+                                ).toLocaleDateString()}{' '}
+                                - {hours}:{minutes}:{seconds}
+                            </Text>
                             <Text mt={2}>
                                 Je kunt de galerij downloaden via de volgende
                                 link:
@@ -100,44 +145,54 @@ const DownloadZip = ({ gallery }: DownloadZipProps) => {
                             </Box>
                         </Box>
                     </Alert>
-                </>
+                )}
+            {/* Expired download */}
+            {latestDownloadRequest && !isValid && (
+                <Alert status="warning" my={6}>
+                    <AlertIcon />
+                    <Text>
+                        De download link is verlopen. Vraag een nieuwe download
+                        aan.
+                    </Text>
+                </Alert>
             )}
-            {!downloadLink && (
-                <>
-                    <Alert status="info" my={6}>
-                        <AlertIcon />
-                        <Text>
-                            Je hebt nog geen download aangevraagd of deze is
-                            verlopen voor deze galerij. Vraag een download aan
-                            om de galerij te downloaden. Dit kan enkele minuten
-                            duren, afhankelijk van de grootte van de galerij.
-                        </Text>
-                    </Alert>
-                </>
-            )}
+            <Text my={6} color={maxDownloadsReached ? 'red.500' : 'green.500'}>
+                <strong>{gallery.totalDownloadRequests}</strong> van de{' '}
+                <strong>{gallery.maxAllowedDownloads}</strong> downloads
+                gebruikt
+            </Text>
             <Button
                 variant="solid"
                 mr={4}
                 colorScheme="tertiary"
                 isLoading={downloadLoading}
-                isDisabled={requestDownload}
+                isDisabled={
+                    requestDownload ||
+                    latestDownloadRequestIsWithin30Min ||
+                    maxDownloadsReached
+                }
                 onClick={async () => {
+                    if (
+                        latestDownloadRequestIsWithin30Min ||
+                        maxDownloadsReached
+                    )
+                        return;
                     setRequestDownload(true);
                     await downloadGallery(gallery.id);
                 }}
             >
-                <DownloadIcon color="white" mr={2} />
                 Vraag download aan
             </Button>
             {requestDownload && (
                 <Tooltip
-                    label="Reload de pagina om de download link te zien. Dit kan enkele minuten duren. Indien dit na een lange periode nog niet werkt kun je een nieuwe download forceren. Indien dit niet werkt, neem dan contact op met de beheerder."
-                    aria-label="Reload de pagina om de download link te zien. Dit kan enkele minuten duren. Indien dit na een lange periode nog niet werkt kun je een nieuwe download forceren. Indien dit niet werkt, neem dan contact op met de beheerder."
+                    label="Reload de pagina om de download link te zien. Dit kan enkele minuten duren. Indien dit na een lange periode nog niet werkt kun je een nieuwe download forceren. Indien dit niet werkt, neem dan contact op met de beheerder. Dit kan maximaal 1x per 30 minuten."
+                    aria-label="Reload de pagina om de download link te zien. Dit kan enkele minuten duren. Indien dit na een lange periode nog niet werkt kun je een nieuwe download forceren. Indien dit niet werkt, neem dan contact op met de beheerder. Dit kan maximaal 1x per 30 minuten."
                 >
                     <Button
                         variant="link"
                         color="blue.500"
                         onClick={() => setRequestDownload(false)}
+                        isDisabled={latestDownloadRequestIsWithin30Min}
                     >
                         <Icon as={TbReload} color="blue.500" mr={2} />
                         Forceer nog een download

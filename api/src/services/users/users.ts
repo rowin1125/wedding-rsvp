@@ -2,7 +2,7 @@ import { createId } from '@paralleldrive/cuid2';
 import type { MutationResolvers, UserRelationResolvers } from 'types/graphql';
 
 import { db } from 'src/lib/db';
-import { mailUser } from 'src/lib/email';
+import { EMAIL_TEMPLATES_MAP, mailUser } from 'src/lib/email';
 
 export const activateUserEmail = async ({
     email,
@@ -29,7 +29,7 @@ export const activateUserEmail = async ({
                     email: user.email,
                 },
             ],
-            templateId: 3,
+            templateId: EMAIL_TEMPLATES_MAP.SIGNUP,
             params: {
                 activateUrl: `${REDWOOD_ENV_VERCEL_URL}/activeren?verifiedToken=${verifiedToken}&email=${encodedEmail}`,
             },

@@ -4,11 +4,12 @@ import { File, Bucket } from '@google-cloud/storage';
 import { Gallery } from '@prisma/client';
 import archiver from 'archiver';
 import Bottleneck from 'bottleneck';
+import { User, Wedding } from 'types/graphql';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 
 import { db } from './db';
-import { mailUser } from './email';
+import { EMAIL_TEMPLATES_MAP, mailUser } from './email';
 import { logger } from './logger';
 
 const logTime = (label: string) => {
@@ -19,17 +20,23 @@ const logTime = (label: string) => {
     };
 };
 
-const ONE_DAY_TIME = 1000 * 60 * 60 * 24;
+export const ONE_DAY_TIME = 1000 * 60 * 60 * 24;
 const ARCHIVE_PREFIX = 'archive';
 const MAX_CONCURRENT_UPLOADS = 20;
 let totalFilesAdded = 0;
 
-export const downloadInBackground = async ({ id }: { id: string }) => {
+export const downloadInBackground = async ({
+    galleryId,
+    downloadId,
+}: {
+    galleryId: string;
+    downloadId: string;
+}) => {
     const endDownloadInBackground = logTime('downloadInBackground');
-    logger.info(`Starting download in background for gallery ID: ${id}`);
+    logger.info(`Starting download in background for gallery ID: ${galleryId}`);
 
     const gallery = await db.gallery.findUnique({
-        where: { id },
+        where: { id: galleryId },
         include: {
             wedding: {
                 include: {
@@ -40,7 +47,7 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
     });
 
     if (!gallery) {
-        const errorMessage = `Gallery with ID: ${id} not found`;
+        const errorMessage = `Gallery with ID: ${galleryId} not found`;
         logger.error(errorMessage);
         throw new Error(errorMessage);
     }
@@ -49,19 +56,20 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
     await deleteOldArchives();
     logger.info(`Old archives deleted`);
 
-    const downloadUrl = await createAndMergeZips(gallery);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const downloadUrl = await createAndMergeZips(gallery as any);
     if (!downloadUrl) {
         const errorMessage = `Error creating zip archive for gallery: ${gallery.name}`;
         logger.error(errorMessage);
         throw new Error(errorMessage);
     }
 
-    await db.gallery.update({
-        where: { id },
+    await db.galleryDownloadRequest.update({
+        where: { id: downloadId },
         data: {
             downloadUrl,
-            downloadRequestAt: new Date().toISOString(),
-            downloadPending: false,
+            status: 'SUCCESS',
+            validUntil: new Date(Date.now() + ONE_DAY_TIME).toISOString(),
         },
     });
 
@@ -73,7 +81,7 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
                     email: gallery.wedding.user.email,
                 },
             ],
-            templateId: 6,
+            templateId: EMAIL_TEMPLATES_MAP.DOWNLOAD_GALLERY,
             params: {
                 downloadUrl,
                 websiteUrl: process.env.REDWOOD_ENV_VERCEL_URL,
@@ -85,22 +93,41 @@ export const downloadInBackground = async ({ id }: { id: string }) => {
     totalFilesAdded = 0;
 };
 
-const revertDownloadRequest = async ({ id }: { id: string }) => {
+const revertDownloadRequest = async ({
+    id,
+    email,
+}: {
+    id: string;
+    email: string;
+}) => {
     try {
-        await db.gallery.update({
-            where: { id },
-            data: {
-                downloadPending: false,
+        logger.info(`Gallery download request reverted for gallery: ${id}`);
+
+        await mailUser({
+            templateId: EMAIL_TEMPLATES_MAP.GENERAL_ERROR,
+            to: [
+                {
+                    name: 'Bruiloft Buddy gebruiker',
+                    email,
+                },
+            ],
+            params: {
+                websiteUrl: process.env.REDWOOD_ENV_VERCEL_URL,
+                errorMessage:
+                    'Download helaas mislukt. We proberen het nogmaals. Indien dit fout blijft gaan neem dan contact op met de klantenservice',
             },
         });
-        logger.info(`Gallery download request reverted for gallery: ${id}`);
     } catch (error) {
         logger.error(`Error reverting download request for gallery: ${id}`);
     }
 };
 
 const createAndMergeZips = async (
-    gallery: Gallery
+    gallery: Gallery & {
+        wedding: Wedding & {
+            user: User;
+        };
+    }
 ): Promise<string | undefined> => {
     const bucket = await getStorageClient();
     const [files] = await bucket.getFiles({
@@ -131,38 +158,41 @@ const createAndMergeZips = async (
             );
             zipFiles.push(batchZipFile);
         }
-    } catch (err) {
-        await revertDownloadRequest({ id: gallery.id });
-        const error = err as Error;
-        logger.error(`Error creating batch zip files: ${error.message}`);
-    }
 
-    const finalZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}.zip`;
-    logger.info(
-        `Merging batch zip files into final zip file: ${finalZipFileName}`
-    );
+        const finalZipFileName = `${archiveFolderName}/${gallery.gcloudStoragePath}/${gallery.name}.zip`;
+        logger.info(
+            `Merging batch zip files into final zip file: ${finalZipFileName}`
+        );
 
-    const finalZipFile = await mergeZips(zipFiles, finalZipFileName, bucket);
+        const finalZipFile = await mergeZips(
+            zipFiles,
+            finalZipFileName,
+            bucket
+        );
 
-    const [downloadUrl] = await finalZipFile.getSignedUrl({
-        version: 'v4',
-        action: 'read',
-        expires: Date.now() + ONE_DAY_TIME,
-    });
+        const [downloadUrl] = await finalZipFile.getSignedUrl({
+            version: 'v4',
+            action: 'read',
+            expires: Date.now() + ONE_DAY_TIME,
+        });
 
-    try {
         const deletePromises = zipFiles.map((zipFile) => zipFile.delete());
         await Promise.allSettled(deletePromises);
         logger.info('Batch zip files deleted');
-    } catch (err) {
-        await revertDownloadRequest({ id: gallery.id });
-        const error = err as Error;
-        const errorMessage = `Error deleting batch zip files: ${error.message}`;
-        logger.error(errorMessage);
-    }
 
-    logger.info(`Final zip file created with download URL: ${downloadUrl}`);
-    return downloadUrl;
+        logger.info(`Final zip file created with download URL: ${downloadUrl}`);
+
+        return downloadUrl;
+    } catch (err) {
+        const email = gallery.wedding.user.email;
+
+        await revertDownloadRequest({
+            id: gallery.id,
+            email,
+        });
+        const error = err as Error;
+        logger.error(`Error creating batch zip files: ${error.message}`);
+    }
 };
 
 const createBatchZip = async (

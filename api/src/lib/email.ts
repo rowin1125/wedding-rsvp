@@ -1,4 +1,3 @@
-import * as nodemailer from 'nodemailer';
 import * as Sib from 'sib-api-v3-sdk';
 
 type MailToType = {
@@ -16,6 +15,14 @@ type MailUserOptions = {
     params?: Record<string, string>;
 };
 
+export const EMAIL_TEMPLATES_MAP = {
+    RSVP_CONFIRMATION: 1,
+    PASSWORD_RESET: 2,
+    SIGNUP: 3,
+    DOWNLOAD_GALLERY: 6,
+    GENERAL_ERROR: 7,
+};
+
 export async function mailUser(options: MailUserOptions) {
     if (process.env.DISABLE_SENDINBLUE === 'true') return;
 
@@ -29,7 +36,7 @@ export async function mailUser(options: MailUserOptions) {
     const emailOptions = {
         ...options,
         sender: options.sender ?? {
-            name: 'Demi & Rowin',
+            name: 'Bruiloft Buddy',
             email: 'demi.rowin@gmail.com',
         },
     };
@@ -47,35 +54,4 @@ export async function mailUser(options: MailUserOptions) {
                 console.error('err', err);
             })
     );
-}
-
-interface Options {
-    to: string | string[];
-    subject: string;
-    text?: string;
-    html: string;
-}
-
-// create reusable transporter object using SendInBlue for SMTP
-export const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.sendinblue.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-        user: 'demi.rowin@gmail.com',
-        pass: process.env.SENDINBLUE_SMTP_KEYS,
-    },
-});
-
-export async function sendEmail({ to, subject, text, html }: Options) {
-    // send mail with defined transport object
-    const info = await transporter.sendMail({
-        from: 'Demi & Rowin | Bruiloft',
-        to: Array.isArray(to) ? to : [to], // list of receivers
-        subject, // Subject line
-        text, // plain text body
-        html, // html body
-    });
-
-    return info;
 }
