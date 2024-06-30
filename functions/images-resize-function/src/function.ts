@@ -31,9 +31,11 @@ export const resizeImages = cloudEvent(
 
         const thumbnailImage = await sharp(buffer)
             .resize({ width: 400 })
+            .withMetadata()
             .toBuffer();
         const previewImage = await sharp(buffer)
             .resize({ width: 1024 })
+            .withMetadata()
             .toBuffer();
 
         // TODO: After everything is in place, replace everything within 1 folder like: `weddingId/galleryId/uniqueId/(original/thumbnail/preview)image.jpg`
