@@ -43,7 +43,7 @@ const DownloadZip = ({ gallery }: DownloadZipProps) => {
         ? new Date(latestDownloadRequest?.validUntil) > new Date()
         : false;
 
-    const thirtyMinutes = 30 * 60 * 1000;
+    const thirtyMinutes = 1000; // 30 * 60 * 1000;
     const latestDownloadRequestIsWithin30Min = latestDownloadRequest
         ? new Date(latestDownloadRequest?.createdAt).getTime() + thirtyMinutes >
               new Date().getTime() &&
