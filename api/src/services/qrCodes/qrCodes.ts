@@ -6,6 +6,7 @@ import type { QueryResolvers, MutationResolvers } from 'types/graphql';
 import { removeNulls } from '@redwoodjs/api';
 
 import { db } from 'src/lib/db';
+import Sentry from 'src/lib/sentry';
 
 export const qrCode: QueryResolvers['qrCode'] = ({ id }) => {
     return db.qrCode.findUnique({
@@ -30,6 +31,8 @@ export const scannedQrCode: QueryResolvers['qrCode'] = async ({ id }) => {
             where: { id },
         });
     } catch (error) {
+        Sentry.captureException(error);
+
         throw new Error('Failed to update usage count');
     }
 

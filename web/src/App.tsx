@@ -1,9 +1,10 @@
 import { ChakraProvider, ColorModeScript, extendTheme } from '@chakra-ui/react';
 import theme from 'config/chakra.config';
 
-import { FatalErrorBoundary, RedwoodProvider } from '@redwoodjs/web';
+import { RedwoodProvider } from '@redwoodjs/web';
 import { RedwoodApolloProvider } from '@redwoodjs/web/apollo';
 
+import Sentry from 'src/lib/sentry';
 import FatalErrorPage from 'src/pages/FatalErrorPage';
 import Routes from 'src/Routes';
 
@@ -15,7 +16,7 @@ import './index.css';
 const extendedTheme = extendTheme(theme);
 
 const App = () => (
-    <FatalErrorBoundary page={FatalErrorPage}>
+    <Sentry.ErrorBoundary fallback={FatalErrorPage}>
         <RedwoodProvider titleTemplate="%PageTitle | %AppTitle">
             <AuthProvider>
                 <ColorModeScript />
@@ -26,7 +27,7 @@ const App = () => (
                 </ChakraProvider>
             </AuthProvider>
         </RedwoodProvider>
-    </FatalErrorBoundary>
+    </Sentry.ErrorBoundary>
 );
 
 export default App;

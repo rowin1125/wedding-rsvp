@@ -3,6 +3,8 @@ import { UserRole } from '@prisma/client';
 import type { Decoded } from '@redwoodjs/api';
 import { AuthenticationError, ForbiddenError } from '@redwoodjs/graphql-server';
 
+import Sentry from 'src/lib/sentry';
+
 import { db } from './db';
 
 /**
@@ -24,23 +26,28 @@ import { db } from './db';
  */
 
 export const getCurrentUser = async (session: Decoded) => {
-    if (!session || typeof session.id !== 'string') {
-        throw new Error('Invalid session');
+    try {
+        if (!session || typeof session.id !== 'string') {
+            throw new Error('Invalid session');
+        }
+
+        const user = await db.user.findUnique({
+            where: { id: session.id },
+            select: { id: true, wedding: true, weddingId: true, roles: true },
+        });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        return {
+            ...user,
+            roles: user.roles.map((role) => role.name),
+        };
+    } catch (error) {
+        Sentry.captureException(error);
+        throw new AuthenticationError('Authentication error. Please sign in.');
     }
-
-    const user = await db.user.findUnique({
-        where: { id: session.id },
-        select: { id: true, wedding: true, weddingId: true, roles: true },
-    });
-
-    if (!user) {
-        throw new Error('User not found');
-    }
-
-    return {
-        ...user,
-        roles: user.roles.map((role) => role.name),
-    };
 };
 
 /**

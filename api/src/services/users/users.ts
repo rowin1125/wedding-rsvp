@@ -21,22 +21,18 @@ export const activateUserEmail = async ({
     const REDWOOD_ENV_VERCEL_URL =
         process.env.REDWOOD_ENV_VERCEL_URL ?? 'http://localhost:8910';
 
-    try {
-        await mailUser({
-            to: [
-                {
-                    name: encodedEmail,
-                    email: user.email,
-                },
-            ],
-            templateId: EMAIL_TEMPLATES_MAP.SIGNUP,
-            params: {
-                activateUrl: `${REDWOOD_ENV_VERCEL_URL}/activeren?verifiedToken=${verifiedToken}&email=${encodedEmail}`,
+    await mailUser({
+        to: [
+            {
+                name: encodedEmail,
+                email: user.email,
             },
-        });
-    } catch (error) {
-        if (error instanceof Error) throw new Error(error.message);
-    }
+        ],
+        templateId: EMAIL_TEMPLATES_MAP.SIGNUP,
+        params: {
+            activateUrl: `${REDWOOD_ENV_VERCEL_URL}/activeren?verifiedToken=${verifiedToken}&email=${encodedEmail}`,
+        },
+    });
 
     return user;
 };

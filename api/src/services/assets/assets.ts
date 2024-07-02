@@ -11,6 +11,7 @@ import { UserInputError } from '@redwoodjs/graphql-server';
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { ALLOWED_FILE_TYPES } from 'src/lib/config';
 import { db } from 'src/lib/db';
+import Sentry from 'src/lib/sentry';
 
 export const assets: QueryResolvers['assets'] = () => {
     return db.asset.findMany({
@@ -76,7 +77,8 @@ export const createAssets: MutationResolvers['createAssets'] = async ({
 
         return createdAssets;
     } catch (err) {
-        console.error(err);
+        Sentry.captureException(err);
+
         const error = err as Error;
         throw new UserInputError(
             error.message ?? 'Error during asset creation'

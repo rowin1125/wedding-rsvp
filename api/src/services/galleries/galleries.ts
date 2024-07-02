@@ -12,6 +12,7 @@ import { UserInputError } from '@redwoodjs/graphql-server';
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { db } from 'src/lib/db';
 import { ONE_DAY_TIME } from 'src/lib/gcloudBackgroundDownloader';
+import Sentry from 'src/lib/sentry';
 
 export const galleries: QueryResolvers['galleries'] = () => {
     return db.gallery.findMany();
@@ -88,7 +89,8 @@ export const deleteGallery: MutationResolvers['deleteGallery'] = async ({
             where: { id },
         });
     } catch (error) {
-        console.error(error);
+        Sentry.captureException(error);
+
         throw new UserInputError('Failed to delete gallery');
     }
 };
@@ -113,35 +115,40 @@ export const downloadGallery: MutationResolvers['downloadGallery'] = async ({
 
     // TODO: Build in a feature to upgrade this on an user basis
     if (gallery.galleryDownloadRequests.length >= gallery.maxAllowedDownloads) {
-        throw new Error('Maximum number of download requests reached');
+        throw new UserInputError('Maximum number of download requests reached');
     }
 
-    const downloadRequest = await db.galleryDownloadRequest.create({
-        data: {
-            gallery: {
-                connect: {
-                    id: gallery.id,
+    try {
+        const downloadRequest = await db.galleryDownloadRequest.create({
+            data: {
+                gallery: {
+                    connect: {
+                        id: gallery.id,
+                    },
                 },
+                status: 'PENDING',
+                validUntil: new Date(Date.now() + ONE_DAY_TIME),
             },
-            status: 'PENDING',
-            validUntil: new Date(Date.now() + ONE_DAY_TIME),
-        },
-    });
+        });
 
-    const client = await faktory.connect({
-        url: process.env.FAKTORY_URL,
-        password: process.env.FAKTORY_PASSWORD,
-        port: 7419,
-    });
-    await client
-        .job('downloadAllFiles', {
-            galleryId: id,
-            downloadId: downloadRequest.id,
-        })
-        .push();
-    await client.close();
+        const client = await faktory.connect({
+            url: process.env.FAKTORY_URL,
+            password: process.env.FAKTORY_PASSWORD,
+            port: 7419,
+        });
+        await client
+            .job('downloadAllFiles', {
+                galleryId: id,
+                downloadId: downloadRequest.id,
+            })
+            .push();
+        await client.close();
 
-    return 'Download aangevraagd. Ververs de pagina na enkele minuten om de downloadlink te zien. Deze link 1 dag geldig.';
+        return 'Download aangevraagd. Ververs de pagina na enkele minuten om de downloadlink te zien. Deze link 1 dag geldig.';
+    } catch (error) {
+        Sentry.captureException(error);
+        throw new UserInputError('Failed to download gallery');
+    }
 };
 
 export const DEFAULT_PAGINATION_OFFSET = 28;

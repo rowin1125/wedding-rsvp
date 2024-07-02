@@ -11,6 +11,7 @@ import { UserInputError } from '@redwoodjs/graphql-server';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { db } from 'src/lib/db';
+import Sentry from 'src/lib/sentry';
 
 export const weddings: QueryResolvers['weddings'] = () => {
     return db.wedding.findMany();
@@ -103,6 +104,7 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
         try {
             await Promise.all(deleteQrCodePromises);
         } catch (error) {
+            Sentry.captureException(error);
             console.error(error);
             throw new UserInputError(
                 'Failed to delete galleries with qr codes'

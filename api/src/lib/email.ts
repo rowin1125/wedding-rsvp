@@ -1,5 +1,7 @@
 import * as Sib from 'sib-api-v3-sdk';
 
+import Sentry from './sentry';
+
 type MailToType = {
     name: string;
     email: string;
@@ -51,6 +53,8 @@ export async function mailUser(options: MailUserOptions) {
             })
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .catch((err: any) => {
+                Sentry.captureException(err);
+
                 console.error('err', err);
             })
     );

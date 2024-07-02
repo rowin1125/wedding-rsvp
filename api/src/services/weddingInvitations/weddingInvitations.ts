@@ -6,6 +6,7 @@ import type {
 
 import { db } from 'src/lib/db';
 import { EMAIL_TEMPLATES_MAP, mailUser } from 'src/lib/email';
+import Sentry from 'src/lib/sentry';
 
 export const weddingInvitations: QueryResolvers['weddingInvitations'] = ({
     weddingId,
@@ -86,6 +87,7 @@ export const createWeddingInvitation: MutationResolvers['createWeddingInvitation
             return weddingInvitation;
         } catch (err) {
             const error = err as Error;
+            Sentry.captureException(error);
             throw new Error(error.message);
         }
     };

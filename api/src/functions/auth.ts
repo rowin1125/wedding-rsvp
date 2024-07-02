@@ -8,6 +8,7 @@ import {
 } from '@redwoodjs/auth-dbauth-api';
 
 import { db } from 'src/lib/db';
+import Sentry from 'src/lib/sentry';
 import { activateUserEmail } from 'src/services/users/users';
 
 import { EMAIL_TEMPLATES_MAP, mailUser } from '../lib/email';
@@ -146,6 +147,8 @@ export const handler = async (
                     verifiedToken,
                 });
             } catch (error) {
+                Sentry.captureException(error);
+
                 throw new Error('Failed to sign up');
             }
 

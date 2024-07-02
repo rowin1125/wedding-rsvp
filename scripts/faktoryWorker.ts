@@ -1,5 +1,6 @@
 import { downloadInBackground } from 'api/src/lib/gcloudBackgroundDownloader';
 import { logger } from 'api/src/lib/logger';
+import Sentry from 'api/src/lib/sentry';
 import faktory from 'faktory-worker';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,6 +17,7 @@ export default async () => {
             password: process.env.FAKTORY_PASSWORD,
         })
         .catch((error) => {
+            Sentry.captureException(error);
             logger.error(`worker failed to start: ${error}`);
             process.exit(1);
         });

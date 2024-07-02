@@ -9,6 +9,7 @@ import { useAuth } from 'src/auth';
 import Footer from 'src/components/Footer/Footer';
 import FooterMenu from 'src/components/FooterMenu/FooterMenu';
 import Sidebar from 'src/components/Sidebar/Sidebar';
+import Sentry from 'src/lib/sentry';
 
 import SamsungAlert from './components/SamsungAlert';
 
@@ -21,6 +22,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     const { pathname } = useLocation();
 
     const isSettingsPage = pathname === routes.weddingSettings();
+
+    useEffect(() => Sentry.setUser(currentUser), [currentUser]);
 
     useEffect(() => {
         if (!currentUser) return;

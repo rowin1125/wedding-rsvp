@@ -22,6 +22,8 @@
     "@redwoodjs/forms": "7.6.2",
     "@redwoodjs/router": "7.6.2",
     "@redwoodjs/web": "7.6.2",
+    "@sentry/browser": "7",
+    "@sentry/react": "7",
     "@tanstack/react-table": "^8.9.8",
     "chart.js": "^4.4.0",
     "framer-motion": "^9",

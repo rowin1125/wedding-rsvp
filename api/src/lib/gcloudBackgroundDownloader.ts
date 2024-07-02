@@ -11,6 +11,7 @@ import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { db } from './db';
 import { EMAIL_TEMPLATES_MAP, mailUser } from './email';
 import { logger } from './logger';
+import Sentry from './sentry';
 
 const logTime = (label: string) => {
     const startTime = performance.now();
@@ -129,6 +130,8 @@ const revertDownloadRequest = async ({
             },
         });
     } catch (error) {
+        Sentry.captureException(error);
+
         logger.error(`Error reverting download request for gallery: ${id}`);
     }
 };

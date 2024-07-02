@@ -5,7 +5,7 @@ declare global {
             SENDINBLUE_SMTP_KEYS: string;
             REDWOOD_ENV_VERCEL_URL: string;
             GCLOUD_STORAGE_BUCKET: string;
-
+            SENTRY_ENABLED: string;
             SIGN_UP_ENABLED: string;
         }
     }
