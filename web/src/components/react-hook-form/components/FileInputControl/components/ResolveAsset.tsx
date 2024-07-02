@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { Box, Icon, Image } from '@chakra-ui/react';
 import { BiImage, BiVideo } from 'react-icons/bi';
@@ -8,11 +8,19 @@ type ResolveAssetProps = {
 };
 
 const ResolveAsset = ({ file }: ResolveAssetProps) => {
+    const objectUrl = useMemo(() => URL.createObjectURL(file), [file]);
+
+    useEffect(() => {
+        return () => {
+            URL.revokeObjectURL(objectUrl);
+        };
+    }, [objectUrl]);
+
     if (file.type.includes('image')) {
         return (
             <>
                 <Image
-                    src={URL.createObjectURL(file)}
+                    src={objectUrl}
                     inset={0}
                     w="100%"
                     h="100%"
@@ -40,7 +48,7 @@ const ResolveAsset = ({ file }: ResolveAssetProps) => {
             <>
                 <Box
                     as="video"
-                    src={URL.createObjectURL(file)}
+                    src={objectUrl}
                     objectFit="cover"
                     width="100%"
                     height="100%"

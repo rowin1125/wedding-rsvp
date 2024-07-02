@@ -58,7 +58,6 @@ export const createAssets: MutationResolvers['createAssets'] = async ({
             const file = bucket.file(`${imageData.gcloudStoragePath}`);
             const url = file.publicUrl();
 
-            // TODO: add metadata from Sharp
             const metaData = {} as Prisma.JsonObject;
 
             assetArray.push({

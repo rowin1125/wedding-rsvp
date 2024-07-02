@@ -88,55 +88,78 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
             }
             setGlobalLoading(true);
 
-            const createAssetsPromises = [];
-
-            for (const file of values.files) {
+            const signingUrlPromises = values.files.map((file) => {
                 const fileType = file.type;
                 const uniqueId = createId();
                 const gcloudStoragePath = `${weddingId}/${galleryId}/${uniqueId}.${
                     fileType.split('/')[1]
                 }`;
 
-                const url = await requestSigningUrl({
+                return requestSigningUrl({
                     variables: {
                         gcloudStoragePath,
                     },
-                });
+                }).then((response) => {
+                    uploadedFiles.current.push(file);
 
-                if (!values?.files || !url.data?.requestSigningUrl) {
-                    setGlobalLoading(false);
                     return {
-                        errors: {
-                            files: 'No files selected',
-                        },
+                        file,
+                        fileType,
+                        uniqueId,
+                        gcloudStoragePath,
+                        signingUrl: response.data?.requestSigningUrl,
                     };
-                }
-
-                await fetch(url.data?.requestSigningUrl, {
-                    method: 'PUT',
-                    body: file,
-                    headers: {
-                        'Content-Type': 'application/octet-stream',
-                    },
                 });
+            });
 
-                createAssetsPromises.push(
+            const signingUrlResults = await Promise.all(signingUrlPromises);
+
+            const uploadFilePromises = signingUrlResults.map(
+                ({ file, signingUrl }) => {
+                    if (!signingUrl) {
+                        throw new Error('Failed to get signing URL');
+                    }
+
+                    return fetch(signingUrl, {
+                        method: 'PUT',
+                        body: file,
+                        headers: {
+                            'Content-Type': 'application/octet-stream',
+                        },
+                    });
+                }
+            );
+
+            await toast.promise(
+                Promise.all([
                     createAssets({
                         variables: {
                             galleryId,
-                            input: {
-                                gcloudStoragePath,
-                                uuid: uniqueId,
-                                fileType,
-                            },
+                            input: signingUrlResults.map(
+                                ({
+                                    gcloudStoragePath,
+                                    uniqueId,
+                                    fileType,
+                                }) => ({
+                                    gcloudStoragePath,
+                                    uuid: uniqueId,
+                                    fileType,
+                                })
+                            ),
                         },
-                    })
-                );
-                uploadedFiles.current.push(file);
-            }
-            const responses = await Promise.all(createAssetsPromises);
+                    }),
+                    ...uploadFilePromises,
+                ]),
+                {
+                    loading:
+                        'Succesvol geüpload naar de opslag, nu nog even opslaan in de database, bijna klaar! Sluit dit scherm niet af!',
+                    success: (response) => {
+                        return `Succesvol ${response[0].data?.createAssets?.count} bestanden opgeslagen!`;
+                    },
+                    error: 'Oeps er is iets misgegaan, probeer het later nog eens!',
+                }
+            );
 
-            toast.success(`Successfully uploaded ${responses.length} file(s)`);
             client.refetchQueries({
                 include: [FIND_GALLERY_QUERY],
             });
