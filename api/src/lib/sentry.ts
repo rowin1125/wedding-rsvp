@@ -1,11 +1,6 @@
 import * as Sentry from '@sentry/node';
 
 import { db as client } from 'src/lib/db';
-console.log(
-    'process.env.SENTRY_ENABLED',
-    process.env.SENTRY_ENABLED
-);
-console.log('process.env.NODE_ENV', process.env.NODE_ENV);
 
 Sentry.init({
     enabled:
