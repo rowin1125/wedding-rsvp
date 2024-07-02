@@ -16,9 +16,9 @@ export const resizeImages = cloudEvent(
     'resizeImages',
     async (cloudEvent: any) => {
         const name = cloudEvent.data.name as string;
-        const resizeName = 'resized';
+        const resizeNames = ['thumbnail', 'preview'];
 
-        if (name.includes(resizeName)) return;
+        if (resizeNames.some((resizeName) => name.includes(resizeName))) return;
 
         const bucketName = cloudEvent.data.bucket;
         const bucket = await getStorageClient(bucketName);
@@ -30,7 +30,7 @@ export const resizeImages = cloudEvent(
         if (!type || !type.mime.startsWith('image/')) return;
 
         const thumbnailImage = await sharp(buffer)
-            .resize({ width: 400 })
+            .resize({ width: 512 })
             .withMetadata()
             .toBuffer();
         const previewImage = await sharp(buffer)
@@ -38,9 +38,8 @@ export const resizeImages = cloudEvent(
             .withMetadata()
             .toBuffer();
 
-        // TODO: After everything is in place, replace everything within 1 folder like: `weddingId/galleryId/uniqueId/(original/thumbnail/preview)image.jpg`
-        const thumbnailFileName = `${resizeName}/thumbnail/${name}`;
-        const previewFileName = `${resizeName}/preview/${name}`;
+        const thumbnailFileName = name.replace('original', 'thumbnail');
+        const previewFileName = name.replace('original', 'preview');
 
         await bucket.file(thumbnailFileName).save(thumbnailImage);
         await bucket.file(previewFileName).save(previewImage);

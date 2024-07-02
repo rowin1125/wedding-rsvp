@@ -16,6 +16,6 @@ import { createLogger } from '@redwoodjs/api/logger';
  */
 export const logger = createLogger({
     options: {
-        level: 'info', // default is debug
+        level: process.env.NODE_ENV === 'production' ? 'info' : 'debug', // default is debug
     },
 });

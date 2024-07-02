@@ -29,7 +29,7 @@ export const createGallery: MutationResolvers['createGallery'] = ({
 }) => {
     const id = createId();
 
-    const gcloudStoragePath = `${input.weddingId}/${id}`;
+    const gcloudStoragePath = `galleries/${input.weddingId}/${id}`;
     return db.gallery.create({
         data: {
             ...input,
@@ -66,24 +66,10 @@ export const deleteGallery: MutationResolvers['deleteGallery'] = async ({
     }
 
     try {
-        const deleteRegularFiles = bucket.deleteFiles({
+        await bucket.deleteFiles({
             prefix: gallery.gcloudStoragePath,
             force: true,
         });
-        const deleteThumbnailFiles = bucket.deleteFiles({
-            prefix: `resized/thumbnail/${gallery.gcloudStoragePath}`,
-            force: true,
-        });
-        const deletePreviewFiles = bucket.deleteFiles({
-            prefix: `resized/preview/${gallery.gcloudStoragePath}`,
-            force: true,
-        });
-
-        await Promise.all([
-            deleteRegularFiles,
-            deleteThumbnailFiles,
-            deletePreviewFiles,
-        ]);
 
         return db.gallery.delete({
             where: { id },

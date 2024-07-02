@@ -91,7 +91,7 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
             const signingUrlPromises = values.files.map((file) => {
                 const fileType = file.type;
                 const uniqueId = createId();
-                const gcloudStoragePath = `${weddingId}/${galleryId}/${uniqueId}.${
+                const gcloudStoragePath = `galleries/${weddingId}/${galleryId}/${uniqueId}/original/${uniqueId}.${
                     fileType.split('/')[1]
                 }`;
 

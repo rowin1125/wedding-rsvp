@@ -124,10 +124,10 @@ export const deleteAsset: MutationResolvers['deleteAsset'] = async ({ id }) => {
 
         try {
             const thumbnailFile = bucket.file(
-                `resized/thumbnail/${asset.gcloudStoragePath}`
+                asset.gcloudStoragePath.replace('original', 'thumbnail')
             );
             const previewFile = bucket.file(
-                `resized/preview/${asset.gcloudStoragePath}`
+                asset.gcloudStoragePath.replace('original', 'preview')
             );
             if (thumbnailFile) {
                 await thumbnailFile.delete();
@@ -158,13 +158,17 @@ export const Asset: AssetRelationResolvers = {
             process.env.GCLOUD_STORAGE_BUCKET
         )[0];
 
-        return `${googleDomain}${process.env.GCLOUD_STORAGE_BUCKET}/resized/preview/${root.gcloudStoragePath}`;
+        return `${googleDomain}${
+            process.env.GCLOUD_STORAGE_BUCKET
+        }/${root.gcloudStoragePath.replace('original', 'preview')}`;
     },
     thumbnailUrl: (obj, { root }) => {
         const googleDomain = root.url.split(
             process.env.GCLOUD_STORAGE_BUCKET
         )[0];
 
-        return `${googleDomain}${process.env.GCLOUD_STORAGE_BUCKET}/resized/thumbnail/${root.gcloudStoragePath}`;
+        return `${googleDomain}${
+            process.env.GCLOUD_STORAGE_BUCKET
+        }/${root.gcloudStoragePath.replace('original', 'thumbnail')}`;
     },
 };

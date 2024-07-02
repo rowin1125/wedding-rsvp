@@ -144,9 +144,10 @@ const createAndMergeZips = async (
     }
 ): Promise<string | undefined> => {
     const bucket = await getStorageClient();
-    const [files] = await bucket.getFiles({
+    const [allFiles] = await bucket.getFiles({
         prefix: gallery.gcloudStoragePath,
     });
+    const files = allFiles.filter((file) => file.name.includes('original'));
     logger.info(`Found ${files.length} files in gallery: ${gallery.name}`);
 
     const batchSize = 100;

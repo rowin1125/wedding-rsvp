@@ -135,7 +135,7 @@ const ImageModal = ({
                                     <ResolveAssetType
                                         fileType={image.fileType}
                                         imageProps={{
-                                            src: image.previewUrl,
+                                            src: image.url,
                                             previewUrl: image.previewUrl,
                                             w: 'full',
                                             h: 'full',

@@ -115,26 +115,10 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
     const bucket = await getStorageClient();
 
     try {
-        const deleteRegularFiles = bucket.deleteFiles({
+        await bucket.deleteFiles({
             prefix: wedding.gcloudStoragePath,
             force: true,
         });
-
-        const deleteThumbnailFiles = bucket.deleteFiles({
-            prefix: `resized/thumbnail/${wedding.gcloudStoragePath}`,
-            force: true,
-        });
-
-        const deletePreviewFiles = bucket.deleteFiles({
-            prefix: `resized/preview/${wedding.gcloudStoragePath}`,
-            force: true,
-        });
-
-        await Promise.all([
-            deleteRegularFiles,
-            deleteThumbnailFiles,
-            deletePreviewFiles,
-        ]);
 
         const deleteWedding = db.wedding.delete({
             where: { id },
