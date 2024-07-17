@@ -15,6 +15,7 @@ const Routes = () => {
             <Set wrap={AppLayout}>
                 <PrivateSet unauthenticated="home" roles={[ROLE_ENUMS.ADMIN, ROLE_ENUMS.MASTER_OF_CEREMONIES, ROLE_ENUMS.WEDDING_OWNER]}>
                     <Route path="/app/dashboard" page={DashboardPage} name="dashboard" />
+                    <Route path="/app/media" page={MediaPage} name="media" />
                     <Route path="/app/dagdelen/dag-gasten" page={DayGuestsPage} name="dayGuests" />
                     <Route path="/app/dagdelen/avond-gasten" page={EveningGuestsPage} name="eveningGuests" />
                     <Route path="/app/galerij/{galleryId}" page={GalleryPage} name="gallery" />

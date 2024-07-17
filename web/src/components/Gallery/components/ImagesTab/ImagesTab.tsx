@@ -8,10 +8,8 @@ import { Link } from '@redwoodjs/router';
 
 import ImageGallery from 'src/components/ImageGallery/ImageGallery';
 import Pagination from 'src/components/Pagination';
-import {
-    DEFAULT_PAGINATION_OFFSET,
-    useGalleryPagination,
-} from 'src/pages/GalleryPage/hooks/useGalleryPagination';
+import { DEFAULT_GALLERY_PAGINATION_OFFSET } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
+import { useQueryControls } from 'src/pages/GalleryPage/hooks/useQueryControls';
 
 import { useCreateAssets } from '../../hooks/useCreateAssets';
 import { useDeleteAsset } from '../../hooks/useDeleteAsset';
@@ -26,17 +24,19 @@ type ImagesTabProps = {
 
 const ImagesTab = ({ gallery, isPublic }: ImagesTabProps) => {
     const { assets, weddingId } = gallery;
-    const assetManager = useCreateAssets({ weddingId });
+    const assetManager = useCreateAssets({
+        gcloudPath: `galleries/${weddingId}/${gallery.id}`,
+    });
     const { deleteAsset, loading } = useDeleteAsset({
         id: gallery.id,
     });
 
     const { currentPage, setCurrentPage, totalPages, offset } =
-        useGalleryPagination();
+        useQueryControls();
 
     const hasAssets = assets?.items?.length > 0;
     const maxImages = Math.min(
-        currentPage * DEFAULT_PAGINATION_OFFSET,
+        currentPage * DEFAULT_GALLERY_PAGINATION_OFFSET,
         gallery.assets.count
     );
 
@@ -61,7 +61,10 @@ const ImagesTab = ({ gallery, isPublic }: ImagesTabProps) => {
                 </Flex>
             </Flex>
             {!hasAssets && (
-                <NoAssets modalDisclosure={assetManager.modalDisclosure} />
+                <NoAssets
+                    modalDisclosure={assetManager.modalDisclosure}
+                    loading={false}
+                />
             )}
             {hasAssets && (
                 <>

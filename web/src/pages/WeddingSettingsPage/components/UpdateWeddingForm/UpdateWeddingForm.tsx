@@ -22,7 +22,7 @@ const UpdateWeddingForm = () => {
     const { updateWedding, loading: updateWeddingLoading } = useUpdateWedding();
     const { deleteWeddingById, loading } = useDeleteWeddingById();
 
-    const initialDate = new Date(wedding?.date || '')
+    const initialDate = new Date(wedding?.date || new Date())
         .toISOString()
         .split('T')[0];
 

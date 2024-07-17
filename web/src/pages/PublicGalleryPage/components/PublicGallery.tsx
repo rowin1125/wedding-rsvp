@@ -19,7 +19,7 @@ const PublicGallery = () => {
                 subtitle="Bekijk of upload hier de foto’s van onze bruiloft"
                 h={'40vh'}
             />
-            <Container my={10} maxW="8xl">
+            <Container my={10}>
                 <ImagesTab gallery={gallery} isPublic />
             </Container>
         </Box>

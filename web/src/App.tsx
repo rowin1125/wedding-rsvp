@@ -20,7 +20,16 @@ const App = () => (
         <RedwoodProvider titleTemplate="%PageTitle | %AppTitle">
             <AuthProvider>
                 <ColorModeScript />
-                <ChakraProvider theme={extendedTheme}>
+                <ChakraProvider
+                    theme={extendedTheme}
+                    toastOptions={{
+                        defaultOptions: {
+                            position: 'top',
+                            duration: 4000,
+                            isClosable: true,
+                        },
+                    }}
+                >
                     <RedwoodApolloProvider useAuth={useAuth}>
                         <Routes />
                     </RedwoodApolloProvider>

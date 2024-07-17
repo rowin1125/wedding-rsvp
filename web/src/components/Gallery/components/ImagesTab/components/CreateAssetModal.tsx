@@ -22,9 +22,15 @@ import SubmitButton from 'src/components/react-hook-form/components/SubmitButton
 
 type CreateAssetModalProps = {
     assetManager: ReturnType<typeof useCreateAssets>;
+    accept?: string;
+    maxFiles?: number;
 };
 
-const CreateAssetModal = ({ assetManager }: CreateAssetModalProps) => {
+const CreateAssetModal = ({
+    assetManager,
+    accept = 'image/*, video/*',
+    maxFiles,
+}: CreateAssetModalProps) => {
     const { methods, uploadedFiles, onSubmit, globalLoading } = assetManager;
     const { isOpen, onClose } = assetManager.modalDisclosure;
 
@@ -49,13 +55,14 @@ const CreateAssetModal = ({ assetManager }: CreateAssetModalProps) => {
                                     fileListWrapperProps={{
                                         mb: 4,
                                     }}
-                                    accept="image/*, video/*"
+                                    accept={accept}
                                     maxSizeInMB={
                                         GCLOUD_MAX_FILE_SIZE / 1024 / 1024
                                     }
                                     uploadedFiles={uploadedFiles}
                                     isLoading={globalLoading}
                                     isDisabled={globalLoading}
+                                    maxFiles={maxFiles}
                                 />
 
                                 <Box as="hr" w="full" mb={4} />

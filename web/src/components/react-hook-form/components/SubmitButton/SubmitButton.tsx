@@ -9,13 +9,16 @@ export type SubmitButtonProps = ButtonProps & {
 
 export const SubmitButton = (props: SubmitButtonProps) => {
     const { children, control, ...rest } = props;
-    const { isSubmitting } = useFormState({ control });
+    const { isSubmitting, errors } = useFormState({ control });
+
+    const hasErrors = Object.keys(errors).length > 0;
 
     return (
         <Button
             type="submit"
             colorScheme={props.colorScheme ?? 'tertiary'}
             isLoading={isSubmitting}
+            isDisabled={hasErrors || isSubmitting}
             {...rest}
         >
             {children}

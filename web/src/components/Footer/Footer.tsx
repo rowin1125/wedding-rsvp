@@ -12,7 +12,7 @@ import { CgCopyright } from 'react-icons/cg';
 const Footer = ({ ...rest }: BoxProps) => {
     return (
         <Box {...rest}>
-            <Container maxW="8xl" p={4}>
+            <Container p={4}>
                 <Flex justifyContent={'center'} alignItems="center">
                     <Icon as={CgCopyright} color="inherit" fontSize="24px" />{' '}
                     <Text color="inherit" fontSize="sm" fontWeight="semibold">

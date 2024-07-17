@@ -5,8 +5,10 @@ import { useMutation } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import { FIND_GALLERY_QUERY } from 'src/components/Gallery/hooks/useFindGallery';
-import { useGalleryForm } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
-import { DEFAULT_PAGINATION_OFFSET } from 'src/pages/GalleryPage/hooks/useGalleryPagination';
+import {
+    DEFAULT_GALLERY_PAGINATION_OFFSET,
+    useGalleryForm,
+} from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
 
 import { FIND_QR_CODE_BY_ID } from '../../QRCodeForm/hooks/useGetQRCode';
 
@@ -43,7 +45,7 @@ export const useDeleteQrCode = () => {
                 query: FIND_GALLERY_QUERY,
                 variables: {
                     id: galleryId,
-                    take: DEFAULT_PAGINATION_OFFSET,
+                    take: DEFAULT_GALLERY_PAGINATION_OFFSET,
                     skip: 0,
                 },
             },

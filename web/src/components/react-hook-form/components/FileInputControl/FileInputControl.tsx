@@ -34,6 +34,7 @@ type FileInputControlType = {
     uploadedFiles: MutableRefObject<File[]>;
     isLoading?: boolean;
     isDisabled?: boolean;
+    maxFiles?: number;
 };
 
 export const ONE_MB = 1000000;
@@ -52,6 +53,7 @@ const FileInputControl = ({
     uploadedFiles,
     isLoading,
     isDisabled,
+    maxFiles,
     ...props
 }: FileInputControlType) => {
     const {
@@ -102,6 +104,18 @@ const FileInputControl = ({
                             {totalFileSize} / {maxSizeInMB} MB
                         </Text>
                     </Flex>
+                    {maxFiles && (
+                        <Flex direction="column" align="center" gap="0.625rem">
+                            <Text
+                                fontSize="xs"
+                                color={
+                                    maxFiles < 10 ? 'orange.500' : 'gray.500'
+                                }
+                            >
+                                Max {maxFiles} bestanden over
+                            </Text>
+                        </Flex>
+                    )}
                     <Flex justifyContent="center" mt={4}>
                         <Button
                             onClick={handleInputButtonClick}

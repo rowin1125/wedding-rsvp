@@ -1,7 +1,14 @@
 import { useCallback, useMemo } from 'react';
 
 import { EditIcon } from '@chakra-ui/icons';
-import { Heading, Box, useDisclosure, Button, Icon } from '@chakra-ui/react';
+import {
+    Heading,
+    Box,
+    useDisclosure,
+    Button,
+    Icon,
+    Container,
+} from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FaMagnifyingGlassPlus } from 'react-icons/fa6';
 
@@ -153,26 +160,28 @@ const EveningGuestsPage = () => {
             <Metadata title="EveningGuests" description="EveningGuests page" />
             <Hero />
 
-            <AppContentWrapper>
-                <Heading mb={8}>
-                    Avondgasten{' '}
-                    <Box as="span" fontWeight="black">
-                        {presentGuests}
-                    </Box>{' '}
-                    aanwezig van de geschatte{' '}
-                    <Box as="span" fontWeight="black">
-                        {wedding?.eveningInvitationAmount}
-                    </Box>{' '}
-                    genodigden
-                </Heading>
-                <GuestInvitationModal
-                    isOpen={disclosure.isOpen}
-                    onClose={handleOnClose}
-                    invitationId={invitationId}
-                />
-                {!data && loading && <Loader />}
-                {data && <GuestDataTable columns={columns} data={data} />}
-            </AppContentWrapper>
+            <Container>
+                <AppContentWrapper>
+                    <Heading mb={8}>
+                        Avondgasten{' '}
+                        <Box as="span" fontWeight="black">
+                            {presentGuests}
+                        </Box>{' '}
+                        aanwezig van de geschatte{' '}
+                        <Box as="span" fontWeight="black">
+                            {wedding?.eveningInvitationAmount}
+                        </Box>{' '}
+                        genodigden
+                    </Heading>
+                    <GuestInvitationModal
+                        isOpen={disclosure.isOpen}
+                        onClose={handleOnClose}
+                        invitationId={invitationId}
+                    />
+                    {!data && loading && <Loader />}
+                    {data && <GuestDataTable columns={columns} data={data} />}
+                </AppContentWrapper>
+            </Container>
         </>
     );
 };

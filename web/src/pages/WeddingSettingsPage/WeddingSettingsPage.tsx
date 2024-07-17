@@ -1,3 +1,5 @@
+import { Container } from '@chakra-ui/react';
+
 import { Metadata } from '@redwoodjs/web';
 
 import Hero from 'src/components/Hero';
@@ -19,7 +21,9 @@ const WeddingSettingsPage = () => {
             />
             <Hero />
             <AppContentWrapper>
-                {noWedding ? <CreateWeddingForm /> : <UpdateWeddingForm />}
+                <Container>
+                    {noWedding ? <CreateWeddingForm /> : <UpdateWeddingForm />}
+                </Container>
             </AppContentWrapper>
         </>
     );

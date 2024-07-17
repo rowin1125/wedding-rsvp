@@ -3,10 +3,9 @@ import { FindGalleryQuery, FindGalleryQueryVariables } from 'types/graphql';
 import { useParams } from '@redwoodjs/router';
 import { useQuery } from '@redwoodjs/web';
 
-import {
-    DEFAULT_PAGINATION_OFFSET,
-    useGalleryPagination,
-} from '../../../pages/GalleryPage/hooks/useGalleryPagination';
+import { DEFAULT_GALLERY_PAGINATION_OFFSET } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
+
+import { useQueryControls } from '../../../pages/GalleryPage/hooks/useQueryControls';
 
 export const FIND_GALLERY_QUERY = gql`
     query FindGalleryQuery($id: String!, $take: Int, $skip: Int) {
@@ -43,7 +42,7 @@ export const FIND_GALLERY_QUERY = gql`
 `;
 
 export const useFindGallery = () => {
-    const { offset, setTotalPages } = useGalleryPagination();
+    const { offset, setTotalPages } = useQueryControls();
     const { galleryId } = useParams();
 
     const { data, ...query } = useQuery<
@@ -52,7 +51,7 @@ export const useFindGallery = () => {
     >(FIND_GALLERY_QUERY, {
         variables: {
             id: galleryId,
-            take: DEFAULT_PAGINATION_OFFSET,
+            take: DEFAULT_GALLERY_PAGINATION_OFFSET,
             skip: offset,
         },
         onCompleted: (data) => {

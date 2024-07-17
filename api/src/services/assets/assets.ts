@@ -30,9 +30,30 @@ export const asset: QueryResolvers['asset'] = ({ id }) => {
 export const createAssets: MutationResolvers['createAssets'] = async ({
     input,
     galleryId,
+    mediaLibraryId,
 }) => {
     const bucket = await getStorageClient();
     const assetArray: Prisma.AssetCreateManyInput[] = [];
+
+    if (mediaLibraryId) {
+        const mediaLibrary = await db.mediaLibrary.findUnique({
+            where: { id: mediaLibraryId },
+        });
+
+        if (!mediaLibrary) throw new UserInputError('Media library not found');
+
+        const maxAllowedAssets = mediaLibrary.maxAllowedAssets;
+
+        const existingAssets = await db.asset.count({
+            where: { mediaLibraryId: mediaLibraryId },
+        });
+
+        if (existingAssets + input.length > maxAllowedAssets) {
+            throw new UserInputError(
+                `Max allowed assets exceeded. Allowed: ${maxAllowedAssets}`
+            );
+        }
+    }
 
     try {
         for (const imageData of input) {
@@ -65,8 +86,10 @@ export const createAssets: MutationResolvers['createAssets'] = async ({
                 url,
                 metadata: metaData,
                 galleryId: galleryId,
+                mediaLibraryId: mediaLibraryId,
                 gcloudStoragePath: imageData.gcloudStoragePath,
                 fileType: imageData.fileType,
+                originalFilename: imageData.originalFilename,
             });
         }
 
@@ -82,6 +105,33 @@ export const createAssets: MutationResolvers['createAssets'] = async ({
         throw new UserInputError(
             error.message ?? 'Error during asset creation'
         );
+    }
+};
+
+export const updateAsset: MutationResolvers['updateAsset'] = async ({
+    id,
+    input,
+}) => {
+    const asset = await db.asset.findUnique({
+        where: { id },
+    });
+
+    if (!asset) {
+        throw new UserInputError('Asset not found');
+    }
+
+    try {
+        const updatedAsset = await db.asset.update({
+            where: { id },
+            data: input,
+        });
+
+        return updatedAsset;
+    } catch (err) {
+        Sentry.captureException(err);
+
+        const error = err as Error;
+        throw new UserInputError(error.message ?? 'Error during asset update');
     }
 };
 
@@ -129,10 +179,13 @@ export const deleteAsset: MutationResolvers['deleteAsset'] = async ({ id }) => {
             const previewFile = bucket.file(
                 asset.gcloudStoragePath.replace('original', 'preview')
             );
-            if (thumbnailFile) {
+            const [thumbnailExists] = await thumbnailFile.exists();
+            const [previewExists] = await previewFile.exists();
+
+            if (thumbnailExists) {
                 await thumbnailFile.delete();
             }
-            if (previewFile) {
+            if (previewExists) {
                 await previewFile.delete();
             }
         } catch (error) {
@@ -147,6 +200,66 @@ export const deleteAsset: MutationResolvers['deleteAsset'] = async ({ id }) => {
         console.error(error);
         throw new UserInputError('Error during asset deletion');
     }
+};
+
+export const deleteAssets: MutationResolvers['deleteAssets'] = async ({
+    ids,
+}) => {
+    const bucket = await getStorageClient();
+    const deletePromises = [];
+    const user = context.currentUser;
+
+    const assets = await db.asset.findMany({
+        where: {
+            id: {
+                in: ids,
+            },
+            AND: {
+                mediaLibraryId: user?.wedding?.mediaLibrary?.id,
+            },
+        },
+    });
+
+    for (const asset of assets) {
+        const file = bucket.file(asset.gcloudStoragePath);
+
+        deletePromises.push(
+            file
+                .delete()
+                .then(async () => {
+                    // Check and delete thumbnail and preview images
+                    const thumbnailFile = bucket.file(
+                        asset.gcloudStoragePath.replace('original', 'thumbnail')
+                    );
+                    const previewFile = bucket.file(
+                        asset.gcloudStoragePath.replace('original', 'preview')
+                    );
+
+                    const [thumbnailExists] = await thumbnailFile.exists();
+                    if (thumbnailExists) {
+                        await thumbnailFile.delete();
+                    }
+
+                    const [previewExists] = await previewFile.exists();
+                    if (previewExists) {
+                        await previewFile.delete();
+                    }
+
+                    // Delete the asset record from the database
+                    return db.asset.delete({
+                        where: { id: asset.id },
+                    });
+                })
+                .catch((error) => {
+                    console.error(
+                        `Failed to delete file ${asset.gcloudStoragePath}:`,
+                        error
+                    );
+                })
+        );
+    }
+
+    return Promise.all(deletePromises);
 };
 
 export const Asset: AssetRelationResolvers = {

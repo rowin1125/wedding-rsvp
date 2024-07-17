@@ -9,13 +9,14 @@ type ValidateFileProps = {
     maxFileSize?: number;
     hasMaxFiles?: boolean;
     maxFiles?: number;
+    accept: string;
 };
 
 const validateFile = ({
     isRequired = false,
     maxFileSize = maxFileSizeInMB,
-    hasMaxFiles = false,
     maxFiles = maxFilesToUpload,
+    accept,
 }: ValidateFileProps) => {
     const fileValidation = mixed<File[]>()
         .test(
@@ -36,15 +37,18 @@ const validateFile = ({
         .test(
             'AmountOfFiles',
             'Te veel bestanden geselecteerd',
-            (files) => (files && files.length <= maxFiles) || !hasMaxFiles
+            (files) => files && files.length <= maxFiles
         )
         .test('fileType', 'Ongeldig bestandstype', (files) => {
             let isValidFileType = true;
 
             for (const file of files as File[]) {
+                const fileTypes = accept.split(',');
+
                 if (
-                    !file.type.startsWith('image/') &&
-                    !file.type.startsWith('video/')
+                    !fileTypes.some((type) =>
+                        file.type.startsWith(type.replace('*', '').trim())
+                    )
                 ) {
                     isValidFileType = false;
                     break;

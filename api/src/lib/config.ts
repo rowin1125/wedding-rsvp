@@ -1,1 +1,1 @@
-export const ALLOWED_FILE_TYPES = ['image', 'video'];
+export const ALLOWED_FILE_TYPES = ['image', 'video', 'application'];

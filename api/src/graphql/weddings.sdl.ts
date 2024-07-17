@@ -8,6 +8,7 @@ export const schema = gql`
         eveningInvitationAmount: Int!
         weddingInvitation: [WeddingInvitation]!
         weddingGuest: [WeddingGuest]!
+        mediaLibrary: MediaLibrary
         createdAt: DateTime!
         updatedAt: DateTime!
     }

@@ -1,6 +1,14 @@
 import React, { useEffect } from 'react';
 
-import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import {
+    Box,
+    Container,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+} from '@chakra-ui/react';
 
 import { navigate, routes, useLocation } from '@redwoodjs/router';
 
@@ -8,7 +16,7 @@ import Loader from 'src/components/Loader';
 import { generateURL } from 'src/helpers/generateURL/generateURL';
 import { useIsDevice } from 'src/hooks/useIsDevice';
 import { useHeroContext } from 'src/layouts/AppLayout/components/AppContentWrapper';
-import { useGalleryPagination } from 'src/pages/GalleryPage/hooks/useGalleryPagination';
+import { useQueryControls } from 'src/pages/GalleryPage/hooks/useQueryControls';
 
 import ImagesTab from './components/ImagesTab';
 import QRCodeTab from './components/QRCodeTab/QRCodeTab';
@@ -27,7 +35,7 @@ const Gallery = () => {
     const { setHeroData } = useHeroContext();
     const location = useLocation();
     const { gallery, loading } = useFindGallery();
-    const { setCurrentPage } = useGalleryPagination();
+    const { setCurrentPage } = useQueryControls();
 
     const { tabIndex, handleTabChange } = useControlledTabs({
         tabs: Object.values(GALLERY_TABS),
@@ -88,18 +96,26 @@ const Gallery = () => {
 
                 <TabPanels>
                     <TabPanel>
-                        {!gallery && loading && <Loader />}
-                        {gallery && !loading && <ImagesTab gallery={gallery} />}
+                        <Container>
+                            {!gallery && loading && <Loader />}
+                            {gallery && !loading && (
+                                <ImagesTab gallery={gallery} />
+                            )}
+                        </Container>
                     </TabPanel>
                     <TabPanel>
-                        {!gallery && loading && <Loader />}
-                        {gallery && !loading && <QRCodeTab />}
+                        <Container>
+                            {!gallery && loading && <Loader />}
+                            {gallery && !loading && <QRCodeTab />}
+                        </Container>
                     </TabPanel>
                     <TabPanel>
-                        {!gallery && loading && <Loader />}
-                        {gallery && !loading && (
-                            <SettingsTab gallery={gallery} />
-                        )}
+                        <Container>
+                            {!gallery && loading && <Loader />}
+                            {gallery && !loading && (
+                                <SettingsTab gallery={gallery} />
+                            )}
+                        </Container>
                     </TabPanel>
                 </TabPanels>
             </Tabs>

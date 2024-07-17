@@ -7,9 +7,11 @@ import { BsPlay } from 'react-icons/bs';
 type SliderVideoProps = BoxProps &
     VideoHTMLAttributes<HTMLVideoElement> & {
         locked?: boolean;
+    } & {
+        hideIcon?: boolean;
     };
 
-const SliderVideo = ({ ...videoProps }: SliderVideoProps) => {
+const SliderVideo = ({ hideIcon, ...videoProps }: SliderVideoProps) => {
     const { locked: shouldLock, ...videoPropsWithoutLocked } = videoProps || {};
     const [locked, setLocked] = useState(shouldLock ?? false);
     const showControls = (locked ? false : videoProps?.controls) ?? false;
@@ -18,10 +20,10 @@ const SliderVideo = ({ ...videoProps }: SliderVideoProps) => {
         <>
             <Box w="full" h="full" position="relative">
                 <Box
-                    {...videoPropsWithoutLocked}
-                    width="100%"
                     // Height of footer
                     height="calc(100% - 72px)"
+                    {...videoPropsWithoutLocked}
+                    width="100%"
                     as="video"
                     controls={showControls}
                 />
@@ -61,17 +63,19 @@ const SliderVideo = ({ ...videoProps }: SliderVideoProps) => {
                     </Flex>
                 )}
             </Box>
-            <Icon
-                as={BiVideo}
-                position="absolute"
-                bottom={2}
-                right={2}
-                color="green.500"
-                fontSize={{
-                    base: 'md',
-                    lg: '2xl',
-                }}
-            />
+            {!hideIcon && (
+                <Icon
+                    as={BiVideo}
+                    position="absolute"
+                    bottom={2}
+                    right={2}
+                    color="green.500"
+                    fontSize={{
+                        base: 'md',
+                        lg: '2xl',
+                    }}
+                />
+            )}
         </>
     );
 };

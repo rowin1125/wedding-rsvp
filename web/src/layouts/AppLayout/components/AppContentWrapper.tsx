@@ -34,7 +34,7 @@ const AppContentWrapper = ({
                 setHeroData: setHeroData,
             }}
         >
-            <Box p={4} {...props} position="relative">
+            <Box py={4} {...props} position="relative">
                 {props.children}
             </Box>
         </HeroContext.Provider>

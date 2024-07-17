@@ -50,6 +50,7 @@ const DeleteDialog = ({
                 colorScheme="red"
                 onClick={onOpen}
                 variant={buttonVariant}
+                isLoading={loading}
                 {...buttonProps}
             >
                 <Icon as={BsTrash} mr={2} />

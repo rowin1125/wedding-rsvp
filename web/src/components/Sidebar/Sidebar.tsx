@@ -3,6 +3,7 @@ import { BiLogOut, BiPhotoAlbum, BiSun } from 'react-icons/bi';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
 import { CgOptions, CgWebsite } from 'react-icons/cg';
 import { FaRegEnvelopeOpen } from 'react-icons/fa6';
+import { MdOutlinePermMedia } from 'react-icons/md';
 import { RiDashboard3Line } from 'react-icons/ri';
 
 import { routes } from '@redwoodjs/router';
@@ -140,6 +141,12 @@ const Sidebar = () => {
                     icon={BiPhotoAlbum}
                     title="Galerij"
                     to={routes.galleries()}
+                />
+                <SidebarItem
+                    navOpen={navOpen}
+                    icon={MdOutlinePermMedia}
+                    title="Media"
+                    to={routes.media()}
                 />
                 <SidebarItem
                     navOpen={navOpen}

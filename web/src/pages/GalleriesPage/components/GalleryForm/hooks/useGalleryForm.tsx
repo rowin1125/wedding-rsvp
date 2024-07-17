@@ -11,7 +11,6 @@ import { useMutation } from '@redwoodjs/web';
 import { useAuth } from 'src/auth';
 import { FIND_GALLERY_QUERY } from 'src/components/Gallery/hooks/useFindGallery';
 import { GET_GALLERIES_BY_WEDDING_ID } from 'src/pages/GalleriesPage/hooks/useGetGalleries';
-import { DEFAULT_PAGINATION_OFFSET } from 'src/pages/GalleryPage/hooks/useGalleryPagination';
 
 export const CREATE_GALLERY = gql`
     mutation CreateGalleryMutation($input: CreateGalleryInput!) {
@@ -53,6 +52,8 @@ export const UPDATE_GALLERY = gql`
     }
 `;
 
+export const DEFAULT_GALLERY_PAGINATION_OFFSET = 48;
+
 export const useGalleryForm = () => {
     const { currentUser } = useAuth();
     const { galleryId } = useParams();
@@ -86,7 +87,7 @@ export const useGalleryForm = () => {
                 query: FIND_GALLERY_QUERY,
                 variables: {
                     id: galleryId,
-                    take: DEFAULT_PAGINATION_OFFSET,
+                    take: DEFAULT_GALLERY_PAGINATION_OFFSET,
                     skip: 0,
                 },
             },

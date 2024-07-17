@@ -18,15 +18,21 @@ import { useMutation } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import validateFile from 'src/components/react-hook-form/helpers/validateFile';
+import { GET_MEDIA_ASSETS } from 'src/pages/MediaPage/hooks/useGetMediaAssets';
 
 import { FIND_GALLERY_QUERY } from './useFindGallery';
 
 export const CREATE_ASSETS_MUTATION = gql`
     mutation CreateAssetsMutation(
         $input: [CreateAssetInput!]!
-        $galleryId: String!
+        $galleryId: String
+        $mediaLibraryId: String
     ) {
-        createAssets(input: $input, galleryId: $galleryId) {
+        createAssets(
+            input: $input
+            galleryId: $galleryId
+            mediaLibraryId: $mediaLibraryId
+        ) {
             count
         }
     }
@@ -41,10 +47,18 @@ export const REQUEST_SIGNING_URL = gql`
 export const GCLOUD_MAX_FILE_SIZE = 1024 * 1024 * 30; // 30MB
 
 type UseCreateAssetsType = {
-    weddingId?: string;
+    gcloudPath: string;
+    mediaLibraryId?: string;
+    accept?: string;
+    maxFiles?: number;
 };
 
-export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
+export const useCreateAssets = ({
+    gcloudPath,
+    mediaLibraryId,
+    accept = 'image/*, video/*',
+    maxFiles,
+}: UseCreateAssetsType) => {
     const client = useApolloClient();
     const uploadedFiles = React.useRef<File[]>([]);
     const [globalLoading, setGlobalLoading] = useState(false);
@@ -55,6 +69,8 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
         files: validateFile({
             isRequired: true,
             maxFileSize: GCLOUD_MAX_FILE_SIZE,
+            accept,
+            maxFiles,
         }),
     });
 
@@ -78,10 +94,6 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
 
     const onSubmit = async (values: InferType<typeof validationSchema>) => {
         try {
-            if (!weddingId) {
-                toast.error('No wedding selected');
-                return;
-            }
             if (!values.files) {
                 toast.error('No files selected');
                 return;
@@ -90,10 +102,10 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
 
             const signingUrlPromises = values.files.map((file) => {
                 const fileType = file.type;
+                const fileTypeExtension = fileType.split('/')[1];
+
                 const uniqueId = createId();
-                const gcloudStoragePath = `galleries/${weddingId}/${galleryId}/${uniqueId}/original/${uniqueId}.${
-                    fileType.split('/')[1]
-                }`;
+                const gcloudStoragePath = `${gcloudPath}/${uniqueId}/original/${uniqueId}.${fileTypeExtension}`;
 
                 return requestSigningUrl({
                     variables: {
@@ -107,6 +119,7 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
                         fileType,
                         uniqueId,
                         gcloudStoragePath,
+                        originalFilename: file.name,
                         signingUrl: response.data?.requestSigningUrl,
                     };
                 });
@@ -135,15 +148,18 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
                     createAssets({
                         variables: {
                             galleryId,
+                            mediaLibraryId,
                             input: signingUrlResults.map(
                                 ({
                                     gcloudStoragePath,
                                     uniqueId,
                                     fileType,
+                                    originalFilename,
                                 }) => ({
                                     gcloudStoragePath,
                                     uuid: uniqueId,
                                     fileType,
+                                    originalFilename,
                                 })
                             ),
                         },
@@ -160,9 +176,16 @@ export const useCreateAssets = ({ weddingId }: UseCreateAssetsType) => {
                 }
             );
 
-            client.refetchQueries({
-                include: [FIND_GALLERY_QUERY],
-            });
+            if (galleryId) {
+                client.refetchQueries({
+                    include: [FIND_GALLERY_QUERY],
+                });
+            }
+            if (mediaLibraryId) {
+                client.refetchQueries({
+                    include: [GET_MEDIA_ASSETS],
+                });
+            }
             methods.reset();
 
             modalDisclosure.onClose();

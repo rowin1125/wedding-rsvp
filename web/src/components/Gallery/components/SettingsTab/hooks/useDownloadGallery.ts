@@ -2,7 +2,7 @@ import { useMutation } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/dist/toast';
 
 import { FIND_GALLERY_QUERY } from 'src/components/Gallery/hooks/useFindGallery';
-import { DEFAULT_PAGINATION_OFFSET } from 'src/pages/GalleryPage/hooks/useGalleryPagination';
+import { DEFAULT_GALLERY_PAGINATION_OFFSET } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
 
 export const DOWNLOAD_GALLERY_MUTATION = gql`
     mutation DownloadGalleryMutation($id: String!) {
@@ -26,7 +26,7 @@ export const useDownloadGallery = (galleryId: string) => {
                     query: FIND_GALLERY_QUERY,
                     variables: {
                         id: galleryId,
-                        take: DEFAULT_PAGINATION_OFFSET,
+                        take: DEFAULT_GALLERY_PAGINATION_OFFSET,
                         skip: 0,
                     },
                 },

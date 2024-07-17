@@ -33,7 +33,20 @@ export const getCurrentUser = async (session: Decoded) => {
 
         const user = await db.user.findUnique({
             where: { id: session.id },
-            select: { id: true, wedding: true, weddingId: true, roles: true },
+            select: {
+                id: true,
+                wedding: {
+                    include: {
+                        mediaLibrary: {
+                            select: {
+                                id: true,
+                            },
+                        },
+                    },
+                },
+                weddingId: true,
+                roles: true,
+            },
         });
 
         if (!user) {

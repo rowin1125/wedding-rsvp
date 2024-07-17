@@ -76,6 +76,7 @@ export const deleteGallery: MutationResolvers['deleteGallery'] = async ({
         });
     } catch (error) {
         Sentry.captureException(error);
+        console.log('error', error);
 
         throw new UserInputError('Failed to delete gallery');
     }
@@ -137,7 +138,7 @@ export const downloadGallery: MutationResolvers['downloadGallery'] = async ({
     }
 };
 
-export const DEFAULT_PAGINATION_OFFSET = 28;
+export const DEFAULT_GALLERY_PAGINATION_OFFSET = 28;
 
 export const Gallery: GalleryRelationResolvers = {
     totalDownloadRequests: async (_obj, { root }) => {
@@ -162,7 +163,7 @@ export const Gallery: GalleryRelationResolvers = {
             .findUnique({ where: { id: root?.id } })
             .assets({
                 skip: _obj?.skip || 0,
-                take: _obj?.take || DEFAULT_PAGINATION_OFFSET,
+                take: _obj?.take || DEFAULT_GALLERY_PAGINATION_OFFSET,
                 orderBy: {
                     createdAt: 'desc',
                 },
@@ -172,7 +173,7 @@ export const Gallery: GalleryRelationResolvers = {
             where: { galleryId: root?.id },
         });
         const pages = Math.ceil(
-            count / (_obj?.take ?? DEFAULT_PAGINATION_OFFSET)
+            count / (_obj?.take ?? DEFAULT_GALLERY_PAGINATION_OFFSET)
         );
 
         return {

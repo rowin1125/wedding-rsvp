@@ -1,6 +1,7 @@
 import { Metadata } from '@redwoodjs/web';
 
-import { GalleryPaginationProvider } from '../GalleryPage/hooks/useGalleryPagination';
+import { DEFAULT_GALLERY_PAGINATION_OFFSET } from '../GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
+import { QueryControlsProvider } from '../GalleryPage/hooks/useQueryControls';
 
 import PublicGallery from './components/PublicGallery';
 
@@ -9,9 +10,11 @@ const PublicGalleryPage = () => {
         <>
             <Metadata title="PublicGallery" description="PublicGallery page" />
 
-            <GalleryPaginationProvider>
+            <QueryControlsProvider
+                defaultOffset={DEFAULT_GALLERY_PAGINATION_OFFSET}
+            >
                 <PublicGallery />
-            </GalleryPaginationProvider>
+            </QueryControlsProvider>
         </>
     );
 };

@@ -5,7 +5,9 @@ import Hero from 'src/components/Hero';
 import { useControlHero } from 'src/components/Hero/hooks/useControlHero';
 import AppContentWrapper from 'src/layouts/AppLayout/components/AppContentWrapper';
 
-import { GalleryPaginationProvider } from './hooks/useGalleryPagination';
+import { DEFAULT_GALLERY_PAGINATION_OFFSET } from '../GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
+
+import { QueryControlsProvider } from './hooks/useQueryControls';
 
 const GalleryPage = () => {
     const { heroData, setHeroData } = useControlHero({
@@ -23,9 +25,11 @@ const GalleryPage = () => {
 
             <Hero {...heroData} />
             <AppContentWrapper p={0} setHeroData={setHeroData}>
-                <GalleryPaginationProvider>
+                <QueryControlsProvider
+                    defaultOffset={DEFAULT_GALLERY_PAGINATION_OFFSET}
+                >
                     <Gallery />
-                </GalleryPaginationProvider>
+                </QueryControlsProvider>
             </AppContentWrapper>
         </>
     );

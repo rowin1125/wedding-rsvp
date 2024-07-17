@@ -42,6 +42,7 @@ model Wedding {
     createdAt               DateTime            @default(now())
     updatedAt               DateTime            @updatedAt
     gallery                 Gallery[]
+    mediaLibrary            MediaLibrary?
 }
 
 model WeddingInvitation {
@@ -105,6 +106,17 @@ model Gallery {
     maxAllowedDownloads     Int                      @default(5)
 }
 
+model MediaLibrary {
+    id                String   @id @default(cuid())
+    gcloudStoragePath String
+    assets            Asset[]
+    wedding           Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId         String   @unique
+    maxAllowedAssets  Int      @default(75)
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+}
+
 enum GalleryDownloadRequestStatus {
     PENDING
     SUCCESS
@@ -123,15 +135,21 @@ model GalleryDownloadRequest {
 }
 
 model Asset {
-    id                String   @id @default(cuid())
-    gallery           Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
-    galleryId         String
+    id                String        @id @default(cuid())
+    gallery           Gallery?      @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+    galleryId         String?
+    originalFilename  String?
     metadata          Json
     gcloudStoragePath String
     fileType          String
     url               String
-    createdAt         DateTime @default(now())
-    updatedAt         DateTime @updatedAt
+    createdAt         DateTime      @default(now())
+    updatedAt         DateTime      @updatedAt
+    mediaLibrary      MediaLibrary? @relation(fields: [mediaLibraryId], references: [id])
+    mediaLibraryId    String?
+    title             String?
+    altText           String?
+    description       String?
 }
 
 model QrCode {

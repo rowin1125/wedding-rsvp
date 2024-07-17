@@ -7,13 +7,23 @@ import { useCreateAssets } from 'src/components/Gallery/hooks/useCreateAssets';
 
 type NoAssetsProps = {
     modalDisclosure: ReturnType<typeof useCreateAssets>['modalDisclosure'];
+    hasAssets?: boolean;
+    loading: boolean;
+    searchQuery?: string;
 };
 
-const NoAssets = ({ modalDisclosure }: NoAssetsProps) => {
+const NoAssets = ({
+    modalDisclosure,
+    loading,
+    hasAssets,
+    searchQuery,
+}: NoAssetsProps) => {
+    if (loading || searchQuery || hasAssets) return null;
+
     return (
         <Flex justifyContent="center" alignItems="center" flexDir="column">
             <Heading textAlign="center" mt={{ base: 4, lg: 0 }}>
-                Voeg de eerste fotos toe:{' '}
+                Voeg de eerste bestanden toe:{' '}
             </Heading>
             <Flex my={10} justifyContent="center">
                 <Button

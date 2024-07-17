@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem, Heading } from '@chakra-ui/react';
+import { Box, Container, Grid, GridItem, Heading } from '@chakra-ui/react';
 
 import { Metadata } from '@redwoodjs/web';
 
@@ -29,59 +29,63 @@ const DashboardPage = () => {
         <>
             <Metadata title="Dashboard" description="Dashboard page" />
             <Hero />
-            <AppContentWrapper>
-                <Heading fontWeight="bold" as="h2" size="h2">
-                    Overzicht van de bruiloft van {wedding?.name}
-                </Heading>
+            <Container>
+                <AppContentWrapper>
+                    <Heading fontWeight="bold" as="h2" size="h2">
+                        Overzicht van de bruiloft van {wedding?.name}
+                    </Heading>
 
-                <Grid my={6} templateColumns="repeat(2, 1fr)" rowGap={10}>
-                    <GridItem colSpan={{ base: 2 }}>
-                        <Countdown
-                            hideDate
-                            targetDate={
-                                wedding?.date || '2024-05-16T00:00:00+02:00'
-                            }
-                            my={0}
-                        />
-                    </GridItem>
-                    <GridItem colSpan={{ base: 2 }}>
-                        <Box as="hr" />
-                    </GridItem>
-                    <GridItem colSpan={{ base: 2, lg: 1 }}>
-                        <Heading
-                            as="h2"
-                            size="h2"
-                            mb={8}
-                            fontWeight="bold"
-                            textAlign="center"
-                        >
-                            Algemene gegevens
-                        </Heading>
+                    <Grid my={6} templateColumns="repeat(2, 1fr)" rowGap={10}>
+                        <GridItem colSpan={{ base: 2 }}>
+                            <Countdown
+                                hideDate
+                                targetDate={
+                                    wedding?.date || '2024-05-16T00:00:00+02:00'
+                                }
+                                my={0}
+                            />
+                        </GridItem>
+                        <GridItem colSpan={{ base: 2 }}>
+                            <Box as="hr" />
+                        </GridItem>
+                        <GridItem colSpan={{ base: 2, lg: 1 }}>
+                            <Heading
+                                as="h2"
+                                size="h2"
+                                mb={8}
+                                fontWeight="bold"
+                                textAlign="center"
+                            >
+                                Algemene gegevens
+                            </Heading>
 
-                        <DataDisplay
-                            entry={{
-                                trouwdatum: wedding?.date
-                                    ? new Date(
-                                          wedding?.date
-                                      ).toLocaleDateString(navigator.language)
-                                    : '',
-                                '+/- overdag':
-                                    wedding?.dayInvitationAmount || 0,
-                                '+/- avond':
-                                    wedding?.eveningInvitationAmount || 0,
-                                '+/- totaaal':
-                                    (wedding?.dayInvitationAmount || 0) +
-                                    (wedding?.eveningInvitationAmount || 0),
-                                'Van der Valk aantal':
-                                    amountOfVanDerValkGuest ?? 0,
-                            }}
-                        />
-                    </GridItem>
-                    <OverallPresence />
-                    <DayPresence />
-                    <EveningPresence />
-                </Grid>
-            </AppContentWrapper>
+                            <DataDisplay
+                                entry={{
+                                    trouwdatum: wedding?.date
+                                        ? new Date(
+                                              wedding?.date
+                                          ).toLocaleDateString(
+                                              navigator.language
+                                          )
+                                        : '',
+                                    '+/- overdag':
+                                        wedding?.dayInvitationAmount || 0,
+                                    '+/- avond':
+                                        wedding?.eveningInvitationAmount || 0,
+                                    '+/- totaaal':
+                                        (wedding?.dayInvitationAmount || 0) +
+                                        (wedding?.eveningInvitationAmount || 0),
+                                    'Van der Valk aantal':
+                                        amountOfVanDerValkGuest ?? 0,
+                                }}
+                            />
+                        </GridItem>
+                        <OverallPresence />
+                        <DayPresence />
+                        <EveningPresence />
+                    </Grid>
+                </AppContentWrapper>
+            </Container>
         </>
     );
 };

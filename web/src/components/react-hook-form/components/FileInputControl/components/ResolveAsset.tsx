@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 
-import { Box, Icon, Image } from '@chakra-ui/react';
+import { Box, Flex, Icon, Image } from '@chakra-ui/react';
 import { BiImage, BiVideo } from 'react-icons/bi';
+import { IoDocumentAttachOutline } from 'react-icons/io5';
 
 type ResolveAssetProps = {
     file: File;
@@ -69,7 +70,20 @@ const ResolveAsset = ({ file }: ResolveAssetProps) => {
         );
     }
 
-    return null;
+    // For the rest show file icon
+    return (
+        <Flex justifyContent="center" alignItems="center" h="full">
+            <Icon
+                as={IoDocumentAttachOutline}
+                color="tertiary.500"
+                zIndex={1}
+                fontSize={{
+                    base: '5xl',
+                    lg: '8xl',
+                }}
+            />
+        </Flex>
+    );
 };
 
 export default ResolveAsset;

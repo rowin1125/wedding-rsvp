@@ -45,6 +45,11 @@ export const createWedding: MutationResolvers['createWedding'] = async ({
             user: {
                 connect: { id: userId },
             },
+            mediaLibrary: {
+                create: {
+                    gcloudStoragePath: `media/${id}`,
+                },
+            },
         },
     });
 
@@ -82,6 +87,13 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
 }) => {
     const wedding = await db.wedding.findUnique({
         where: { id },
+        include: {
+            mediaLibrary: {
+                select: {
+                    gcloudStoragePath: true,
+                },
+            },
+        },
     });
 
     if (!wedding) {
@@ -115,8 +127,13 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
     const bucket = await getStorageClient();
 
     try {
-        await bucket.deleteFiles({
+        const deleteGalleryImagesPromise = bucket.deleteFiles({
             prefix: wedding.gcloudStoragePath,
+            force: true,
+        });
+
+        const deleteMediaLibraryPromise = await bucket.deleteFiles({
+            prefix: wedding?.mediaLibrary?.gcloudStoragePath,
             force: true,
         });
 
@@ -131,10 +148,18 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
             },
         });
 
-        const [deletedWedding] = await db.$transaction([
+        const deleteWeddingPromise = db.$transaction([
             deleteWedding,
             deleteUserRole,
         ]);
+
+        const [deletedWeddingTransaction] = await Promise.all([
+            deleteWeddingPromise,
+            deleteGalleryImagesPromise,
+            deleteMediaLibraryPromise,
+        ]);
+
+        const deletedWedding = deletedWeddingTransaction[0];
 
         return deletedWedding;
     } catch (error) {

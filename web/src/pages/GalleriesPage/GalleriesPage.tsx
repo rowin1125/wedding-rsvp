@@ -1,5 +1,6 @@
 import {
     Button,
+    Container,
     Flex,
     Grid,
     Heading,
@@ -45,28 +46,33 @@ const GalleriesPage = () => {
                 h="300px"
             />
 
-            <AppContentWrapper>
-                <Flex w="full" justifyContent="space-between" mb={4}>
-                    <Button
-                        size={{ base: 'sm', lg: 'md' }}
-                        as={Link}
-                        to={routes.dashboard()}
-                        variant="outline"
-                    >
-                        {'< Dashboard'}
-                    </Button>
-                    <Button size={{ base: 'sm', lg: 'md' }} onClick={onOpen}>
-                        Maak nog een album aan
-                    </Button>
-                </Flex>
-                {loading && !hasGallery && <Loader />}
-                {!hasGallery && !loading && <CreateNewGallery />}
-                <Grid gridTemplateColumns="repeat(3, 1fr)" gap={6} mt={10}>
-                    {galleries?.map((gallery) => (
-                        <GalleryItem key={gallery.id} gallery={gallery} />
-                    ))}
-                </Grid>
-            </AppContentWrapper>
+            <Container>
+                <AppContentWrapper>
+                    <Flex w="full" justifyContent="space-between" mb={4}>
+                        <Button
+                            size={{ base: 'sm', lg: 'md' }}
+                            as={Link}
+                            to={routes.dashboard()}
+                            variant="outline"
+                        >
+                            {'< Dashboard'}
+                        </Button>
+                        <Button
+                            size={{ base: 'sm', lg: 'md' }}
+                            onClick={onOpen}
+                        >
+                            Maak nog een album aan
+                        </Button>
+                    </Flex>
+                    {loading && !hasGallery && <Loader />}
+                    {!hasGallery && !loading && <CreateNewGallery />}
+                    <Grid gridTemplateColumns="repeat(3, 1fr)" gap={6} mt={10}>
+                        {galleries?.map((gallery) => (
+                            <GalleryItem key={gallery.id} gallery={gallery} />
+                        ))}
+                    </Grid>
+                </AppContentWrapper>
+            </Container>
             <Modal isOpen={isOpen} onClose={onClose} size="xl">
                 <ModalOverlay />
                 <ModalContent>
