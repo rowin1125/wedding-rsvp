@@ -1,10 +1,10 @@
+import { useToast } from '@chakra-ui/react';
 import {
     DeleteWeddingByIdMutation,
     DeleteWeddingByIdMutationVariables,
 } from 'types/graphql';
 
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { GET_WEDDING_BY_ID } from 'src/hooks/useGetWeddingById';
@@ -19,7 +19,7 @@ export const DELETE_WEDDING_BY_ID = gql`
 
 export const useDeleteWeddingById = () => {
     const { reauthenticate } = useAuth();
-
+    const toast = useToast();
     const [deleteWeddingById, mutationData] = useMutation<
         DeleteWeddingByIdMutation,
         DeleteWeddingByIdMutationVariables
@@ -36,7 +36,11 @@ export const useDeleteWeddingById = () => {
             reauthenticate();
         },
         onError: (error) => {
-            toast.error(error.message);
+            toast({
+                title: 'Error deleting wedding',
+                description: error.message,
+                status: 'error',
+            });
         },
     });
 
@@ -46,7 +50,10 @@ export const useDeleteWeddingById = () => {
         });
 
         if (!deleteWeddingId.errors) {
-            toast.success('Wedding deleted');
+            toast({
+                title: 'Wedding verwijderd',
+                status: 'success',
+            });
         }
     };
 

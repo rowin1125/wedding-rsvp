@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 
-import { VStack, Heading, Flex, Text } from '@chakra-ui/react';
+import { VStack, Heading, Flex, Text, useToast } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, FormProvider } from 'react-hook-form';
 import { object, string } from 'yup';
 
 import { routes } from '@redwoodjs/router';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
@@ -33,6 +32,7 @@ const LoginForm = () => {
     const { logIn, loading } = useAuth();
     const [email, setEmail] = useState('');
     const [showResendButton, setShowResendButton] = useState(false);
+    const toast = useToast();
 
     const methods = useForm({
         resolver: yupResolver(validationSchema),
@@ -47,16 +47,33 @@ const LoginForm = () => {
         });
 
         if (response.message) {
-            toast(response.message);
+            toast({
+                title: response.message,
+            });
         } else if (response.error) {
             if ((response.error as string).includes('Valideer')) {
                 setEmail(data.email);
                 setShowResendButton(true);
+
+                toast({
+                    title: 'Valideer je account',
+                    description: 'Je account is nog niet gevalideerd',
+                    status: 'warning',
+                });
+                return;
             }
-            toast.error(response.error);
+            toast({
+                title: 'Er is iets fout gegaan',
+                description: response.error,
+                status: 'error',
+            });
         } else {
             // user is signed in automatically
-            toast.success('Welcome!');
+            toast({
+                title: 'Welkom!',
+                description: 'Je bent ingelogd',
+                status: 'success',
+            });
         }
     };
 

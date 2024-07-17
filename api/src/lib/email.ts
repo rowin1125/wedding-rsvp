@@ -19,7 +19,7 @@ type MailUserOptions = {
 
 export const EMAIL_TEMPLATES_MAP = {
     RSVP_CONFIRMATION: 1,
-    PASSWORD_RESET: 2,
+    PASSWORD_RESET: 8,
     SIGNUP: 3,
     DOWNLOAD_GALLERY: 6,
     GENERAL_ERROR: 7,

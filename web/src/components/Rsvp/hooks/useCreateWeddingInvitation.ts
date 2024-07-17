@@ -1,3 +1,4 @@
+import { useToast } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import {
@@ -9,7 +10,6 @@ import { array, object, string, InferType } from 'yup';
 
 import { useParams } from '@redwoodjs/router';
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 export const CREATE_WEDDING_INVITATION = gql`
     mutation CreateWeddingInvitationMutation(
@@ -43,6 +43,7 @@ export const useCreateWeddingInvitation = ({
     invitationType,
 }: UseCreateWeddingInvitation) => {
     const { weddingId } = useParams();
+    const toast = useToast();
 
     const validationSchema = object({
         email: string()
@@ -117,17 +118,19 @@ export const useCreateWeddingInvitation = ({
         CreateWeddingInvitationMutationVariables
     >(CREATE_WEDDING_INVITATION, {
         onCompleted: () => {
-            toast.success(
-                'Bedankt voor het doorgeven van jullie aanwezigheid! Bekijk de bevestiging in je mailbox (check ook je spamfolder)!',
-                {
-                    duration: 10000,
-                }
-            );
+            toast({
+                title: 'Bedankt voor het doorgeven van jullie aanwezigheid!',
+                description:
+                    'Bekijk de bevestiging in je mailbox (check ook je spamfolder)!',
+                status: 'success',
+                duration: 10000,
+            });
         },
         onError: () => {
-            toast.error(
-                'Er is iets misgegaan bij het doorgeven van jullie aanwezigheid.'
-            );
+            toast({
+                title: 'Er is iets misgegaan bij het doorgeven van jullie aanwezigheid.',
+                status: 'error',
+            });
         },
     });
 

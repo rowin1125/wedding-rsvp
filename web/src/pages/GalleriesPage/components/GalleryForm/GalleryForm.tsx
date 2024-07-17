@@ -1,12 +1,10 @@
 import React from 'react';
 
-import { Button, Flex, VStack } from '@chakra-ui/react';
+import { Button, Flex, useToast, VStack } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FindGalleryQuery } from 'types/graphql';
 import { InferType, object, string } from 'yup';
-
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
@@ -33,6 +31,7 @@ const validationSchema = object({
 const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
     const { createGallery, updateGallery, loading } = useGalleryForm();
     const { currentUser } = useAuth();
+    const toast = useToast();
 
     const defaultValues = {
         name: initialData?.name || '',
@@ -50,7 +49,11 @@ const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
         try {
             if (formType === 'create') {
                 if (!currentUser?.weddingId) {
-                    toast.error('Wedding not found');
+                    toast({
+                        title: 'Wedding niet gevonden',
+                        description: 'Er is geen wedding gevonden',
+                        status: 'error',
+                    });
                     return;
                 }
                 await createGallery({
@@ -63,12 +66,20 @@ const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
                 });
             } else if (formType === 'update') {
                 if (!initialData?.id) {
-                    toast.error('Gallery not found');
+                    toast({
+                        title: 'Gallery niet gevonden',
+                        description: 'Er is geen gallery gevonden',
+                        status: 'error',
+                    });
                     return;
                 }
 
                 if (!initialData?.weddingId) {
-                    toast.error('Wedding not found');
+                    toast({
+                        title: 'Wedding niet gevonden',
+                        description: 'Er is geen wedding gevonden',
+                        status: 'error',
+                    });
                     return;
                 }
 
@@ -85,12 +96,19 @@ const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
 
             methods.reset({ name: data.name });
 
-            toast.success('Galerij succesvol opgeslagen');
+            toast({
+                title: 'Galerij succesvol opgeslagen',
+                status: 'success',
+            });
             onClose?.();
         } catch (err) {
             const error = err as Error;
 
-            toast.error(error.message);
+            toast({
+                title: 'Er is iets misgegaan',
+                description: error.message,
+                status: 'error',
+            });
         }
     };
 

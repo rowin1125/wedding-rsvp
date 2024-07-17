@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react';
 
 import { useParams } from '@redwoodjs/router';
-import { Toaster } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import ClientOnlyWrapper from 'src/components/ClientOnlyWrapper';
@@ -23,7 +22,6 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
 
     return (
         <Box>
-            <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
             <ClientOnlyWrapper>
                 <Header />
             </ClientOnlyWrapper>

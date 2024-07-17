@@ -1,8 +1,8 @@
+import { useToast } from '@chakra-ui/react';
 import { DeleteQrCode, DeleteQrCodeVariables } from 'types/graphql';
 
 import { useParams } from '@redwoodjs/router';
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { FIND_GALLERY_QUERY } from 'src/components/Gallery/hooks/useFindGallery';
 import {
@@ -23,16 +23,23 @@ export const DELETE_QR_CODE = gql`
 export const useDeleteQrCode = () => {
     const { updateGallery, updateGalleryMutationData } = useGalleryForm();
     const { galleryId } = useParams();
+    const toast = useToast();
 
     const [deleteQrCode, deleteQrMutationData] = useMutation<
         DeleteQrCode,
         DeleteQrCodeVariables
     >(DELETE_QR_CODE, {
         onCompleted: () => {
-            toast.success('QR code verwijderd!');
+            toast({
+                title: 'QR code verwijderd!',
+                status: 'success',
+            });
         },
         onError: (error) => {
-            toast.error('Error deleting QR code: ' + error.message);
+            toast({
+                title: 'Error deleting QR code: ' + error.message,
+                status: 'error',
+            });
         },
         refetchQueries: [
             {

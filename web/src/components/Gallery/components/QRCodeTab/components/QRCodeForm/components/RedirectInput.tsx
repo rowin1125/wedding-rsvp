@@ -1,23 +1,25 @@
 import React from 'react';
 
-import { Button, Icon, useClipboard } from '@chakra-ui/react';
+import { Button, Icon, useClipboard, useToast } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
 import { MdContentCopy } from 'react-icons/md';
 import { TbCheck } from 'react-icons/tb';
-
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import InputControl from 'src/components/react-hook-form/components/InputControl';
 
 const RedirectInput = () => {
     const { watch } = useFormContext();
     const redirectUrl = watch('redirectUrl');
+    const toast = useToast();
 
     const { hasCopied, onCopy } = useClipboard(redirectUrl);
 
     const handleCopy = () => {
         onCopy();
-        toast.success('Link copied to clipboard');
+        toast({
+            title: 'Link gekopieerd naar klembord',
+            status: 'success',
+        });
     };
     return (
         <InputControl

@@ -1,13 +1,19 @@
 import React from 'react';
 
-import { Alert, AlertIcon, Spinner, Link, Text } from '@chakra-ui/react';
+import {
+    Alert,
+    AlertIcon,
+    Spinner,
+    Link,
+    Text,
+    useToast,
+} from '@chakra-ui/react';
 import {
     ResendActivateUserMutation,
     ResendActivateUserMutationVariables,
 } from 'types/graphql';
 
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 type ResendVerificationMailProps = {
     showResendButton: boolean;
@@ -29,13 +35,17 @@ const ResendVerificationMail = ({
     email,
     setShowResendButton,
 }: ResendVerificationMailProps) => {
+    const toast = useToast();
     const [resend, { loading: resendLoading }] = useMutation<
         ResendActivateUserMutation,
         ResendActivateUserMutationVariables
     >(RESEND_ACTIVATE_USER, {
         onCompleted: () => {
             setShowResendButton(false);
-            toast.success('Activation email sent');
+            toast({
+                title: 'Activation email sent',
+                status: 'success',
+            });
         },
     });
 

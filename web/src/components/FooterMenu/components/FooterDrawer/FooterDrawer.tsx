@@ -10,6 +10,7 @@ import {
     DrawerFooter,
     DrawerOverlay,
     Flex,
+    useToast,
 } from '@chakra-ui/react';
 import { BiPhotoAlbum, BiSun } from 'react-icons/bi';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
@@ -20,7 +21,6 @@ import { RiDashboard3Line } from 'react-icons/ri';
 import { TbHome } from 'react-icons/tb';
 
 import { routes } from '@redwoodjs/router';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
@@ -38,9 +38,13 @@ type FooterDrawerProps = {
 const FooterDrawer = ({ isOpen, onClose, btnRef }: FooterDrawerProps) => {
     const { logOut } = useAuth();
     const { wedding } = useGetWeddingById();
-    const handleLogut = () => {
+    const toast = useToast();
+    const handleLogout = () => {
         logOut();
-        toast.success('Je bent uitgelogd');
+        toast({
+            title: 'Je bent uitgelogd',
+            status: 'success',
+        });
     };
 
     if (!wedding) return null;
@@ -155,7 +159,7 @@ const FooterDrawer = ({ isOpen, onClose, btnRef }: FooterDrawerProps) => {
                             colorScheme="body"
                             mr={6}
                             variant="outline"
-                            onClick={handleLogut}
+                            onClick={handleLogout}
                         >
                             Log uit
                         </Button>

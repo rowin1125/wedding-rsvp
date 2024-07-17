@@ -1,3 +1,4 @@
+import { useToast } from '@chakra-ui/react';
 import {
     CreateWeddingGuestInput,
     GetGuestInvitationByIdQuery,
@@ -7,7 +8,6 @@ import {
 import { InferType, array, object, string } from 'yup';
 
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 export const UPDATE_WEDDING_INVITATION = gql`
     mutation UpdateWeddingInvitationMutation(
@@ -47,17 +47,22 @@ type UseUpdateWeddingInvitation = {
 export const useUpdateWeddingInvitation = ({
     weddingInvitation,
 }: UseUpdateWeddingInvitation) => {
+    const toast = useToast();
     const [updateWeddingInvitation, mutationMeta] = useMutation<
         UpdateWeddingInvitationMutation,
         UpdateWeddingInvitationMutationVariables
     >(UPDATE_WEDDING_INVITATION, {
         onCompleted: () => {
-            toast.success('Jullie wijzigingen zijn succesvol doorgegeven.');
+            toast({
+                title: 'Jullie wijzigingen zijn succesvol doorgegeven.',
+                status: 'success',
+            });
         },
         onError: () => {
-            toast.error(
-                'Er is iets misgegaan bij het doorgeven van je wijzigen.'
-            );
+            toast({
+                title: 'Er is iets misgegaan bij het doorgeven van je wijzigen.',
+                status: 'error',
+            });
         },
     });
 

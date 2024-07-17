@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { Heading, Flex, Box, Text, VStack } from '@chakra-ui/react';
+import { Heading, Flex, Box, Text, VStack, useToast } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { InferType, object, string } from 'yup';
 
 import { navigate, routes } from '@redwoodjs/router';
 import { Metadata } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import DeleteDialog from 'src/components/DeleteDialog/DeleteDialog';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
@@ -21,6 +20,7 @@ const UpdateWeddingForm = () => {
     const { wedding, loading: weddingLoading } = useGetWeddingById();
     const { updateWedding, loading: updateWeddingLoading } = useUpdateWedding();
     const { deleteWeddingById, loading } = useDeleteWeddingById();
+    const toast = useToast();
 
     const initialDate = new Date(wedding?.date || new Date())
         .toISOString()
@@ -78,10 +78,19 @@ const UpdateWeddingForm = () => {
                     },
                 },
             });
-            toast.success('Bruiloft aangepast!');
+            toast({
+                title: 'Bruiloft aangepast',
+                status: 'success',
+            });
             navigate(routes.dashboard());
         } catch (error) {
-            if (error instanceof Error) toast.error(error.message);
+            if (error instanceof Error) {
+                toast({
+                    title: 'Er is iets fout gegaan',
+                    description: error.message,
+                    status: 'error',
+                });
+            }
         }
     };
 

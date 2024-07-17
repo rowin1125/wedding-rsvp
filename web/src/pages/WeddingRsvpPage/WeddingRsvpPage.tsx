@@ -1,8 +1,7 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, useToast } from '@chakra-ui/react';
 
 import { useParams } from '@redwoodjs/router';
 import { Metadata } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import Banner from 'src/components/Banner';
@@ -21,6 +20,7 @@ import WeddingNotFound from './components/WeddingNotFound';
 const WeddingRsvpPage = () => {
     const { currentUser } = useAuth();
     const { weddingId } = useParams();
+    const toast = useToast();
     const { invitationType } = useParams();
     const { wedding, loading } = useGetWeddingById(weddingId);
 
@@ -28,7 +28,10 @@ const WeddingRsvpPage = () => {
     const isEvening = invitationType.toUpperCase() === 'E';
 
     if ((!loading && !wedding) || (!isFullDay && !isEvening)) {
-        toast.error('Deze bruiloft bestaat niet');
+        toast({
+            title: 'Deze bruiloft bestaat niet',
+            status: 'error',
+        });
 
         return <WeddingNotFound />;
     }

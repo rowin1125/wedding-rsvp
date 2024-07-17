@@ -1,12 +1,18 @@
 import React from 'react';
 
-import { VStack, Heading, ButtonGroup, Button, Flex } from '@chakra-ui/react';
+import {
+    VStack,
+    Heading,
+    ButtonGroup,
+    Button,
+    Flex,
+    useToast,
+} from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, FormProvider } from 'react-hook-form';
 import { object, string } from 'yup';
 
 import { Link, navigate, routes } from '@redwoodjs/router';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
@@ -29,6 +35,7 @@ type ResetPasswordForm = {
 
 const ResetPasswordForm = ({ resetToken, enabled }: ResetPasswordForm) => {
     const { resetPassword, loading, reauthenticate } = useAuth();
+    const toast = useToast();
 
     const methods = useForm({
         resolver: yupResolver(validationSchema),
@@ -43,9 +50,17 @@ const ResetPasswordForm = ({ resetToken, enabled }: ResetPasswordForm) => {
         });
 
         if (response.error) {
-            toast.error(response.error);
+            toast({
+                title: 'Er is iets fout gegaan',
+                description: response.error,
+                status: 'error',
+            });
         } else {
-            toast.success('Wachtwoord veranderd!');
+            toast({
+                title: 'Gelukt!',
+                description: 'Je wachtwoord is veranderd',
+                status: 'success',
+            });
             await reauthenticate();
             navigate(routes.login());
         }

@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { VStack, Heading, Flex, Text } from '@chakra-ui/react';
+import { VStack, Heading, Flex, Text, useToast } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, FormProvider } from 'react-hook-form';
 import { object, string } from 'yup';
 
 import { navigate, routes } from '@redwoodjs/router';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
@@ -29,6 +28,7 @@ const defaultValues = {
 
 const SignupForm = () => {
     const { signUp, loading } = useAuth();
+    const toast = useToast();
 
     const methods = useForm({
         resolver: yupResolver(validationSchema),
@@ -44,13 +44,23 @@ const SignupForm = () => {
 
         if (response.message) {
             methods.reset(defaultValues);
-            toast.success(response.message);
+            toast({
+                title: response.message,
+            });
             navigate(routes.login());
         } else if (response.error) {
-            toast.error(response.error);
+            toast({
+                title: 'Er is iets fout gegaan',
+                description: response.error,
+                status: 'error',
+            });
         } else {
             // user is signed in automatically
-            toast.success('Welkom!');
+            toast({
+                title: 'Welkom!',
+                description: 'Je bent nu ingelogd',
+                status: 'success',
+            });
         }
     };
 

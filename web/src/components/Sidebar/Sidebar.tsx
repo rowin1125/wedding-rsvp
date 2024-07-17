@@ -1,4 +1,11 @@
-import { Button, Flex, Icon, Image, useEventListener } from '@chakra-ui/react';
+import {
+    Button,
+    Flex,
+    Icon,
+    Image,
+    useEventListener,
+    useToast,
+} from '@chakra-ui/react';
 import { BiLogOut, BiPhotoAlbum, BiSun } from 'react-icons/bi';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
 import { CgOptions, CgWebsite } from 'react-icons/cg';
@@ -7,7 +14,6 @@ import { MdOutlinePermMedia } from 'react-icons/md';
 import { RiDashboard3Line } from 'react-icons/ri';
 
 import { routes } from '@redwoodjs/router';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
@@ -24,8 +30,12 @@ const ClOSE_SIDEBAR_KEYS = ['221', '['];
 const Sidebar = () => {
     const [navOpen, toggleNav] = useLocalStorage('navOpen', true);
     const { logOut } = useAuth();
+    const toast = useToast();
     const handleLogout = () => {
-        toast.success('Je bent uitgelogd');
+        toast({
+            title: 'Je bent uitgelogd',
+            status: 'success',
+        });
         logOut();
     };
     const { wedding } = useGetWeddingById();

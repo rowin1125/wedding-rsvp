@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo } from 'react';
 
+import { useToast } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { createId } from '@paralleldrive/cuid2';
 import { useForm } from 'react-hook-form';
@@ -14,7 +15,6 @@ import { InferType } from 'yup';
 
 import { routes, useParams } from '@redwoodjs/router';
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { useGalleryForm } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
@@ -59,6 +59,7 @@ export const useQRCodeForm = ({ formType, qrCodeId }: UseQRCodeFormType) => {
     const { galleryId } = useParams();
     const { currentUser } = useAuth();
     const { qrCode, loading: qrCodeLoading } = useGetQRCode(qrCodeId);
+    const toast = useToast();
 
     const [createQRCode, createQRCodeMutationData] = useMutation<
         CreateQRCodeMutation,
@@ -137,7 +138,10 @@ export const useQRCodeForm = ({ formType, qrCodeId }: UseQRCodeFormType) => {
                 qrCode = createQRCodeResponse.data?.createQrCode;
             } else {
                 if (!qrCodeId) {
-                    toast.error('QR Code not found');
+                    toast({
+                        title: 'QR Code not found',
+                        status: 'error',
+                    });
                     return;
                 }
                 const updateQRCodeResponse = await updateQRCode({
@@ -185,7 +189,10 @@ export const useQRCodeForm = ({ formType, qrCodeId }: UseQRCodeFormType) => {
 
             methods.reset(data);
 
-            toast.success('QR Code successfully saved');
+            toast({
+                title: 'QR Code successfully saved',
+                status: 'success',
+            });
         } catch (error) {
             console.error('Failed to save QR Code', error);
         }

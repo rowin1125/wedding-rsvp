@@ -83,8 +83,25 @@ export const updateQrCode: MutationResolvers['updateQrCode'] = ({
     });
 };
 
-export const deleteQrCode: MutationResolvers['deleteQrCode'] = ({ id }) => {
-    return db.qrCode.delete({
+export const deleteQrCode: MutationResolvers['deleteQrCode'] = async ({
+    id,
+}) => {
+    const deleteQrCodePromise = db.qrCode.delete({
         where: { id },
     });
+
+    const deleteQrCodeFromGalleryPromise = db.gallery.updateMany({
+        where: { qrCodeId: id },
+        data: {
+            qrCodeId: null,
+            qrCode: null,
+        },
+    });
+
+    const [deleteQrCodeResponse] = await db.$transaction([
+        deleteQrCodePromise,
+        deleteQrCodeFromGalleryPromise,
+    ]);
+
+    return deleteQrCodeResponse;
 };

@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, useToast } from '@chakra-ui/react';
 
 import { navigate, routes, useLocation } from '@redwoodjs/router';
-import { Toaster, toast } from '@redwoodjs/web/dist/toast';
+import { Toaster } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import Footer from 'src/components/Footer/Footer';
@@ -20,6 +20,7 @@ type AppLayoutProps = {
 const AppLayout = ({ children }: AppLayoutProps) => {
     const { currentUser, loading } = useAuth();
     const { pathname } = useLocation();
+    const toast = useToast();
 
     const isSettingsPage = pathname === routes.weddingSettings();
 
@@ -30,8 +31,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         if (loading || isSettingsPage || currentUser?.weddingId) return;
 
         navigate(routes.weddingSettings());
-        toast.error('Je hebt nog geen bruiloft aangemaakt');
-    }, [currentUser, loading, pathname, isSettingsPage]);
+        toast({
+            title: 'Je hebt nog geen bruiloft aangemaakt',
+            status: 'error',
+        });
+    }, [currentUser, loading, pathname, isSettingsPage, toast]);
 
     return (
         <Box>

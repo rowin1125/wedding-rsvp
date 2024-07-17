@@ -1,3 +1,4 @@
+import { useToast } from '@chakra-ui/react';
 import {
     DeleteGalleryMutation,
     DeleteGalleryMutationVariables,
@@ -5,7 +6,6 @@ import {
 
 import { navigate, routes } from '@redwoodjs/router';
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import { GET_GALLERIES_BY_WEDDING_ID } from 'src/pages/GalleriesPage/hooks/useGetGalleries';
@@ -20,17 +20,24 @@ export const DELETE_GALLERY_MUTATION = gql`
 
 export const useDeleteGallery = () => {
     const { currentUser } = useAuth();
+    const toast = useToast();
 
     const [deleteGallery, mutationData] = useMutation<
         DeleteGalleryMutation,
         DeleteGalleryMutationVariables
     >(DELETE_GALLERY_MUTATION, {
         onCompleted: () => {
-            toast.success('Gallery deleted');
+            toast({
+                title: 'Gallery deleted',
+                status: 'success',
+            });
             navigate(routes.galleries());
         },
         onError: (error) => {
-            toast.error('Error deleting gallery: ' + error.message);
+            toast({
+                title: 'Error deleting gallery: ' + error.message,
+                status: 'error',
+            });
         },
         refetchQueries: [
             {

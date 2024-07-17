@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Heading, useToast } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
@@ -12,7 +12,6 @@ import * as Yup from 'yup';
 
 import { navigate, routes, useParams } from '@redwoodjs/router';
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/toast';
 
 import { useAuth } from 'src/auth';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
@@ -32,6 +31,7 @@ const ActivateForm = () => {
     const { logIn, currentUser } = useAuth();
     const { verifiedToken, email } = useParams();
     const decodedEmail = decodeURI(email);
+    const toast = useToast();
 
     const [activate, { loading }] = useMutation<
         ActivateUserMutation,
@@ -47,7 +47,10 @@ const ActivateForm = () => {
             });
 
             if ((result.error as string).includes('Incorrect password')) {
-                toast.error('Wachtwoord is incorrect!');
+                toast({
+                    title: 'Wachtwoord is incorrect!',
+                    status: 'error',
+                });
                 setLoadingLogin(false);
                 return;
             }
@@ -64,12 +67,18 @@ const ActivateForm = () => {
                 }).finally(() => {
                     navigate(routes.dashboard());
                 });
-                toast.success('Account actief!');
+                toast({
+                    title: 'Account actief!',
+                    status: 'success',
+                });
             }
 
             setLoadingLogin(false);
         } catch (error: any) {
-            toast.error(error?.message);
+            toast({
+                title: error?.message,
+                status: 'error',
+            });
         }
     };
 
@@ -80,7 +89,10 @@ const ActivateForm = () => {
     useEffect(() => {
         if (!verifiedToken || !email) {
             navigate(routes.login());
-            toast.error('Invalide verifiedToken or email');
+            toast({
+                title: 'Invalide verifiedToken of email',
+                status: 'error',
+            });
         }
     }, [verifiedToken, email]);
 

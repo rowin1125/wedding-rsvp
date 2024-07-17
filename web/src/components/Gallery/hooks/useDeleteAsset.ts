@@ -1,10 +1,10 @@
+import { useToast } from '@chakra-ui/react';
 import {
     DeleteAssetMutation,
     DeleteAssetMutationVariables,
 } from 'types/graphql';
 
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { DEFAULT_GALLERY_PAGINATION_OFFSET } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
 import { useQueryControls } from 'src/pages/GalleryPage/hooks/useQueryControls';
@@ -24,16 +24,24 @@ type UseDeleteAssetType = {
 
 export const useDeleteAsset = ({ id }: UseDeleteAssetType) => {
     const { offset } = useQueryControls();
+    const toast = useToast();
 
     const [deleteAsset, mutationData] = useMutation<
         DeleteAssetMutation,
         DeleteAssetMutationVariables
     >(DELETE_ASSET_MUTATION, {
         onCompleted: () => {
-            toast.success('Asset deleted');
+            toast({
+                title: 'Asset deleted',
+                status: 'success',
+            });
         },
         onError: (error) => {
-            toast.error('Error deleting asset: ' + error.message);
+            toast({
+                title: 'Error deleting asset',
+                description: error.message,
+                status: 'error',
+            });
         },
         refetchQueries: [
             {

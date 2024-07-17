@@ -1,5 +1,6 @@
+import { useToast } from '@chakra-ui/react';
+
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { FIND_GALLERY_QUERY } from 'src/components/Gallery/hooks/useFindGallery';
 import { DEFAULT_GALLERY_PAGINATION_OFFSET } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
@@ -11,14 +12,22 @@ export const DOWNLOAD_GALLERY_MUTATION = gql`
 `;
 
 export const useDownloadGallery = (galleryId: string) => {
+    const toast = useToast();
     const [downloadGallery, downloadMutationData] = useMutation(
         DOWNLOAD_GALLERY_MUTATION,
         {
             onCompleted: (data) => {
-                toast.success(data.downloadGallery);
+                toast({
+                    title: data.downloadGallery,
+                    status: 'success',
+                });
             },
             onError: (error) => {
-                toast.error('Error downloading gallery: ' + error.message);
+                toast({
+                    title: 'Error downloading gallery',
+                    description: error.message,
+                    status: 'error',
+                });
                 console.error('Error downloading gallery: ', error);
             },
             refetchQueries: [

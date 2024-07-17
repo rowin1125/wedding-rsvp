@@ -1,5 +1,4 @@
 import { Metadata } from '@redwoodjs/web';
-import { Toaster } from '@redwoodjs/web/dist/toast';
 
 import AuthScreen from 'src/components/AuthScreen';
 
@@ -14,10 +13,6 @@ const ActivatePage = () => {
             />
 
             <main>
-                <Toaster
-                    toastOptions={{ className: 'rw-toast', duration: 6000 }}
-                />
-
                 <AuthScreen
                     imageSrc={
                         'https://images.prismic.io/derow-v1/ZjZuGEMTzAJOCiHa_beach-wedding.jpg?auto=format,compress'

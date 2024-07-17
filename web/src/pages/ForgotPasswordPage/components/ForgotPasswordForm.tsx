@@ -1,12 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 
-import { VStack, Heading, ButtonGroup, Button } from '@chakra-ui/react';
+import {
+    VStack,
+    Heading,
+    ButtonGroup,
+    Button,
+    useToast,
+} from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, FormProvider } from 'react-hook-form';
 import { object, string } from 'yup';
 
 import { Link, navigate, routes } from '@redwoodjs/router';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { useAuth } from 'src/auth';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
@@ -23,6 +28,7 @@ const defaultValues = {
 const ForgetPasswordForm = () => {
     const { forgotPassword, loading } = useAuth();
     const emailRef = useRef<HTMLInputElement>(null);
+    const toast = useToast();
 
     const methods = useForm({
         resolver: yupResolver(validationSchema),
@@ -34,14 +40,21 @@ const ForgetPasswordForm = () => {
         const response = await forgotPassword(data.email);
 
         if (response.error) {
-            toast.error(response.error);
+            toast({
+                title: 'Er is iets fout gegaan',
+                description: response.error,
+                status: 'error',
+            });
         } else {
             // The function `forgotPassword.handler` in api/src/functions/auth.js has
             // been invoked, let the user know how to get the link to reset their
             // password (sent in email, perhaps?)
-            toast.success(
-                `Er is een mail gestuurd naar ${response.email} met instructies om je wachtwoord te herstellen`
-            );
+            toast({
+                title: 'Er is een mail gestuurd',
+                description: `Er is een mail gestuurd naar ${response.email} met instructies om je wachtwoord te herstellen`,
+                status: 'success',
+            });
+
             navigate(routes.login());
         }
     };

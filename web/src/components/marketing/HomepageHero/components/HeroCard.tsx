@@ -1,9 +1,7 @@
 import React from 'react';
 
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, useToast } from '@chakra-ui/react';
 import { MotionValue, motion } from 'framer-motion';
-
-import { toast } from '@redwoodjs/web/dist/toast';
 
 type HeroCardProps = {
     rotate: MotionValue<number>;
@@ -14,6 +12,7 @@ type HeroCardProps = {
 
 const HeroCard = ({ rotate, scale, children }: HeroCardProps) => {
     const Element = motion(Box);
+    const toast = useToast();
 
     return (
         <Element
@@ -122,8 +121,9 @@ const HeroCard = ({ rotate, scale, children }: HeroCardProps) => {
                     }}
                     cursor="pointer"
                     onClick={() => {
-                        toast.success('Heee afblijven, dat is mijn tablet!', {
-                            duration: 2000,
+                        toast({
+                            title: 'Heee afblijven, dat is mijn tablet!',
+                            status: 'info',
                         });
                     }}
                     bg="primary.100"

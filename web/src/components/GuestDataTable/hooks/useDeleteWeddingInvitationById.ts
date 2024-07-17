@@ -1,10 +1,10 @@
+import { useToast } from '@chakra-ui/react';
 import {
     DeleteWeddingInvitationByIdMutation,
     DeleteWeddingInvitationByIdMutationVariables,
 } from 'types/graphql';
 
 import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import { GET_WEDDING_INVITATION_BY_WEDDING_ID } from 'src/hooks/useGetWeddingInvitationsByWeddingId';
 
@@ -17,6 +17,7 @@ export const DELETE_WEDDING_INVITATION_BY_ID = gql`
 `;
 
 export const useDeleteWeddingInvitationById = () => {
+    const toast = useToast();
     const [deleteWeddingInvitationById, mutationData] = useMutation<
         DeleteWeddingInvitationByIdMutation,
         DeleteWeddingInvitationByIdMutationVariables
@@ -30,7 +31,11 @@ export const useDeleteWeddingInvitationById = () => {
             },
         ],
         onError: (error) => {
-            toast.error(error.message);
+            toast({
+                title: 'Error deleting wedding invitation',
+                description: error.message,
+                status: 'error',
+            });
         },
     });
 
@@ -40,7 +45,10 @@ export const useDeleteWeddingInvitationById = () => {
         });
 
         if (!deleteWeddingInvitationId.errors) {
-            toast.success('Uitnodiging verwijderd');
+            toast({
+                title: 'Uitnodiging verwijderd',
+                status: 'success',
+            });
         }
     };
 

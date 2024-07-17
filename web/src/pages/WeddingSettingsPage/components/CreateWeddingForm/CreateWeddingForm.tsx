@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
 
-import { Box, Flex, Heading, VStack } from '@chakra-ui/react';
+import { Box, Flex, Heading, useToast, VStack } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { InferType, object, string } from 'yup';
 
 import { Metadata } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/dist/toast';
 
 import InputControl from 'src/components/react-hook-form/components/InputControl';
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
@@ -15,6 +14,7 @@ import { useCreateWedding } from './hooks/useCreateWedding';
 
 const CreateWeddingForm = () => {
     const { createWedding, loading } = useCreateWedding();
+    const toast = useToast();
     const validationSchema = object({
         name: string().required('Naam is verplicht'),
         date: string().required('Datum is verplicht'),
@@ -63,7 +63,13 @@ const CreateWeddingForm = () => {
                 },
             });
         } catch (error) {
-            if (error instanceof Error) toast.error(error.message);
+            if (error instanceof Error) {
+                toast({
+                    title: 'Er is iets fout gegaan',
+                    description: error.message,
+                    status: 'error',
+                });
+            }
         }
     };
 
