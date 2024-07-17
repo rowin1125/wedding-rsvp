@@ -44,6 +44,9 @@ export const MediaLibrary: MediaLibraryRelationResolvers = {
                           },
                       },
                       { fileType: { contains: query, mode: 'insensitive' } },
+                      { description: { contains: query, mode: 'insensitive' } },
+                      { title: { contains: query, mode: 'insensitive' } },
+                      { altText: { contains: query, mode: 'insensitive' } },
                   ]
                 : undefined,
         };
