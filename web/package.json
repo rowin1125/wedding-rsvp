@@ -25,6 +25,7 @@
     "@sentry/browser": "7",
     "@sentry/react": "7",
     "@tanstack/react-table": "^8.9.8",
+    "buffer": "^6.0.3",
     "chart.js": "^4.4.0",
     "framer-motion": "^9",
     "gsap": "^3.12.5",
