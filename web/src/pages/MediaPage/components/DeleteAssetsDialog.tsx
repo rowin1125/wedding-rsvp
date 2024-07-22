@@ -11,6 +11,8 @@ import {
     AlertDialogFooter,
 } from '@chakra-ui/react';
 
+import { useParams } from '@redwoodjs/router';
+
 import { useAuth } from 'src/auth';
 
 import { useDeleteAssets } from '../hooks/useDeleteAssets';
@@ -18,18 +20,26 @@ import { useDeleteAssets } from '../hooks/useDeleteAssets';
 type DeleteAssetsDialogProps = {
     selectedAssets: string[];
     setSelectedAssets: (ids: string[]) => void;
+    type: 'media' | 'gallery';
 };
 
 const DeleteAssetsDialog = ({
     selectedAssets,
     setSelectedAssets,
+    type,
 }: DeleteAssetsDialogProps) => {
     const { currentUser } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = React.useRef<null>(null);
 
+    const isGallery = type === 'gallery';
+    const { galleryId } = useParams();
+
     const { deleteAssets, loading } = useDeleteAssets({
-        id: currentUser?.wedding?.mediaLibrary?.id as string,
+        id: isGallery
+            ? galleryId
+            : currentUser?.wedding?.mediaLibrary?.id ?? '',
+        type,
     });
 
     const handleDeleteSelectedFiles = async () => {

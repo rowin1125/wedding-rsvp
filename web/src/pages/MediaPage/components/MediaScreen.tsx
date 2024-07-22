@@ -113,6 +113,7 @@ const MediaScreen = () => {
                 <MediaLibraryAssetSelection
                     selectedAssets={selectedAssets}
                     setSelectedAssets={setSelectedAssets}
+                    type="media"
                 />
 
                 <AssetsLoader loading={loading} />

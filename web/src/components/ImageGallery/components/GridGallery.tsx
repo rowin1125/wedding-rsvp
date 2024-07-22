@@ -2,6 +2,9 @@ import React from 'react';
 
 import { DeleteIcon, DownloadIcon } from '@chakra-ui/icons';
 import {
+    Box,
+    Button,
+    Checkbox,
     Grid,
     GridItem,
     IconButton,
@@ -9,11 +12,14 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
+    Text,
     useDisclosure,
 } from '@chakra-ui/react';
 import { BiDotsVertical } from 'react-icons/bi';
 
 import { useAuth } from 'src/auth';
+import { truncateText } from 'src/helpers/textHelpers/truncateText/truncateText';
+import { useIsDevice } from 'src/hooks/useIsDevice';
 import { WEDDING_OWNER } from 'src/lib/contants';
 
 import ResolveAssetType from './ResolveAssetType';
@@ -27,8 +33,15 @@ type GridGalleryProps = {
     containerWidth?: GridSettingsType;
     deleteLoading: boolean;
     gridGap?: string;
+    selectedAssets?: string[];
     deleteCallback?: (id: string) => void;
     setInitialIndex: (index: number) => void;
+    handleSelectAsset?: (
+        event:
+            | React.MouseEvent<HTMLButtonElement, MouseEvent>
+            | React.MouseEvent<HTMLDivElement, MouseEvent>,
+        id: string
+    ) => void;
 };
 
 const resolveHeight = (containerWidth?: GridSettingsType) => {
@@ -59,7 +72,7 @@ const resolveHeight = (containerWidth?: GridSettingsType) => {
 
         default:
             return {
-                base: '200px',
+                base: 'auto',
                 lg: '300px',
             };
     }
@@ -73,8 +86,11 @@ const GridGallery = ({
     deleteCallback,
     setInitialIndex,
     deleteLoading,
+    handleSelectAsset,
+    selectedAssets,
 }: GridGalleryProps) => {
     const { currentUser, hasRole } = useAuth();
+    const { isTablet, isDesktop } = useIsDevice();
     const { onOpen } = modalControls;
     const gridMap = {
         '0': '0px',
@@ -101,68 +117,116 @@ const GridGallery = ({
                         colSpan={{ base: 2, lg: 1 }}
                         key={`image-${index}`}
                         position="relative"
-                        h={resolveHeight(containerWidth)}
                         cursor={'zoom-in'}
                     >
-                        <Menu>
-                            <MenuButton
-                                as={IconButton}
-                                aria-label="Options"
-                                icon={<BiDotsVertical />}
-                                variant="solid"
-                                position="absolute"
-                                right={2}
-                                top={2}
-                                zIndex={1}
-                                isDisabled={deleteLoading}
-                                isLoading={deleteLoading}
-                            />
-                            <MenuList>
-                                <MenuItem
-                                    icon={<DownloadIcon color="blue.500" />}
-                                    onClick={handleDownload}
+                        <Box
+                            shadow="lg"
+                            position="relative"
+                            borderTopRadius="xl"
+                            overflow="hidden"
+                            minH={resolveHeight(containerWidth)}
+                        >
+                            <Menu>
+                                <MenuButton
+                                    as={IconButton}
+                                    aria-label="Options"
+                                    icon={<BiDotsVertical />}
+                                    variant="solid"
+                                    position="absolute"
+                                    right={2}
+                                    top={2}
+                                    zIndex={1}
                                     isDisabled={deleteLoading}
-                                >
-                                    Download origineel
-                                </MenuItem>
-                                {deleteCallback && currentUser && isOwner && (
+                                    isLoading={deleteLoading}
+                                />
+                                <MenuList>
                                     <MenuItem
-                                        icon={<DeleteIcon color="red.500" />}
-                                        onClick={() => deleteCallback(image.id)}
+                                        icon={<DownloadIcon color="blue.500" />}
+                                        onClick={handleDownload}
+                                        isDisabled={deleteLoading}
                                     >
-                                        Verwijder bestand
+                                        Download origineel
                                     </MenuItem>
-                                )}
-                            </MenuList>
-                        </Menu>
-                        <ResolveAssetType
-                            imageProps={{
-                                src: image.url,
-                                thumbnailUrl: image.thumbnailUrl,
-                                w: 'full',
-                                h: 'full',
-                                objectFit: 'cover',
-                                loading: 'lazy',
-                                onClick: () => {
-                                    setInitialIndex(index);
-                                    onOpen();
-                                },
-                                inset: 0,
-                                position: 'absolute',
-                                borderRadius: 'xl',
-                                shadow: 'xl',
-                            }}
-                            fileType={image.fileType}
-                            videoProps={{
-                                objectFit: 'cover',
-                                src: image.url,
-                                onClick: () => {
-                                    setInitialIndex(index);
-                                    modalControls.onOpen();
-                                },
-                                cursor: 'zoom-in',
-                            }}
-                        />
+                                    {deleteCallback &&
+                                        currentUser &&
+                                        isOwner && (
+                                            <MenuItem
+                                                icon={
+                                                    <DeleteIcon color="red.500" />
+                                                }
+                                                onClick={() =>
+                                                    deleteCallback(image.id)
+                                                }
+                                            >
+                                                Verwijder bestand
+                                            </MenuItem>
+                                        )}
+                                </MenuList>
+                            </Menu>
+                            <ResolveAssetType
+                                imageProps={{
+                                    src: image.url,
+                                    thumbnailUrl: image.thumbnailUrl,
+                                    w: 'full',
+                                    h: 'full',
+                                    objectFit: 'cover',
+                                    loading: 'lazy',
+                                    onClick: () => {
+                                        setInitialIndex(index);
+                                        onOpen();
+                                    },
+                                    inset: 0,
+                                    position: 'absolute',
+                                    borderRadius: 'xl',
+                                    borderBottomRadius: handleSelectAsset
+                                        ? 0
+                                        : 'xl',
+                                    shadow: 'xl',
+                                }}
+                                fileType={image.fileType}
+                                videoProps={{
+                                    objectFit: 'cover',
+                                    src: image.url,
+                                    h: 'full',
+                                    inset: 0,
+                                    position: 'absolute',
+                                    onClick: () => {
+                                        setInitialIndex(index);
+                                        modalControls.onOpen();
+                                    },
+                                    cursor: 'zoom-in',
+                                }}
+                            />
+                        </Box>
+                        {handleSelectAsset && (
+                            <Button
+                                variant="ghost"
+                                w="full"
+                                onClick={(e) =>
+                                    handleSelectAsset?.(e, image.id)
+                                }
+                                justifyContent="flex-start"
+                            >
+                                <Checkbox
+                                    size="sm"
+                                    onClick={(e) =>
+                                        handleSelectAsset?.(e, image.id)
+                                    }
+                                    colorScheme="tertiary"
+                                    mr={2}
+                                    isChecked={selectedAssets?.includes(
+                                        image.id
+                                    )}
+                                />
+                                <Text fontSize="xx-small">
+                                    {truncateText(
+                                        image.originalFilename ??
+                                            `${image.id}.${image.fileType}`,
+                                        isTablet ? 15 : isDesktop ? 20 : 20 // mobile
+                                    )}
+                                </Text>
+                            </Button>
+                        )}
                     </GridItem>
                 );
             })}

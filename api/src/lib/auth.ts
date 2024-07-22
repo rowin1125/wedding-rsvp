@@ -42,6 +42,11 @@ export const getCurrentUser = async (session: Decoded) => {
                                 id: true,
                             },
                         },
+                        gallery: {
+                            select: {
+                                id: true,
+                            },
+                        },
                     },
                 },
                 weddingId: true,

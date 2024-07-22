@@ -7,11 +7,13 @@ import DeleteAssetsDialog from './DeleteAssetsDialog';
 type MediaLibraryAssetSelectionProps = {
     selectedAssets: string[];
     setSelectedAssets: (value: string[]) => void;
+    type: 'media' | 'gallery';
 };
 
 const MediaLibraryAssetSelection = ({
     selectedAssets,
     setSelectedAssets,
+    type,
 }: MediaLibraryAssetSelectionProps) => {
     const hasAssetsSelected = selectedAssets.length > 0;
     if (!hasAssetsSelected) return null;
@@ -37,6 +39,7 @@ const MediaLibraryAssetSelection = ({
                     <DeleteAssetsDialog
                         selectedAssets={selectedAssets}
                         setSelectedAssets={setSelectedAssets}
+                        type={type}
                     />
                 </Flex>
             </Box>

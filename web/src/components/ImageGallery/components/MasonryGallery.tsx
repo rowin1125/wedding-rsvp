@@ -6,12 +6,20 @@ import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import MasonryImage from './MasonryImage';
 
 type MasonryGalleryProps = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     images: (Record<string, any> | null)[];
     modalControls: ReturnType<typeof useDisclosure>;
     gridGap?: string;
     deleteLoading: boolean;
     setInitialIndex: (index: number) => void;
     deleteCallback?: (id: string) => void;
+    selectedAssets?: string[];
+    handleSelectAsset?: (
+        event:
+            | React.MouseEvent<HTMLButtonElement, MouseEvent>
+            | React.MouseEvent<HTMLDivElement, MouseEvent>,
+        id: string
+    ) => void;
 };
 
 const MasonryGallery = ({
@@ -21,6 +29,8 @@ const MasonryGallery = ({
     deleteCallback,
     deleteLoading,
     setInitialIndex,
+    handleSelectAsset,
+    selectedAssets,
 }: MasonryGalleryProps) => {
     const gridMap = {
         '0': '0px',
@@ -55,6 +65,8 @@ const MasonryGallery = ({
                                 image={image}
                                 modalControls={modalControls}
                                 deleteCallback={deleteCallback}
+                                selectedAssets={selectedAssets}
+                                handleSelectAsset={handleSelectAsset}
                             />
                         );
                     })}

@@ -7,7 +7,7 @@ import type {
 } from 'types/graphql';
 
 import { removeNulls } from '@redwoodjs/api';
-import { ForbiddenError, UserInputError } from '@redwoodjs/graphql-server';
+import { UserInputError } from '@redwoodjs/graphql-server';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWeddingValidator';
@@ -26,8 +26,6 @@ export const gallery: QueryResolvers['gallery'] = async ({ id }) => {
         where: { id },
     });
     if (!gallery) throw new Error('Gallery not found');
-    if (gallery.weddingId !== context.currentUser?.weddingId)
-        throw new ForbiddenError('Unauthorized');
 
     return gallery;
 };

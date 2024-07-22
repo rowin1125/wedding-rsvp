@@ -95,6 +95,28 @@ const Gallery = () => {
         });
     }, [gallery, gallery?.assets, gallery?.name, setHeroData]);
 
+    const [selectedAssets, setSelectedAssets] = React.useState<string[]>([]);
+
+    const handleSelectAsset = (
+        event:
+            | React.MouseEvent<HTMLButtonElement, MouseEvent>
+            | React.MouseEvent<HTMLDivElement, MouseEvent>,
+        id: string
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (selectedAssets.includes(id)) {
+            setSelectedAssets((prev) =>
+                prev.filter((assetId) => assetId !== id)
+            );
+        } else {
+            setSelectedAssets((prev) => [...prev, id]);
+        }
+    };
+
+    const allIsSelected =
+        selectedAssets.length === gallery?.assets?.items?.length;
+
     return (
         <Box>
             <Tabs
@@ -117,7 +139,13 @@ const Gallery = () => {
                         <Container>
                             {!gallery && loading && <Loader />}
                             {gallery && !loading && (
-                                <ImagesTab gallery={gallery} />
+                                <ImagesTab
+                                    handleSelectAsset={handleSelectAsset}
+                                    selectedAssets={selectedAssets}
+                                    allIsSelected={allIsSelected}
+                                    setSelectedAssets={setSelectedAssets}
+                                    gallery={gallery}
+                                />
                             )}
                         </Container>
                     </TabPanel>

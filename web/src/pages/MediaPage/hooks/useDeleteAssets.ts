@@ -6,6 +6,8 @@ import {
 
 import { useMutation } from '@redwoodjs/web';
 
+import { FIND_GALLERY_QUERY } from 'src/components/Gallery/hooks/useFindGallery';
+import { DEFAULT_GALLERY_PAGINATION_OFFSET } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
 import { useQueryControls } from 'src/pages/GalleryPage/hooks/useQueryControls';
 
 import {
@@ -23,11 +25,14 @@ export const DELETE_ASSETS_MUTATION = gql`
 
 type UseDeleteAssetsType = {
     id: string;
+    type: 'media' | 'gallery';
 };
 
-export const useDeleteAssets = ({ id }: UseDeleteAssetsType) => {
+export const useDeleteAssets = ({ id, type }: UseDeleteAssetsType) => {
     const { offset, currentSorting, finalSearchQuery } = useQueryControls();
     const toast = useToast();
+    const isGallery = type === 'gallery';
+
     const [deleteAssets, mutationData] = useMutation<
         DeleteAssetsMutation,
         DeleteAssetsMutationVariables
@@ -46,17 +51,26 @@ export const useDeleteAssets = ({ id }: UseDeleteAssetsType) => {
             });
         },
         refetchQueries: [
-            {
-                query: GET_MEDIA_ASSETS,
-                variables: {
-                    id,
-                    take: DEFAULT_MEDIA_PAGINATION_OFFSET,
-                    skip: offset,
-                    sortField: currentSorting?.sortField,
-                    sortOrder: currentSorting?.sortOrder,
-                    query: finalSearchQuery,
-                },
-            },
+            isGallery
+                ? {
+                      query: FIND_GALLERY_QUERY,
+                      variables: {
+                          id,
+                          take: DEFAULT_GALLERY_PAGINATION_OFFSET,
+                          skip: offset,
+                      },
+                  }
+                : {
+                      query: GET_MEDIA_ASSETS,
+                      variables: {
+                          id,
+                          take: DEFAULT_MEDIA_PAGINATION_OFFSET,
+                          skip: offset,
+                          sortField: currentSorting?.sortField,
+                          sortOrder: currentSorting?.sortOrder,
+                          query: finalSearchQuery,
+                      },
+                  },
         ],
     });
 

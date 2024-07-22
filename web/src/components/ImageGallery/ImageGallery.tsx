@@ -14,6 +14,13 @@ type ImageGalleryProps = {
     gridGap: string;
     deleteCallback?: (id: string) => void;
     deleteLoading: boolean;
+    selectedAssets?: string[];
+    handleSelectAsset?: (
+        event:
+            | React.MouseEvent<HTMLButtonElement, MouseEvent>
+            | React.MouseEvent<HTMLDivElement, MouseEvent>,
+        id: string
+    ) => void;
 };
 
 const ImageGallery = ({
@@ -23,6 +30,8 @@ const ImageGallery = ({
     gridGap,
     deleteCallback,
     deleteLoading,
+    selectedAssets,
+    handleSelectAsset,
 }: ImageGalleryProps) => {
     const modalControls = useDisclosure();
     const [initialIndex, setInitialIndex] = React.useState<number>(0);
@@ -44,6 +53,8 @@ const ImageGallery = ({
                         deleteCallback={deleteCallback}
                         deleteLoading={deleteLoading}
                         setInitialIndex={setInitialIndex}
+                        handleSelectAsset={handleSelectAsset}
+                        selectedAssets={selectedAssets}
                     />
                 )}
                 {isGrid && (
@@ -55,6 +66,8 @@ const ImageGallery = ({
                         deleteCallback={deleteCallback}
                         setInitialIndex={setInitialIndex}
                         deleteLoading={deleteLoading}
+                        handleSelectAsset={handleSelectAsset}
+                        selectedAssets={selectedAssets}
                     />
                 )}
             </Box>
