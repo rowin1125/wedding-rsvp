@@ -34,8 +34,9 @@ const MediaScreen = () => {
 
     const maxFiles = mediaLibrary ? mediaLibrary.maxAllowedAssets : 0;
     const maxFilesRemaining = mediaLibrary
-        ? maxFiles - mediaLibrary.assets.count
+        ? maxFiles - mediaLibrary.assets.totalCount
         : 0;
+    const filesCurrentlyUploaded = maxFiles - maxFilesRemaining;
     const noFilesRemaining = maxFilesRemaining <= 0;
 
     const accept = 'image/*, video/*, application/pdf';
@@ -44,6 +45,8 @@ const MediaScreen = () => {
         mediaLibraryId: currentUser?.wedding?.mediaLibrary?.id,
         accept,
         maxFiles: maxFilesRemaining,
+        // This is always present when logged in and to access this page you need to be logged in
+        weddingId: currentUser?.weddingId ?? '',
     });
 
     const {
@@ -104,6 +107,7 @@ const MediaScreen = () => {
                     maxFilesRemaining={maxFilesRemaining}
                     mediaLibrary={mediaLibrary}
                     noFilesRemaining={noFilesRemaining}
+                    filesCurrentlyUploaded={filesCurrentlyUploaded}
                 />
 
                 <MediaLibraryAssetSelection

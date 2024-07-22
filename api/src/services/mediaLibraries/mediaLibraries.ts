@@ -4,12 +4,21 @@ import type {
     MediaLibraryRelationResolvers,
 } from 'types/graphql';
 
+import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWeddingValidator';
 import { db } from 'src/lib/db';
 
-export const mediaLibrary: QueryResolvers['mediaLibrary'] = ({ id }) => {
-    return db.mediaLibrary.findUnique({
+export const mediaLibrary: QueryResolvers['mediaLibrary'] = async ({ id }) => {
+    const mediaLibrary = await db.mediaLibrary.findUnique({
         where: { id },
     });
+
+    if (!mediaLibrary) throw new Error('Media library not found');
+
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: mediaLibrary?.weddingId,
+    });
+
+    return mediaLibrary;
 };
 
 export const DEFAULT_MEDIA_PAGINATION_OFFSET = 1;
@@ -58,6 +67,11 @@ export const MediaLibrary: MediaLibraryRelationResolvers = {
             where,
         });
 
+        const totalCount = await db.asset.count({
+            where: {
+                mediaLibraryId: root?.id,
+            },
+        });
         const count = await db.asset.count({ where });
 
         const pages = Math.ceil(
@@ -68,6 +82,7 @@ export const MediaLibrary: MediaLibraryRelationResolvers = {
             items,
             count,
             pages,
+            totalCount,
         };
     },
     wedding: (_obj, { root }) => {

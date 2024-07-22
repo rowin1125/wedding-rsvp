@@ -3,7 +3,7 @@ export const schema = gql`
         id: String!
         date: DateTime!
         name: String!
-        gcloudStoragePat: String!
+        gcloudStoragePath: String!
         dayInvitationAmount: Int!
         eveningInvitationAmount: Int!
         weddingInvitation: [WeddingInvitation]!
@@ -14,7 +14,6 @@ export const schema = gql`
     }
 
     type Query {
-        weddings: [Wedding!]! @skipAuth
         wedding(id: String!): Wedding @skipAuth
     }
 

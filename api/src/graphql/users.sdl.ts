@@ -15,11 +15,6 @@ export const schema = gql`
         roles: [UserRole]!
     }
 
-    type Query {
-        users: [User!]! @requireAuth
-        user(id: String!): User @requireAuth
-    }
-
     input ActivateUserInput {
         verifiedToken: String!
         password: String!

@@ -10,16 +10,19 @@ import { removeNulls } from '@redwoodjs/api';
 import { UserInputError } from '@redwoodjs/graphql-server';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
+import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWeddingValidator';
 import { db } from 'src/lib/db';
 import Sentry from 'src/lib/sentry';
 
-export const weddings: QueryResolvers['weddings'] = () => {
-    return db.wedding.findMany();
-};
+export const wedding: QueryResolvers['wedding'] = async ({ id }) => {
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: id,
+    });
 
-export const wedding: QueryResolvers['wedding'] = ({ id }) => {
     return db.wedding.findUnique({
-        where: { id },
+        where: {
+            id,
+        },
         include: {
             weddingInvitation: {
                 include: {
@@ -65,10 +68,24 @@ export const createWedding: MutationResolvers['createWedding'] = async ({
     return wedding;
 };
 
-export const updateWedding: MutationResolvers['updateWedding'] = ({
+export const updateWedding: MutationResolvers['updateWedding'] = async ({
     id,
     input,
 }) => {
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: id,
+    });
+
+    const wedding = await db.wedding.findUnique({
+        where: {
+            id,
+        },
+    });
+
+    if (!wedding) {
+        throw new UserInputError('Wedding not found');
+    }
+
     return db.wedding.update({
         data: {
             ...removeNulls(input),
@@ -78,15 +95,26 @@ export const updateWedding: MutationResolvers['updateWedding'] = ({
             date: input.date ?? new Date(),
             gcloudStoragePath: id,
         },
-        where: { id },
+        where: {
+            id,
+            user: {
+                id: context.currentUser?.id,
+            },
+        },
     });
 };
 
 export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
     id,
 }) => {
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: id,
+    });
+
     const wedding = await db.wedding.findUnique({
-        where: { id },
+        where: {
+            id,
+        },
         include: {
             mediaLibrary: {
                 select: {

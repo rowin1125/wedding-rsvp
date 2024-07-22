@@ -7,26 +7,37 @@ import type {
 } from 'types/graphql';
 
 import { removeNulls } from '@redwoodjs/api';
-import { UserInputError } from '@redwoodjs/graphql-server';
+import { ForbiddenError, UserInputError } from '@redwoodjs/graphql-server';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
+import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWeddingValidator';
 import { db } from 'src/lib/db';
 import { ONE_DAY_TIME } from 'src/lib/gcloudBackgroundDownloader';
 import Sentry from 'src/lib/sentry';
 
-export const galleries: QueryResolvers['galleries'] = () => {
-    return db.gallery.findMany();
+export const galleries: QueryResolvers['galleries'] = ({ weddingId }) => {
+    if (weddingId !== context.currentUser?.weddingId)
+        throw new UserInputError('Unauthorized');
+    return db.gallery.findMany({ where: { weddingId } });
 };
 
 export const gallery: QueryResolvers['gallery'] = async ({ id }) => {
-    return db.gallery.findUnique({
+    const gallery = await db.gallery.findUnique({
         where: { id },
     });
+    if (!gallery) throw new Error('Gallery not found');
+    if (gallery.weddingId !== context.currentUser?.weddingId)
+        throw new ForbiddenError('Unauthorized');
+
+    return gallery;
 };
 
 export const createGallery: MutationResolvers['createGallery'] = ({
     input,
 }) => {
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: input.weddingId,
+    });
     const id = createId();
 
     const gcloudStoragePath = `galleries/${input.weddingId}/${id}`;
@@ -43,6 +54,15 @@ export const updateGallery: MutationResolvers['updateGallery'] = async ({
     id,
     input,
 }) => {
+    const gallery = await db.gallery.findUnique({
+        where: { id },
+    });
+
+    if (!gallery) throw new Error('Gallery not found');
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: gallery.weddingId,
+    });
+
     return db.gallery.update({
         data: removeNulls(input),
         where: { id },
@@ -56,6 +76,9 @@ export const deleteGallery: MutationResolvers['deleteGallery'] = async ({
         where: { id },
     });
     if (!gallery) throw new Error('Gallery not found');
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: gallery.weddingId,
+    });
     const bucket = await getStorageClient();
 
     const qrCodeId = gallery.qrCodeId;

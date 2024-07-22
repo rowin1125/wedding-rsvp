@@ -36,6 +36,15 @@ docker-run-alpine = docker run --rm -u $$(id -u):$$(id -g) -v `pwd`:/app -w /app
 ## Project commands
 ##
 
+start:
+	@pm2 start ecosystem.config.js
+
+stop:
+	@pm2 stop ecosystem.config.js
+
+restart:
+	@pm2 restart ecosystem.config.js
+
 # Reset database
 
 # Initialize the project

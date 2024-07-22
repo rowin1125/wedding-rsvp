@@ -8,10 +8,12 @@ import {
     TabPanel,
     TabPanels,
     Tabs,
+    useToast,
 } from '@chakra-ui/react';
 
 import { navigate, routes, useLocation } from '@redwoodjs/router';
 
+import { useAuth } from 'src/auth';
 import Loader from 'src/components/Loader';
 import { generateURL } from 'src/helpers/generateURL/generateURL';
 import { useIsDevice } from 'src/hooks/useIsDevice';
@@ -35,6 +37,9 @@ const Gallery = () => {
     const { setHeroData } = useHeroContext();
     const location = useLocation();
     const { gallery, loading } = useFindGallery();
+    const { currentUser } = useAuth();
+    const toast = useToast();
+
     const { setCurrentPage } = useQueryControls();
 
     const { tabIndex, handleTabChange } = useControlledTabs({
@@ -62,6 +67,19 @@ const Gallery = () => {
             );
         },
     });
+
+    useEffect(() => {
+        if (!gallery) return;
+
+        const isNotHisGallery = gallery.weddingId !== currentUser?.weddingId;
+        if (isNotHisGallery) {
+            navigate(routes.dashboard());
+            toast({
+                title: 'Je hebt geen toegang tot deze galerij',
+                status: 'error',
+            });
+        }
+    }, [gallery, currentUser, toast]);
 
     useEffect(() => {
         if (!gallery) return;

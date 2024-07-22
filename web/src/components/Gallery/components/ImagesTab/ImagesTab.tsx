@@ -26,6 +26,7 @@ const ImagesTab = ({ gallery, isPublic }: ImagesTabProps) => {
     const { assets, weddingId } = gallery;
     const assetManager = useCreateAssets({
         gcloudPath: `galleries/${weddingId}/${gallery.id}`,
+        weddingId,
     });
     const { deleteAsset, loading } = useDeleteAsset({
         id: gallery.id,

@@ -36,5 +36,14 @@ module.exports = {
             },
             interpreter: '/usr/bin/env',
         },
+        {
+            name: 'Redwood Studio',
+            script: 'yarn',
+            args: 'rw studio',
+            env: {
+                BROWSER: 'none',
+            },
+            interpreter: '/usr/bin/env',
+        },
     ],
 };

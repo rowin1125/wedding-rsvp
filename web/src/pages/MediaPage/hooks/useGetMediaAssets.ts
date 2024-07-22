@@ -33,6 +33,7 @@ export const GET_MEDIA_ASSETS = gql`
                 query: $query
             ) {
                 count
+                totalCount
                 items {
                     createdAt
                     previewUrl

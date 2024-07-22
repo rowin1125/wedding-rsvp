@@ -27,8 +27,10 @@ export const CREATE_ASSETS_MUTATION = gql`
         $input: [CreateAssetInput!]!
         $galleryId: String
         $mediaLibraryId: String
+        $weddingId: String!
     ) {
         createAssets(
+            weddingId: $weddingId
             input: $input
             galleryId: $galleryId
             mediaLibraryId: $mediaLibraryId
@@ -51,6 +53,7 @@ type UseCreateAssetsType = {
     mediaLibraryId?: string;
     accept?: string;
     maxFiles?: number;
+    weddingId: string;
 };
 
 export const useCreateAssets = ({
@@ -58,6 +61,7 @@ export const useCreateAssets = ({
     mediaLibraryId,
     accept = 'image/*, video/*',
     maxFiles,
+    weddingId,
 }: UseCreateAssetsType) => {
     const client = useApolloClient();
     const uploadedFiles = React.useRef<File[]>([]);
@@ -149,6 +153,7 @@ export const useCreateAssets = ({
                         variables: {
                             galleryId,
                             mediaLibraryId,
+                            weddingId,
                             input: signingUrlResults.map(
                                 ({
                                     gcloudStoragePath,

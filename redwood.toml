@@ -19,5 +19,11 @@
   port = 8911
 [browser]
   open = false
+[studio.graphiql.authImpersonation]
+    open = false
+    authProvider = "dbAuth"
+    email = "rowinmol648+user@gmail.com"
+    # Get the userId from the database
+    userId = "clywl3gqs00006ydpee8f7asi"
 [notifications]
   versionUpdates = ["latest"]

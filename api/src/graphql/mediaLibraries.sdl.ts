@@ -20,6 +20,7 @@ export const schema = gql`
         items: [Asset]!
         pages: Int!
         count: Int!
+        totalCount: Int!
     }
 
     enum AssetSortField {

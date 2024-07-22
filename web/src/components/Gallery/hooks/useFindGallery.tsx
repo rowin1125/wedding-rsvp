@@ -1,6 +1,7 @@
+import { useToast } from '@chakra-ui/react';
 import { FindGalleryQuery, FindGalleryQueryVariables } from 'types/graphql';
 
-import { useParams } from '@redwoodjs/router';
+import { navigate, routes, useParams } from '@redwoodjs/router';
 import { useQuery } from '@redwoodjs/web';
 
 import { DEFAULT_GALLERY_PAGINATION_OFFSET } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
@@ -44,6 +45,7 @@ export const FIND_GALLERY_QUERY = gql`
 export const useFindGallery = () => {
     const { offset, setTotalPages } = useQueryControls();
     const { galleryId } = useParams();
+    const toast = useToast();
 
     const { data, ...query } = useQuery<
         FindGalleryQuery,
@@ -56,6 +58,15 @@ export const useFindGallery = () => {
         },
         onCompleted: (data) => {
             setTotalPages(data.gallery?.assets.pages || 1);
+        },
+        onError: (error) => {
+            if (error.message.includes('Unauthorized')) {
+                navigate(routes.dashboard());
+                toast({
+                    title: 'Je hebt geen toegang tot deze galerij',
+                    status: 'error',
+                });
+            }
         },
     });
 

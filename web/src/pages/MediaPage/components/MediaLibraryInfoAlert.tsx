@@ -7,12 +7,14 @@ type MediaLibraryInfoAlertProps = {
     noFilesRemaining: boolean;
     maxFilesRemaining: number;
     mediaLibrary: GetMediaAssets['mediaLibrary'];
+    filesCurrentlyUploaded: number;
 };
 
 const MediaLibraryInfoAlert = ({
     maxFilesRemaining,
     mediaLibrary,
     noFilesRemaining,
+    filesCurrentlyUploaded,
 }: MediaLibraryInfoAlertProps) => {
     if (!mediaLibrary) return null;
 
@@ -32,8 +34,8 @@ const MediaLibraryInfoAlert = ({
                 In kunt in totaal{' '}
                 <strong>{mediaLibrary.maxAllowedAssets}</strong> uploaden naar
                 de media bibliotheek. Je hebt er momenteel{' '}
-                <strong>{mediaLibrary.assets?.count ?? 0}</strong> geupload en
-                dus nog <strong>{maxFilesRemaining}</strong> over.
+                <strong>{filesCurrentlyUploaded ?? 0}</strong> geupload en dus
+                nog <strong>{maxFilesRemaining}</strong> over.
             </Text>
         </Alert>
     );

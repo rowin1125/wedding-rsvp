@@ -19,10 +19,7 @@ export const schema = gql`
         updatedAt: DateTime!
     }
 
-    type Query {
-        assets(galleryId: String, mediaLibraryId: String): [Asset!]!
-            @requireAuth
-    }
+    # type Query {}
 
     input CreateAssetInput {
         gcloudStoragePath: String!
@@ -46,6 +43,7 @@ export const schema = gql`
         requestSigningUrl(gcloudStoragePath: String!): String! @skipAuth
         createAssets(
             input: [CreateAssetInput!]!
+            weddingId: String!
             galleryId: String
             mediaLibraryId: String
         ): CreateAssetsResponse @skipAuth

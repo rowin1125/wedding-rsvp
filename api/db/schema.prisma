@@ -43,6 +43,7 @@ model Wedding {
     updatedAt               DateTime            @updatedAt
     gallery                 Gallery[]
     mediaLibrary            MediaLibrary?
+    assets                  Asset[]
 }
 
 model WeddingInvitation {
@@ -150,6 +151,8 @@ model Asset {
     title             String?
     altText           String?
     description       String?
+    wedding           Wedding       @relation(fields: [weddingId], references: [id])
+    weddingId         String
 }
 
 model QrCode {

@@ -1,37 +1,25 @@
 import type { Prisma } from '@prisma/client';
-import type {
-    QueryResolvers,
-    MutationResolvers,
-    AssetRelationResolvers,
-} from 'types/graphql';
+import type { MutationResolvers, AssetRelationResolvers } from 'types/graphql';
 
 import { validateWithSync } from '@redwoodjs/api';
 import { UserInputError } from '@redwoodjs/graphql-server';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
+import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWeddingValidator';
 import { ALLOWED_FILE_TYPES } from 'src/lib/config';
 import { db } from 'src/lib/db';
 import Sentry from 'src/lib/sentry';
-
-export const assets: QueryResolvers['assets'] = () => {
-    return db.asset.findMany({
-        orderBy: {
-            createdAt: 'desc',
-        },
-    });
-};
-
-export const asset: QueryResolvers['asset'] = ({ id }) => {
-    return db.asset.findUnique({
-        where: { id },
-    });
-};
 
 export const createAssets: MutationResolvers['createAssets'] = async ({
     input,
     galleryId,
     mediaLibraryId,
+    weddingId,
 }) => {
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: weddingId,
+    });
+
     const bucket = await getStorageClient();
     const assetArray: Prisma.AssetCreateManyInput[] = [];
 
@@ -90,6 +78,7 @@ export const createAssets: MutationResolvers['createAssets'] = async ({
                 gcloudStoragePath: imageData.gcloudStoragePath,
                 fileType: imageData.fileType,
                 originalFilename: imageData.originalFilename,
+                weddingId,
             });
         }
 
@@ -119,6 +108,10 @@ export const updateAsset: MutationResolvers['updateAsset'] = async ({
     if (!asset) {
         throw new UserInputError('Asset not found');
     }
+
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: asset.weddingId,
+    });
 
     try {
         const updatedAsset = await db.asset.update({
@@ -166,6 +159,10 @@ export const deleteAsset: MutationResolvers['deleteAsset'] = async ({ id }) => {
         throw new UserInputError('Asset not found');
     }
 
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: asset.weddingId,
+    });
+
     const bucket = await getStorageClient();
     const file = bucket.file(asset.gcloudStoragePath);
 
@@ -207,17 +204,22 @@ export const deleteAssets: MutationResolvers['deleteAssets'] = async ({
 }) => {
     const bucket = await getStorageClient();
     const deletePromises = [];
-    const user = context.currentUser;
 
     const assets = await db.asset.findMany({
         where: {
             id: {
                 in: ids,
             },
-            AND: {
-                mediaLibraryId: user?.wedding?.mediaLibrary?.id,
-            },
         },
+    });
+
+    if (assets.length !== ids.length) {
+        throw new UserInputError('Invalid asset ids');
+    }
+
+    const firstAssetWeddingId = assets[0].weddingId;
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: firstAssetWeddingId,
     });
 
     for (const asset of assets) {
