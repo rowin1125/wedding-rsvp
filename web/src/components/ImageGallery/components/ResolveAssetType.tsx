@@ -9,14 +9,13 @@ import { Box, BoxProps, Flex, Icon, ImageProps } from '@chakra-ui/react';
 import { BiImage, BiVideo } from 'react-icons/bi';
 import { IoDocumentAttachOutline } from 'react-icons/io5';
 
-import ResizableImage from 'src/components/ResizableImage/ResizableImage';
+import ResizableImage, {
+    ResizableImageProps,
+} from 'src/components/ResizableImage/ResizableImage';
 
 type ResolveAssetTypeProps = {
     fileType: string;
-    imageProps?: ImageProps & {
-        thumbnailUrl?: string;
-        previewUrl?: string;
-    };
+    imageProps?: ImageProps & ResizableImageProps;
     videoProps?: BoxProps &
         VideoHTMLAttributes<HTMLVideoElement> & {
             locked?: boolean;

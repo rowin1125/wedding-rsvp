@@ -28,7 +28,16 @@ const DashboardPage = () => {
     return (
         <>
             <Metadata title="Dashboard" description="Dashboard page" />
-            <Hero />
+            <Hero
+                url={wedding?.bannerImage?.asset.url}
+                previewUrl={wedding?.bannerImage?.asset.previewUrl}
+                imageProps={{
+                    objectPosition: wedding?.bannerImage?.metadata
+                        ? `${wedding?.bannerImage?.metadata?.focalPoint?.x}% ${wedding?.bannerImage?.metadata?.focalPoint?.y}%`
+                        : 'center',
+                }}
+                fileType={wedding?.bannerImage?.asset.fileType || 'image'}
+            />
             <Container>
                 <AppContentWrapper>
                     <Heading fontWeight="bold" as="h2" size="h2">

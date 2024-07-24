@@ -158,7 +158,16 @@ const EveningGuestsPage = () => {
     return (
         <>
             <Metadata title="EveningGuests" description="EveningGuests page" />
-            <Hero />
+            <Hero
+                url={wedding?.bannerImage?.asset.url}
+                previewUrl={wedding?.bannerImage?.asset.previewUrl}
+                fileType={wedding?.bannerImage?.asset.fileType || 'image'}
+                imageProps={{
+                    objectPosition: wedding?.bannerImage?.metadata
+                        ? `${wedding?.bannerImage?.metadata?.focalPoint?.x}% ${wedding?.bannerImage?.metadata?.focalPoint?.y}%`
+                        : 'center',
+                }}
+            />
 
             <Container>
                 <AppContentWrapper>

@@ -9,6 +9,25 @@ export const GET_GALLERIES_BY_WEDDING_ID = gql`
             id
             name
             weddingId
+            bannerImage {
+                metadata {
+                    focalPoint {
+                        x
+                        y
+                    }
+                }
+                asset {
+                    id
+                    fileType
+                    originalFilename
+                    previewUrl
+                    url
+                    thumbnailUrl
+                    title
+                    description
+                    altText
+                }
+            }
             assets {
                 items {
                     id

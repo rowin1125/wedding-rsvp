@@ -17,6 +17,7 @@ export default () => (
                 base: '30vh',
                 lg: '30vh',
             }}
+            fileType="image"
         />
         <Box h="calc(100vh - 30vh - 92px - 57px)" position="relative">
             <Box

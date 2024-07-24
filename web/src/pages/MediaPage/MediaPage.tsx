@@ -2,6 +2,7 @@ import { Metadata } from '@redwoodjs/web';
 
 import Hero from 'src/components/Hero';
 import { useControlHero } from 'src/components/Hero/hooks/useControlHero';
+import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 import AppContentWrapper from 'src/layouts/AppLayout/components/AppContentWrapper';
 
 import { QueryControlsProvider } from '../GalleryPage/hooks/useQueryControls';
@@ -10,12 +11,14 @@ import MediaScreen from './components/MediaScreen';
 import { DEFAULT_MEDIA_PAGINATION_OFFSET } from './hooks/useGetMediaAssets';
 
 const MediaPage = () => {
+    const { wedding } = useGetWeddingById();
     const { heroData, setHeroData } = useControlHero({
         initialValues: {
             title: 'Media bibliotheek',
             subtitle: 'Beheer hier al jouw media bestanden',
-            image: 'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress',
-            fileType: 'image',
+            url: wedding?.bannerImage?.asset.url,
+            previewUrl: wedding?.bannerImage?.asset.previewUrl,
+            fileType: wedding?.bannerImage?.asset.fileType || 'image',
         },
     });
 
@@ -23,7 +26,14 @@ const MediaPage = () => {
         <>
             <Metadata title="Media" description="Al jouw media bestanden" />
 
-            <Hero {...heroData} />
+            <Hero
+                {...heroData}
+                imageProps={{
+                    objectPosition: wedding?.bannerImage?.metadata
+                        ? `${wedding?.bannerImage?.metadata?.focalPoint?.x}% ${wedding?.bannerImage?.metadata?.focalPoint?.y}%`
+                        : 'center',
+                }}
+            />
 
             <QueryControlsProvider
                 defaultOffset={DEFAULT_MEDIA_PAGINATION_OFFSET}

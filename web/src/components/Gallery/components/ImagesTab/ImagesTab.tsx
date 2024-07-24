@@ -12,9 +12,9 @@ import Pagination from 'src/components/Pagination';
 import { DEFAULT_GALLERY_PAGINATION_OFFSET } from 'src/pages/GalleriesPage/components/GalleryForm/hooks/useGalleryForm';
 import { useQueryControls } from 'src/pages/GalleryPage/hooks/useQueryControls';
 import MediaLibraryAssetSelection from 'src/pages/MediaPage/components/MediaLibraryAssetSelection';
+import { useDeleteAssets } from 'src/pages/MediaPage/hooks/useDeleteAssets';
 
 import { useCreateAssets } from '../../hooks/useCreateAssets';
-import { useDeleteAsset } from '../../hooks/useDeleteAsset';
 
 import CreateAssetModal from './components/CreateAssetModal';
 import NoAssets from './components/NoAssets';
@@ -47,7 +47,9 @@ const ImagesTab = ({
         gcloudPath: `galleries/${weddingId}/${gallery.id}`,
         weddingId,
     });
-    const { deleteAsset, loading } = useDeleteAsset({
+
+    const { deleteAssets, loading } = useDeleteAssets({
+        type: 'gallery',
         id: gallery.id,
     });
 
@@ -141,8 +143,8 @@ const ImagesTab = ({
                         {...(isOwnWedding
                             ? {
                                   deleteCallback: async (id) => {
-                                      await deleteAsset({
-                                          variables: { id },
+                                      await deleteAssets({
+                                          variables: { ids: [id] },
                                       });
                                   },
                               }

@@ -4,7 +4,7 @@ import { GridItem, Box, Button, Icon, Heading } from '@chakra-ui/react';
 import { BiEditAlt } from 'react-icons/bi';
 import { GetGalleriesQuery } from 'types/graphql';
 
-import { routes } from '@redwoodjs/router';
+import { navigate, routes } from '@redwoodjs/router';
 import { Link } from '@redwoodjs/router';
 
 import { GALLERY_TABS } from 'src/components/Gallery/Gallery';
@@ -15,6 +15,15 @@ type GalleryItemProps = {
 };
 
 const GalleryItem = ({ gallery }: GalleryItemProps) => {
+    const backgroundImage = {
+        src: gallery.bannerImage?.asset.url ?? gallery.assets?.items?.[0]?.url,
+        thumbnailUrl:
+            gallery.bannerImage?.asset.previewUrl ??
+            gallery.assets?.items?.[0]?.thumbnailUrl,
+        fileType:
+            gallery.bannerImage?.asset.fileType ??
+            gallery.assets?.items?.[0]?.fileType,
+    };
     return (
         <GridItem
             cursor="pointer"
@@ -37,10 +46,14 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
             alignItems="center"
         >
             <ResolveAssetType
-                fileType={gallery.assets?.items?.[0]?.fileType ?? 'image'}
+                fileType={backgroundImage.fileType || 'image'}
                 imageProps={{
-                    src: gallery.assets?.items?.[0]?.url,
-                    thumbnailUrl: gallery.assets?.items?.[0]?.thumbnailUrl,
+                    src:
+                        backgroundImage.src ??
+                        'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress',
+                    thumbnailUrl:
+                        backgroundImage.thumbnailUrl ??
+                        'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress',
                     alt: gallery.name,
                     objectFit: 'cover',
                     width: '100%',
@@ -48,6 +61,9 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
                     position: 'absolute',
                     inset: 0,
                     filter: 'brightness(0.7) sepia(0.5)',
+                    onClick: () => {
+                        navigate(routes.gallery({ galleryId: gallery.id }));
+                    },
                 }}
                 videoProps={{
                     src: gallery.assets?.items?.[0]?.url,
@@ -57,21 +73,10 @@ const GalleryItem = ({ gallery }: GalleryItemProps) => {
                     w: 'full',
                     h: 'full',
                     filter: 'brightness(0.7) sepia(0.5)',
+                    onClick: () => {
+                        navigate(routes.gallery({ galleryId: gallery.id }));
+                    },
                 }}
-            />
-            <Box
-                bgImage={
-                    gallery.assets?.items?.[0]?.url ??
-                    'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress'
-                }
-                bgSize="cover"
-                inset={0}
-                position="absolute"
-                filter="brightness(0.7) sepia(0.5)"
-                as={Link}
-                to={routes.gallery({
-                    galleryId: gallery.id,
-                })}
             />
             <Button
                 aria-label="Edit"

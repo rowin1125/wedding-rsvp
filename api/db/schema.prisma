@@ -44,6 +44,8 @@ model Wedding {
     gallery                 Gallery[]
     mediaLibrary            MediaLibrary?
     assets                  Asset[]
+    bannerImage             AssetReference?     @relation("weddingReferences", fields: [bannerImageId], references: [id], onDelete: SetNull)
+    bannerImageId           String?             @unique
 }
 
 model WeddingInvitation {
@@ -105,6 +107,8 @@ model Gallery {
     updatedAt               DateTime                 @updatedAt
     galleryDownloadRequests GalleryDownloadRequest[]
     maxAllowedDownloads     Int                      @default(5)
+    bannerImage             AssetReference?          @relation("galleryReferences", fields: [bannerImageId], references: [id], onDelete: SetNull)
+    bannerImageId           String?                  @unique
 }
 
 model MediaLibrary {
@@ -136,23 +140,38 @@ model GalleryDownloadRequest {
 }
 
 model Asset {
-    id                String        @id @default(cuid())
-    gallery           Gallery?      @relation(fields: [galleryId], references: [id], onDelete: Cascade)
-    galleryId         String?
+    id                String           @id @default(cuid())
     originalFilename  String?
     metadata          Json
     gcloudStoragePath String
     fileType          String
     url               String
-    createdAt         DateTime      @default(now())
-    updatedAt         DateTime      @updatedAt
-    mediaLibrary      MediaLibrary? @relation(fields: [mediaLibraryId], references: [id])
-    mediaLibraryId    String?
     title             String?
     altText           String?
     description       String?
-    wedding           Wedding       @relation(fields: [weddingId], references: [id])
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    gallery           Gallery?         @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+    galleryId         String?
+    mediaLibrary      MediaLibrary?    @relation(fields: [mediaLibraryId], references: [id])
+    mediaLibraryId    String?
+    wedding           Wedding          @relation(fields: [weddingId], references: [id])
     weddingId         String
+    assetReferences   AssetReference[]
+}
+
+// Workaround for Prisma not supporting Polymorphic Associations
+// https://github.com/prisma/prisma/issues/1644
+model AssetReference {
+    id                String   @id @default(cuid())
+    asset             Asset    @relation(fields: [assetId], references: [id])
+    assetId           String
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+    galleryReferences Gallery? @relation("galleryReferences")
+    weddingReferences Wedding? @relation("weddingReferences")
+    /// [AssetReferenceMetadata]
+    metadata          Json
 }
 
 model QrCode {

@@ -150,55 +150,6 @@ export const requestSigningUrl: MutationResolvers['requestSigningUrl'] =
         }
     };
 
-export const deleteAsset: MutationResolvers['deleteAsset'] = async ({ id }) => {
-    const asset = await db.asset.findUnique({
-        where: { id },
-    });
-
-    if (!asset) {
-        throw new UserInputError('Asset not found');
-    }
-
-    isUserAssignedToWeddingValidator({
-        requestWeddingId: asset.weddingId,
-    });
-
-    const bucket = await getStorageClient();
-    const file = bucket.file(asset.gcloudStoragePath);
-
-    try {
-        await file.delete();
-
-        try {
-            const thumbnailFile = bucket.file(
-                asset.gcloudStoragePath.replace('original', 'thumbnail')
-            );
-            const previewFile = bucket.file(
-                asset.gcloudStoragePath.replace('original', 'preview')
-            );
-            const [thumbnailExists] = await thumbnailFile.exists();
-            const [previewExists] = await previewFile.exists();
-
-            if (thumbnailExists) {
-                await thumbnailFile.delete();
-            }
-            if (previewExists) {
-                await previewFile.delete();
-            }
-        } catch (error) {
-            console.info('No resized images found');
-        }
-
-        const deletedAssets = await db.asset.delete({
-            where: { id },
-        });
-        return deletedAssets;
-    } catch (error) {
-        console.error(error);
-        throw new UserInputError('Error during asset deletion');
-    }
-};
-
 export const deleteAssets: MutationResolvers['deleteAssets'] = async ({
     ids,
 }) => {
@@ -211,6 +162,9 @@ export const deleteAssets: MutationResolvers['deleteAssets'] = async ({
                 in: ids,
             },
         },
+        include: {
+            assetReferences: true,
+        },
     });
 
     if (assets.length !== ids.length) {
@@ -221,6 +175,16 @@ export const deleteAssets: MutationResolvers['deleteAssets'] = async ({
     isUserAssignedToWeddingValidator({
         requestWeddingId: firstAssetWeddingId,
     });
+
+    const someAssetsHaveReferences = assets.some(
+        (asset) => asset.assetReferences && asset.assetReferences.length > 0
+    );
+
+    if (someAssetsHaveReferences) {
+        throw new UserInputError(
+            `Some assets have references: ${ids.join(', ')}`
+        );
+    }
 
     for (const asset of assets) {
         const file = bucket.file(asset.gcloudStoragePath);

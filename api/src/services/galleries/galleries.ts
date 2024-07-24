@@ -1,4 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
+import type { Prisma } from '@prisma/client';
 import faktory from 'faktory-worker';
 import type {
     QueryResolvers,
@@ -6,7 +7,6 @@ import type {
     GalleryRelationResolvers,
 } from 'types/graphql';
 
-import { removeNulls } from '@redwoodjs/api';
 import { UserInputError } from '@redwoodjs/graphql-server';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
@@ -18,12 +18,16 @@ import Sentry from 'src/lib/sentry';
 export const galleries: QueryResolvers['galleries'] = ({ weddingId }) => {
     if (weddingId !== context.currentUser?.weddingId)
         throw new UserInputError('Unauthorized');
-    return db.gallery.findMany({ where: { weddingId } });
+    return db.gallery.findMany({
+        where: { weddingId },
+        include: { bannerImage: true },
+    });
 };
 
 export const gallery: QueryResolvers['gallery'] = async ({ id }) => {
     const gallery = await db.gallery.findUnique({
         where: { id },
+        include: { bannerImage: true },
     });
     if (!gallery) throw new Error('Gallery not found');
 
@@ -31,7 +35,7 @@ export const gallery: QueryResolvers['gallery'] = async ({ id }) => {
 };
 
 export const createGallery: MutationResolvers['createGallery'] = ({
-    input,
+    input: { bannerImageId, bannerImageMetadata, ...input },
 }) => {
     isUserAssignedToWeddingValidator({
         requestWeddingId: input.weddingId,
@@ -39,11 +43,27 @@ export const createGallery: MutationResolvers['createGallery'] = ({
     const id = createId();
 
     const gcloudStoragePath = `galleries/${input.weddingId}/${id}`;
+
     return db.gallery.create({
         data: {
-            ...input,
             id,
+            name: input.name,
             gcloudStoragePath,
+            bannerImage: bannerImageId
+                ? {
+                      create: {
+                          asset: {
+                              connect: { id: bannerImageId },
+                          },
+                          metadata: bannerImageMetadata as Prisma.JsonObject,
+                      },
+                  }
+                : undefined,
+            wedding: {
+                connect: {
+                    id: input.weddingId,
+                },
+            },
         },
     });
 };
@@ -54,6 +74,9 @@ export const updateGallery: MutationResolvers['updateGallery'] = async ({
 }) => {
     const gallery = await db.gallery.findUnique({
         where: { id },
+        include: {
+            bannerImage: true,
+        },
     });
 
     if (!gallery) throw new Error('Gallery not found');
@@ -61,8 +84,33 @@ export const updateGallery: MutationResolvers['updateGallery'] = async ({
         requestWeddingId: gallery.weddingId,
     });
 
+    const galleryHasBanner = !!gallery.bannerImage?.assetId;
+
+    if (galleryHasBanner) {
+        await db.assetReference.delete({
+            where: {
+                id: gallery.bannerImage?.id,
+            },
+        });
+    }
+
     return db.gallery.update({
-        data: removeNulls(input),
+        data: {
+            name: input.name ?? undefined,
+            qrCodeId: input.qrCodeId,
+            qrCode: input.qrCode,
+            bannerImage: input.bannerImageId
+                ? {
+                      create: {
+                          asset: {
+                              connect: { id: input.bannerImageId },
+                          },
+                          metadata:
+                              input.bannerImageMetadata as Prisma.JsonObject,
+                      },
+                  }
+                : undefined,
+        },
         where: { id },
     });
 };

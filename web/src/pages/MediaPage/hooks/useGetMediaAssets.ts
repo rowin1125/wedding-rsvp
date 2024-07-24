@@ -48,6 +48,17 @@ export const GET_MEDIA_ASSETS = gql`
                     title
                     altText
                     description
+                    assetReferences {
+                        id
+                        galleryReferences {
+                            id
+                            name
+                        }
+                        weddingReferences {
+                            id
+                            name
+                        }
+                    }
                 }
                 pages
             }

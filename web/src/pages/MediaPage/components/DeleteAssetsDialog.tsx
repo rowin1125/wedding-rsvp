@@ -21,12 +21,16 @@ type DeleteAssetsDialogProps = {
     selectedAssets: string[];
     setSelectedAssets: (ids: string[]) => void;
     type: 'media' | 'gallery';
+    isDisabled?: boolean;
+    title?: string;
 };
 
 const DeleteAssetsDialog = ({
     selectedAssets,
     setSelectedAssets,
     type,
+    isDisabled,
+    title,
 }: DeleteAssetsDialogProps) => {
     const { currentUser } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -63,8 +67,10 @@ const DeleteAssetsDialog = ({
                 variant="ghost"
                 ml={2}
                 colorScheme="red"
-                onClick={onOpen}
                 isLoading={loading}
+                isDisabled={isDisabled}
+                title={title}
+                onClick={onOpen}
             >
                 Verwijderen
             </Button>

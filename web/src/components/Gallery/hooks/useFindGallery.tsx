@@ -25,6 +25,25 @@ export const FIND_GALLERY_QUERY = gql`
                 count
                 pages
             }
+            bannerImage {
+                metadata {
+                    focalPoint {
+                        x
+                        y
+                    }
+                }
+                asset {
+                    id
+                    fileType
+                    originalFilename
+                    previewUrl
+                    url
+                    thumbnailUrl
+                    title
+                    description
+                    altText
+                }
+            }
             name
             qrCode
             qrCodeId

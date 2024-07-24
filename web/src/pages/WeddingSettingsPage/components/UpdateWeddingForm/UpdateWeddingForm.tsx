@@ -3,13 +3,13 @@ import React from 'react';
 import { Heading, Flex, Box, Text, VStack, useToast } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
-import { InferType, object, string } from 'yup';
+import { InferType, number, object, string } from 'yup';
 
-import { navigate, routes } from '@redwoodjs/router';
 import { Metadata } from '@redwoodjs/web';
 
 import DeleteDialog from 'src/components/DeleteDialog/DeleteDialog';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
+import SelectAssetControl from 'src/components/react-hook-form/components/SelectAssetControl';
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
@@ -43,6 +43,13 @@ const UpdateWeddingForm = () => {
                 'Naam mag geen tekst bevatten',
                 (value) => !isNaN(Number(value))
             ),
+        bannerImage: object({
+            id: string(),
+            focalPoint: object({
+                x: number(),
+                y: number(),
+            }),
+        }),
     });
 
     const initialValues = {
@@ -51,6 +58,13 @@ const UpdateWeddingForm = () => {
         dayInvitationAmount: String(wedding?.dayInvitationAmount) || '0',
         eveningInvitationAmount:
             String(wedding?.eveningInvitationAmount) || '0',
+        bannerImage: {
+            id: wedding?.bannerImage?.asset.id || '',
+            focalPoint: {
+                x: wedding?.bannerImage?.metadata?.focalPoint?.x || 50,
+                y: wedding?.bannerImage?.metadata?.focalPoint?.y || 50,
+            },
+        },
     };
 
     const methods = useForm({
@@ -75,6 +89,15 @@ const UpdateWeddingForm = () => {
                         eveningInvitationAmount: Number(
                             values.eveningInvitationAmount
                         ),
+                        bannerImageId: values.bannerImage.id || null,
+                        bannerImageMetadata: values.bannerImage.id
+                            ? {
+                                  focalPoint: {
+                                      x: values.bannerImage.focalPoint.x,
+                                      y: values.bannerImage.focalPoint.y,
+                                  },
+                              }
+                            : {},
                     },
                 },
             });
@@ -82,7 +105,7 @@ const UpdateWeddingForm = () => {
                 title: 'Bruiloft aangepast',
                 status: 'success',
             });
-            navigate(routes.dashboard());
+            methods.reset(values);
         } catch (error) {
             if (error instanceof Error) {
                 toast({
@@ -140,6 +163,7 @@ const UpdateWeddingForm = () => {
                                 type: 'number',
                             }}
                         />
+                        <SelectAssetControl name="bannerImage" />
 
                         <Flex justifyContent="flex-end" w="full">
                             <SubmitButton

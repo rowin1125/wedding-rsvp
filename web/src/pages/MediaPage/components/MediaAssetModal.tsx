@@ -13,6 +13,8 @@ import {
     Box,
     Grid,
     GridItem,
+    useToast,
+    Tooltip,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
 
@@ -24,8 +26,8 @@ import { useDeleteAssets } from '../hooks/useDeleteAssets';
 import { SingleAssetType } from '../hooks/useGetMediaAssets';
 import { useUpdateAssetForm } from '../hooks/useUpdateAssetForm';
 
-import MediaAssetForm from './MediaAssetForm';
 import MediaAssetInformationTable from './MediaAssetInformationTable';
+import MediaAssetModalAssetInformation from './MediaAssetModalAssetInformation';
 
 type MediaAssetModalProps = {
     currentAsset?: SingleAssetType;
@@ -37,17 +39,31 @@ const MediaAssetModal = ({
     currentAsset,
 }: MediaAssetModalProps) => {
     const { currentUser } = useAuth();
+    const toast = useToast();
 
     const { deleteAssets, loading } = useDeleteAssets({
         id: currentUser?.wedding?.mediaLibrary?.id as string,
+        type: 'media',
     });
 
     const { methods, onSubmit, updateLoading } = useUpdateAssetForm({
         currentAsset,
     });
+    const hasReferences =
+        !!currentAsset?.assetReferences &&
+        currentAsset.assetReferences.length > 0;
 
     const handleDelete = async () => {
         if (!currentAsset) return;
+
+        if (hasReferences) {
+            toast({
+                title: 'Kan niet verwijderen',
+                description: 'Dit best and heeft nog referenties',
+                status: 'error',
+            });
+            return;
+        }
 
         await deleteAssets({
             variables: {
@@ -123,9 +139,9 @@ const MediaAssetModal = ({
                                         hideIcon
                                     />
                                 </GridItem>
-                                <GridItem colSpan={{ base: 2, lg: 1 }}>
-                                    <MediaAssetForm />
-                                </GridItem>
+                                <MediaAssetModalAssetInformation
+                                    currentAsset={currentAsset}
+                                />
                                 <GridItem colSpan={{ base: 2, lg: 1 }}>
                                     <MediaAssetInformationTable
                                         asset={currentAsset}
@@ -135,15 +151,21 @@ const MediaAssetModal = ({
                         </ModalBody>
                         <Box as="hr" mt={4} />
                         <ModalFooter justifyContent={'space-between'}>
-                            <Button
-                                colorScheme="red"
-                                variant="ghost"
-                                mr={3}
-                                isLoading={loading}
-                                onClick={handleDelete}
+                            <Tooltip
+                                isDisabled={!hasReferences}
+                                label="Verwijderen is niet mogelijk als er referenties zijn"
                             >
-                                Verwijderen
-                            </Button>
+                                <Button
+                                    colorScheme="red"
+                                    variant="ghost"
+                                    mr={3}
+                                    isLoading={loading}
+                                    isDisabled={hasReferences}
+                                    onClick={handleDelete}
+                                >
+                                    Verwijderen
+                                </Button>
+                            </Tooltip>
                             <Box>
                                 <Button
                                     variant="ghost"

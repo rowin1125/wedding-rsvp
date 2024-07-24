@@ -1,4 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
+import type { Prisma } from '@prisma/client';
 import { Role } from '@prisma/client';
 import type {
     QueryResolvers,
@@ -9,10 +10,8 @@ import type {
 import { removeNulls } from '@redwoodjs/api';
 import { UserInputError } from '@redwoodjs/graphql-server';
 
-import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWeddingValidator';
 import { db } from 'src/lib/db';
-import Sentry from 'src/lib/sentry';
 
 export const wedding: QueryResolvers['wedding'] = async ({ id }) => {
     isUserAssignedToWeddingValidator({
@@ -29,6 +28,7 @@ export const wedding: QueryResolvers['wedding'] = async ({ id }) => {
                     weddingGuests: true,
                 },
             },
+            bannerImage: true,
         },
     });
 };
@@ -70,15 +70,20 @@ export const createWedding: MutationResolvers['createWedding'] = async ({
 
 export const updateWedding: MutationResolvers['updateWedding'] = async ({
     id,
-    input,
+    input: { bannerImageId, bannerImageMetadata, ...input },
 }) => {
+    // Validate user permissions
     isUserAssignedToWeddingValidator({
         requestWeddingId: id,
     });
 
+    // Find the wedding along with its current banner image
     const wedding = await db.wedding.findUnique({
         where: {
             id,
+        },
+        include: {
+            bannerImage: true,
         },
     });
 
@@ -86,7 +91,18 @@ export const updateWedding: MutationResolvers['updateWedding'] = async ({
         throw new UserInputError('Wedding not found');
     }
 
+    const currentWeddingHasBanner = !!wedding.bannerImage?.assetId;
+
+    if (currentWeddingHasBanner) {
+        await db.assetReference.delete({
+            where: {
+                id: wedding.bannerImage?.id,
+            },
+        });
+    }
+
     return db.wedding.update({
+        where: { id },
         data: {
             ...removeNulls(input),
             user: {
@@ -94,12 +110,16 @@ export const updateWedding: MutationResolvers['updateWedding'] = async ({
             },
             date: input.date ?? new Date(),
             gcloudStoragePath: id,
-        },
-        where: {
-            id,
-            user: {
-                id: context.currentUser?.id,
-            },
+            bannerImage: bannerImageId
+                ? {
+                      create: {
+                          asset: {
+                              connect: { id: bannerImageId },
+                          },
+                          metadata: bannerImageMetadata as Prisma.JsonObject,
+                      },
+                  }
+                : undefined,
         },
     });
 };

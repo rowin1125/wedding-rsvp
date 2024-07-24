@@ -17,6 +17,7 @@ export const schema = gql`
         description: String
         createdAt: DateTime!
         updatedAt: DateTime!
+        assetReferences: [AssetReference]
     }
 
     # type Query {}
@@ -48,7 +49,6 @@ export const schema = gql`
             mediaLibraryId: String
         ): CreateAssetsResponse @skipAuth
         updateAsset(id: String!, input: UpdateAssetInput!): Asset! @requireAuth
-        deleteAsset(id: String!): Asset! @requireAuth
         deleteAssets(ids: [String!]!): [Asset!]! @requireAuth
     }
 `;

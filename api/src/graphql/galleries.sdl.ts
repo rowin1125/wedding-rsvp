@@ -13,6 +13,7 @@ export const schema = gql`
         galleryDownloadRequests: [GalleryDownloadRequest]!
         maxAllowedDownloads: Int!
         totalDownloadRequests: Int!
+        bannerImage: AssetReference
     }
 
     type PaginatedAssets {
@@ -31,6 +32,8 @@ export const schema = gql`
         weddingId: String!
         qrCodeId: String
         qrCode: String
+        bannerImageId: String
+        bannerImageMetadata: JSON
     }
 
     input UpdateGalleryInput {
@@ -38,6 +41,8 @@ export const schema = gql`
         weddingId: String
         qrCodeId: String
         qrCode: String
+        bannerImageId: String
+        bannerImageMetadata: JSON
     }
 
     type Mutation {

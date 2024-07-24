@@ -4,10 +4,11 @@ import { Button, Flex, useToast, VStack } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FindGalleryQuery } from 'types/graphql';
-import { InferType, object, string } from 'yup';
+import { InferType, number, object, string } from 'yup';
 
 import { useAuth } from 'src/auth';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
+import SelectAssetControl from 'src/components/react-hook-form/components/SelectAssetControl';
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
 
 import { useGalleryForm } from './hooks/useGalleryForm';
@@ -26,6 +27,13 @@ type GalleryFormProps =
 
 const validationSchema = object({
     name: string().required('Naam is verplicht'),
+    bannerImage: object({
+        id: string(),
+        focalPoint: object({
+            x: number(),
+            y: number(),
+        }),
+    }),
 });
 
 const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
@@ -35,6 +43,13 @@ const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
 
     const defaultValues = {
         name: initialData?.name || '',
+        bannerImage: {
+            id: initialData?.bannerImage?.asset.id || '',
+            focalPoint: {
+                x: initialData?.bannerImage?.metadata?.focalPoint?.x || 50,
+                y: initialData?.bannerImage?.metadata?.focalPoint?.y || 50,
+            },
+        },
     };
 
     const methods = useForm({
@@ -61,6 +76,15 @@ const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
                         input: {
                             name: data.name,
                             weddingId: currentUser?.weddingId,
+                            bannerImageId: data.bannerImage.id || null,
+                            bannerImageMetadata: data.bannerImage.id
+                                ? {
+                                      focalPoint: {
+                                          x: data.bannerImage.focalPoint.x,
+                                          y: data.bannerImage.focalPoint.y,
+                                      },
+                                  }
+                                : null,
                         },
                     },
                 });
@@ -89,12 +113,21 @@ const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
                         input: {
                             weddingId: initialData?.weddingId,
                             name: data.name,
+                            bannerImageId: data.bannerImage.id || null,
+                            bannerImageMetadata: data.bannerImage.id
+                                ? {
+                                      focalPoint: {
+                                          x: data.bannerImage.focalPoint.x,
+                                          y: data.bannerImage.focalPoint.y,
+                                      },
+                                  }
+                                : null,
                         },
                     },
                 });
             }
 
-            methods.reset({ name: data.name });
+            methods.reset({ name: data.name, bannerImage: data.bannerImage });
 
             toast({
                 title: 'Galerij succesvol opgeslagen',
@@ -127,6 +160,7 @@ const GalleryForm = ({ initialData, formType, onClose }: GalleryFormProps) => {
                         placeholder: "Dag foto's",
                     }}
                 />
+                <SelectAssetControl name="bannerImage" />
 
                 <Flex alignItems="center" justifyContent="flex-end" w="full">
                     {onClose && (

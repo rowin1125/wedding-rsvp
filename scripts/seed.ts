@@ -10,16 +10,19 @@ export default async () => {
                 email: 'rowinmol648+user@gmail.com',
                 password: '123456',
                 roles: [Role.USER],
+                id: 'clyy21qms000012nxklvqgfhw',
             },
             {
                 email: 'rowinmol648+admin@gmail.com',
                 password: '123456',
                 roles: [Role.USER, Role.ADMIN],
+                id: 'clyy21qnt000112nx2u4c27kx',
             },
             {
                 email: 'rowinmol648+moc@gmail.com',
                 password: '123456',
                 roles: [Role.USER, Role.MASTER_OF_CEREMONIES],
+                id: 'clyy21qor000212nxrodbp689',
             },
         ];
 
@@ -27,6 +30,7 @@ export default async () => {
             const [hashedPassword, salt] = hashPassword(user.password);
             const newUser = await db.user.create({
                 data: {
+                    id: user.id,
                     email: user.email,
                     hashedPassword,
                     salt,

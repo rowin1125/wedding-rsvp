@@ -65,6 +65,14 @@ export const MediaLibrary: MediaLibraryRelationResolvers = {
             take: take ?? DEFAULT_MEDIA_PAGINATION_OFFSET,
             orderBy,
             where,
+            include: {
+                assetReferences: {
+                    include: {
+                        galleryReferences: true,
+                        weddingReferences: true,
+                    },
+                },
+            },
         });
 
         const totalCount = await db.asset.count({

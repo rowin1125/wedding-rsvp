@@ -76,7 +76,6 @@ const ResolveAsset = ({ file }: ResolveAssetProps) => {
             <Icon
                 as={IoDocumentAttachOutline}
                 color="tertiary.500"
-                zIndex={1}
                 fontSize={{
                     base: '5xl',
                     lg: '8xl',

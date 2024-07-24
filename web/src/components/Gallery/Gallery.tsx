@@ -87,11 +87,19 @@ const Gallery = () => {
         setHeroData?.({
             title: gallery?.name,
             subtitle: 'Jouw unieke momenten vastgelegd op beeld',
-            image:
-                gallery?.assets?.items?.[0]?.url ??
-                'https://images.prismic.io/derow-v1/ZjZskEMTzAJOCiHL_weddingDrinks.jpg?auto=format,compress',
-            previewUrl: gallery?.assets?.items?.[0]?.previewUrl,
-            fileType: gallery?.assets?.items?.[0]?.fileType ?? 'image',
+            url:
+                gallery.bannerImage?.asset.url ??
+                gallery?.assets?.items?.[0]?.url,
+            previewUrl:
+                gallery.bannerImage?.asset.previewUrl ??
+                gallery?.assets?.items?.[0]?.previewUrl,
+            fileType:
+                gallery.bannerImage?.asset.fileType ??
+                gallery?.assets?.items?.[0]?.fileType ??
+                'image',
+            objectPosition: gallery.bannerImage?.metadata
+                ? `${gallery.bannerImage?.metadata?.focalPoint?.x}% ${gallery.bannerImage?.metadata?.focalPoint?.y}%`
+                : 'center',
         });
     }, [gallery, gallery?.assets, gallery?.name, setHeroData]);
 

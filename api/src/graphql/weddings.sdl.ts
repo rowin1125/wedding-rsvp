@@ -9,6 +9,7 @@ export const schema = gql`
         weddingInvitation: [WeddingInvitation]!
         weddingGuest: [WeddingGuest]!
         mediaLibrary: MediaLibrary
+        bannerImage: AssetReference
         createdAt: DateTime!
         updatedAt: DateTime!
     }
@@ -29,6 +30,8 @@ export const schema = gql`
         name: String!
         dayInvitationAmount: Int
         eveningInvitationAmount: Int
+        bannerImageId: String
+        bannerImageMetadata: JSON
     }
 
     type Mutation {

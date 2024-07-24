@@ -45,7 +45,26 @@ stop:
 restart:
 	@pm2 restart ecosystem.config.js
 
-# Reset database
+
+##
+## Logs
+##
+
+# Show the logs
+logs:
+	@pm2 logs
+# App logs
+bb-logs:
+	@pm2 logs "Bruiloft Buddy App"
+# Worker logs
+worker-logs:
+	@pm2 logs "faktoryWorker"
+# Cron logs
+cron-logs:
+	@pm2 logs "cron"
+# RW Studio logs
+rwstudio-logs:
+	@pm2 logs "rwstudio"
 
 # Initialize the project
 init: intro

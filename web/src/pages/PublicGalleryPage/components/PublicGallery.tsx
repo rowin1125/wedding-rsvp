@@ -17,6 +17,14 @@ const PublicGallery = () => {
             <Hero
                 title={gallery.name || 'Foto galerij'}
                 subtitle="Bekijk of upload hier de foto’s van onze bruiloft"
+                url={gallery.bannerImage?.asset.url}
+                fileType={gallery.bannerImage?.asset.fileType}
+                previewUrl={gallery.bannerImage?.asset.previewUrl}
+                objectPosition={
+                    gallery.bannerImage?.metadata
+                        ? `${gallery.bannerImage?.metadata?.focalPoint?.x}% ${gallery.bannerImage?.metadata?.focalPoint?.y}%`
+                        : 'center'
+                }
                 h={'40vh'}
             />
             <Container my={10}>

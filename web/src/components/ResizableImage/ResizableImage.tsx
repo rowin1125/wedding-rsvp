@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
-import { Image, Spinner, ImageProps, Flex } from '@chakra-ui/react';
+import { Box, Image, ImageProps } from '@chakra-ui/react';
 
-type ResizableImageProps = {
+import ImageFocalPoint, { FocalPoint } from '../FocalPoint';
+
+export type ResizableImageProps = {
     thumbnailUrl?: string;
     previewUrl?: string;
     alt?: string;
+    focalPoint?: {
+        setFocalPoint?: React.Dispatch<React.SetStateAction<FocalPoint>>;
+        focalPoint?: FocalPoint;
+    };
+    imageProps?: ImageProps;
 } & ImageProps;
 
 const ResizableImage = ({
@@ -13,6 +20,7 @@ const ResizableImage = ({
     thumbnailUrl,
     previewUrl,
     alt,
+    focalPoint,
     ...props
 }: ResizableImageProps) => {
     const [src, setSrc] = useState(thumbnailUrl || previewUrl || originalSrc);
@@ -32,24 +40,24 @@ const ResizableImage = ({
         setSrc(thumbnailUrl || previewUrl || originalSrc);
     }, [thumbnailUrl, previewUrl, originalSrc]);
 
-    return (
-        <>
-            {false && (
-                <Flex
-                    justifyContent="center"
-                    alignItems="center"
-                    position="absolute"
-                    top="50%"
-                    left="50%"
-                    transform="translate(-50%, -50%)"
-                    zIndex="1"
-                >
-                    <Spinner size="xl" />
-                </Flex>
-            )}
-            <Image src={src} alt={alt} onError={handleError} {...props} />
-        </>
-    );
+    if (focalPoint?.setFocalPoint && focalPoint.focalPoint) {
+        return (
+            <Box
+                as={ImageFocalPoint}
+                src={src}
+                alt={alt}
+                onError={handleError}
+                onChange={focalPoint.setFocalPoint}
+                focalPoint={focalPoint.focalPoint}
+                focalPointProps={{
+                    borderColor: 'blue.500',
+                }}
+                {...props}
+            />
+        );
+    }
+
+    return <Image src={src} alt={alt} onError={handleError} {...props} />;
 };
 
 export default ResizableImage;

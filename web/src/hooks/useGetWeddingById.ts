@@ -13,6 +13,25 @@ export const GET_WEDDING_BY_ID = gql`
             date
             dayInvitationAmount
             eveningInvitationAmount
+            bannerImage {
+                metadata {
+                    focalPoint {
+                        x
+                        y
+                    }
+                }
+                asset {
+                    id
+                    fileType
+                    originalFilename
+                    previewUrl
+                    url
+                    thumbnailUrl
+                    title
+                    description
+                    altText
+                }
+            }
             weddingInvitation {
                 dietaryWishes
                 useCouponCode

@@ -15,7 +15,6 @@ import NoAssets from 'src/components/Gallery/components/ImagesTab/components/NoA
 import { useCreateAssets } from 'src/components/Gallery/hooks/useCreateAssets';
 import ResolveAssetType from 'src/components/ImageGallery/components/ResolveAssetType';
 import { truncateText } from 'src/helpers/textHelpers/truncateText/truncateText';
-import { useIsDevice } from 'src/hooks/useIsDevice';
 
 type MediaLibraryAssetsGridProps = {
     mediaLibrary: GetMediaAssets['mediaLibrary'];
@@ -47,8 +46,6 @@ const MediaLibraryAssetsGrid = ({
     loading,
     searchQuery,
 }: MediaLibraryAssetsGridProps) => {
-    const { isTablet, isDesktop } = useIsDevice();
-
     if (!hasAssets)
         return (
             <NoAssets
@@ -137,7 +134,7 @@ const MediaLibraryAssetsGrid = ({
                                 {truncateText(
                                     asset.originalFilename ??
                                         `${asset.id}.${asset.fileType}`,
-                                    isTablet ? 20 : isDesktop ? 30 : 20 // mobile
+                                    20
                                 )}
                             </Text>
                         </Button>

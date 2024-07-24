@@ -14,9 +14,11 @@ import ResolveAssetType from '../ImageGallery/components/ResolveAssetType';
 export type HeroData = {
     title?: string;
     subtitle?: string;
-    image?: string;
+    url?: string;
+    thumbnailUrl?: string;
     fileType?: string;
     previewUrl?: string;
+    objectPosition?: string;
 };
 
 type HeroProps = {
@@ -26,16 +28,16 @@ type HeroProps = {
 
 const Hero = ({
     subtitle,
-    fileType = 'image',
+    fileType = 'image/png',
     title,
-    image = 'https://images.prismic.io/derow-v1/ZjZmyEMTzAJOCiGi_Screenshotfrom2023-08-2517-41-23.png?auto=format,compress',
+    url = 'https://images.prismic.io/derow-v1/ZjZmyEMTzAJOCiGi_Screenshotfrom2023-08-2517-41-23.png?auto=format,compress',
     previewUrl,
     imageProps,
-    height = '300px',
+    height = '400px',
+    objectPosition,
     ...props
 }: HeroProps) => {
     const { pageTitle } = useGetPageTitle();
-
     const heroTitle = title ?? pageTitle;
 
     return (
@@ -45,21 +47,23 @@ const Hero = ({
                 imageProps={{
                     w: 'full',
                     h: 'full',
-                    src: image,
+                    src: url,
                     previewUrl: previewUrl,
                     objectFit: 'cover',
-                    objectPosition: 'center',
+                    objectPosition: objectPosition ?? 'center',
                     filter: 'brightness(0.7)',
                     ...imageProps,
                 }}
                 videoProps={{
-                    src: image,
+                    src: url,
                     objectFit: 'cover',
                     position: 'absolute',
                     inset: 0,
                     w: 'full',
                     h: 'full',
                     filter: 'brightness(0.7)',
+                    autoPlay: true,
+                    loop: true,
                 }}
             />
 
