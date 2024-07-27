@@ -29,7 +29,8 @@ export const gallery: QueryResolvers['gallery'] = async ({ id }) => {
         where: { id },
         include: { bannerImage: true },
     });
-    if (!gallery) throw new Error('Gallery not found');
+
+    if (!gallery) return null;
 
     return gallery;
 };

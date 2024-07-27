@@ -39,6 +39,7 @@ const Gallery = () => {
     const { gallery, loading } = useFindGallery();
     const { currentUser } = useAuth();
     const toast = useToast();
+    const [selectedAssets, setSelectedAssets] = React.useState<string[]>([]);
 
     const { setCurrentPage } = useQueryControls();
 
@@ -103,7 +104,13 @@ const Gallery = () => {
         });
     }, [gallery, gallery?.assets, gallery?.name, setHeroData]);
 
-    const [selectedAssets, setSelectedAssets] = React.useState<string[]>([]);
+    if (!gallery && !loading) {
+        navigate(routes.galleries());
+        toast({
+            title: 'Galerij niet gevonden',
+            status: 'error',
+        });
+    }
 
     const handleSelectAsset = (
         event:
