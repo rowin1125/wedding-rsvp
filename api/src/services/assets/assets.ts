@@ -189,6 +189,16 @@ export const deleteAssets: MutationResolvers['deleteAssets'] = async ({
     for (const asset of assets) {
         const file = bucket.file(asset.gcloudStoragePath);
 
+        const [exists] = await file.exists();
+        if (!exists) {
+            deletePromises.push(
+                db.asset.delete({
+                    where: { id: asset.id },
+                })
+            );
+            continue;
+        }
+
         deletePromises.push(
             file
                 .delete()
