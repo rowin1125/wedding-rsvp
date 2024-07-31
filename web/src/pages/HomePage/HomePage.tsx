@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Heading, Text } from '@chakra-ui/react';
+import { Box, Heading, Text } from '@chakra-ui/react';
 
 import { Metadata } from '@redwoodjs/web';
 
@@ -45,8 +45,36 @@ const HomePage = () => {
                 imageSrc={
                     'https://images.prismic.io/derow-v1/ZjZoxkMTzAJOCiGv_bb.png?auto=format,compress'
                 }
-                gridLayout="7"
+                gridLayout="6"
                 imageFirst
+                imageProps={{
+                    objectFit: 'cover',
+                    height: '100%',
+                    objectPosition: 'left',
+                }}
+            >
+                <Box
+                    as="iframe"
+                    width="full"
+                    height={{
+                        base: '850px',
+                        lg: '600px',
+                    }}
+                    src="https://9add87d7.sibforms.com/serve/MUIFAMWhoc_ytqrp4WfFuV1aE7oKUvMZcbiGvJnAgg1G06_yf2rKajf_gseetmXjy9irVJKkli3Ijl6jObolmPKFFWHzyeqVfVceztFpJ_gw5PqRlvhqTgj_vVWDcmqushHipTAVw0Wp6GLVnt6jgsZTf8-dXfV3lBxzN1QNIhrSXVBrPhHyRfg9edtR4si4P2bYo6-FLQTNT0jf"
+                    frameBorder="0"
+                    scrolling="auto"
+                    display="block"
+                    marginLeft="auto"
+                    marginRight="auto"
+                    maxW="100%"
+                />
+            </ImageTextBlock>
+
+            <ImageTextBlock
+                imageSrc={
+                    'https://images.prismic.io/derow-v1/ZjZoxkMTzAJOCiGv_bb.png?auto=format,compress'
+                }
+                gridLayout="7"
             >
                 <Heading as="h2" size="xl" mb={4}>
                     Een uitgebreid dashboard

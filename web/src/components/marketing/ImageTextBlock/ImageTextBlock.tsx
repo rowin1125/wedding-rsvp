@@ -7,6 +7,7 @@ import {
     Grid,
     GridItem,
     Image,
+    ImageProps,
 } from '@chakra-ui/react';
 
 import { resolveContainerWidth } from 'src/helpers/marketingBlockHelpers';
@@ -18,6 +19,7 @@ type ImageTextBlockProps = {
     children: React.ReactNode;
     roundImage?: boolean;
     imageSrc: string;
+    imageProps?: ImageProps;
 } & BoxProps;
 
 const ImageTextBlock = ({
@@ -27,6 +29,7 @@ const ImageTextBlock = ({
     imageFirst,
     roundImage,
     imageSrc,
+    imageProps,
     ...props
 }: ImageTextBlockProps) => {
     const imageColumnWidth = parseInt(gridLayout);
@@ -73,6 +76,7 @@ const ImageTextBlock = ({
                             objectFit="contain"
                             w="full"
                             h="auto"
+                            {...imageProps}
                         />
                     </GridItem>
                 </Grid>
