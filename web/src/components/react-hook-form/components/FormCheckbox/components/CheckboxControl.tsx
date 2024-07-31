@@ -84,3 +84,5 @@ const CheckboxControl = (props: CheckboxControlProps) => {
 };
 
 CheckboxControl.displayName = 'CheckboxControl';
+
+export default CheckboxControl;

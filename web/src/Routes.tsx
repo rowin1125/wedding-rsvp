@@ -13,6 +13,9 @@ const Routes = () => {
                 <Route path="/app/wedding-instellingen" page={WeddingSettingsPage} name="weddingSettings" />
             </PrivateSet>
             <Set wrap={AppLayout}>
+                <PrivateSet unauthenticated="dashboard" roles={[ROLE_ENUMS.USER, ROLE_ENUMS.ADMIN]}>
+                    <Route path="/app/onboarding" page={OnboardingPage} name="onboarding" />
+                </PrivateSet>
                 <PrivateSet unauthenticated="home" roles={[ROLE_ENUMS.ADMIN, ROLE_ENUMS.MASTER_OF_CEREMONIES, ROLE_ENUMS.WEDDING_OWNER]}>
                     <Route path="/app/dashboard" page={DashboardPage} name="dashboard" />
                     <Route path="/app/media" page={MediaPage} name="media" />

@@ -1,5 +1,6 @@
-import { Heading, Flex, Box, Image, Text } from '@chakra-ui/react';
+import { Heading, Flex, Box, Image, Text, Button } from '@chakra-ui/react';
 
+import { Link, routes } from '@redwoodjs/router';
 import { Metadata } from '@redwoodjs/web';
 
 import Hero from 'src/components/Hero';
@@ -53,7 +54,10 @@ export default () => (
                                 'https://images.prismic.io/derow-v1/ZjZsKkMTzAJOCiHG_brokenhart.png?auto=format,compress'
                             }
                             alt="broken heart"
-                            h="70px"
+                            h={{
+                                base: '30px',
+                                lg: '70px',
+                            }}
                         />
                         <Heading
                             fontSize={{
@@ -68,6 +72,11 @@ export default () => (
                     <Text>
                         De pagina die je probeert te bezoeken bestaat niet
                     </Text>
+                    <Flex mt={6} justifyContent="center">
+                        <Button as={Link} to={routes.home()}>
+                            Terug naar home
+                        </Button>
+                    </Flex>
                 </Box>
             </Box>
         </Box>

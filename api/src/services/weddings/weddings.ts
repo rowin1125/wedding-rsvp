@@ -1,6 +1,7 @@
 import { createId } from '@paralleldrive/cuid2';
 import type { Prisma } from '@prisma/client';
 import { Role } from '@prisma/client';
+import * as Sentry from '@sentry/node';
 import type {
     QueryResolvers,
     MutationResolvers,
@@ -10,6 +11,7 @@ import type {
 import { removeNulls } from '@redwoodjs/api';
 import { UserInputError } from '@redwoodjs/graphql-server';
 
+import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWeddingValidator';
 import { db } from 'src/lib/db';
 
@@ -29,6 +31,8 @@ export const wedding: QueryResolvers['wedding'] = async ({ id }) => {
                 },
             },
             bannerImage: true,
+            partners: true,
+            dayParts: true,
         },
     });
 };
@@ -43,7 +47,6 @@ export const createWedding: MutationResolvers['createWedding'] = async ({
     const createWedding = db.wedding.create({
         data: {
             id,
-            ...input,
             gcloudStoragePath: id,
             user: {
                 connect: { id: userId },
@@ -53,6 +56,20 @@ export const createWedding: MutationResolvers['createWedding'] = async ({
                     gcloudStoragePath: `media/${id}`,
                 },
             },
+            dayParts: {
+                create: input.dayParts,
+            },
+            date: input.date,
+            name: input.name,
+            partners: {
+                create: input.partners,
+            },
+            theme: input.theme,
+            preferredSeason: input.preferredSeason ?? undefined,
+            isAbroad: input.isAbroad ?? false,
+            // TODO: Remove this and add dependency on real guests
+            eveningInvitationAmount: 50,
+            dayInvitationAmount: 50,
         },
     });
 

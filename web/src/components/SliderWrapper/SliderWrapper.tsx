@@ -82,6 +82,7 @@ type SliderWrapperProps = {
     transitionType?: 'slide' | 'fade';
     zoomAnimation?: boolean;
     loop?: boolean;
+    lazy?: boolean;
     customControls?: (
         slidePrev: (
             speed?: number | undefined,
@@ -94,6 +95,8 @@ type SliderWrapperProps = {
         currentIndex: number,
         totalSlides: number
     ) => ReactNode;
+    controlledIndex?: number;
+    disableKeyboard?: boolean;
 } & FlexProps &
     SwiperProps;
 
@@ -112,8 +115,10 @@ const SliderWrapper = ({
     transitionType,
     zoomAnimation,
     loop,
+    disableKeyboard,
     disableAutoPlay,
     customControls: customControls,
+    controlledIndex,
     ...props
 }: SliderWrapperProps) => {
     const { isDesktop } = useIsDevice();
@@ -157,11 +162,19 @@ const SliderWrapper = ({
     }, []);
 
     useEffect(() => {
+        if (disableKeyboard) return;
+
         window.addEventListener('keydown', handleArrowKeys);
         return () => {
             window.removeEventListener('keydown', handleArrowKeys);
         };
-    }, [handleArrowKeys]);
+    }, [disableKeyboard, handleArrowKeys]);
+
+    useEffect(() => {
+        if (controlledIndex === undefined || !sliderRef) return;
+
+        sliderRef.current?.slideTo(controlledIndex);
+    }, [controlledIndex]);
 
     return (
         <Flex

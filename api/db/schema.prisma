@@ -46,6 +46,46 @@ model Wedding {
     assets                  Asset[]
     bannerImage             AssetReference?     @relation("weddingReferences", fields: [bannerImageId], references: [id], onDelete: SetNull)
     bannerImageId           String?             @unique
+    partners                Partner[]
+    theme                   String?
+    preferredSeason         String?
+    isAbroad                Boolean             @default(false)
+    dayParts                WeddingDayPart[]
+}
+
+model WeddingDayPart {
+    id          String   @id @default(cuid())
+    name        String
+    startTime   DateTime
+    endTime     DateTime
+    description String?
+    wedding     Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId   String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
+
+enum PartnerType {
+    BRIDE
+    GROOM
+}
+
+model Partner {
+    id        String      @id @default(cuid())
+    firstName String
+    lastName  String
+    gender    Gender
+    type      PartnerType
+    wedding   Wedding     @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId String
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
 }
 
 model WeddingInvitation {

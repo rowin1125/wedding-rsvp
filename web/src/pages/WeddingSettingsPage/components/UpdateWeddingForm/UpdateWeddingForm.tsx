@@ -1,184 +1,114 @@
 import React from 'react';
 
-import { Heading, Flex, Box, Text, VStack, useToast } from '@chakra-ui/react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { FormProvider, useForm } from 'react-hook-form';
-import { InferType, number, object, string } from 'yup';
-
-import { Metadata } from '@redwoodjs/web';
+import { Heading, Flex, Box, Text, Grid, GridItem } from '@chakra-ui/react';
+import { FormProvider } from 'react-hook-form';
 
 import DeleteDialog from 'src/components/DeleteDialog/DeleteDialog';
+import CheckboxSingleControl from 'src/components/react-hook-form/components/FormCheckbox/components/CheckboxSingle';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
 import SelectAssetControl from 'src/components/react-hook-form/components/SelectAssetControl';
+import SelectControl from 'src/components/react-hook-form/components/SelectControl';
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
-import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
 import { useDeleteWeddingById } from './hooks/useDeleteWeddingById';
-import { useUpdateWedding } from './hooks/useUpdateWedding';
+import { useUpdateWeddingForm } from './hooks/useUpdateWeddingForm';
 
 const UpdateWeddingForm = () => {
-    const { wedding, loading: weddingLoading } = useGetWeddingById();
-    const { updateWedding, loading: updateWeddingLoading } = useUpdateWedding();
-    const { deleteWeddingById, loading } = useDeleteWeddingById();
-    const toast = useToast();
-
-    const initialDate = new Date(wedding?.date || new Date())
-        .toISOString()
-        .split('T')[0];
-
-    const validationSchema = object({
-        name: string().required('Naam is verplicht'),
-        date: string().required('Datum is verplicht'),
-        dayInvitationAmount: string()
-            .required('Aantal is verplicht')
-            .test(
-                'isNumeric',
-                'Getal mag geen tekst bevatten',
-                (value) => !isNaN(Number(value))
-            ),
-        eveningInvitationAmount: string()
-            .required('Aantal is verplicht')
-            .test(
-                'isNumeric',
-                'Naam mag geen tekst bevatten',
-                (value) => !isNaN(Number(value))
-            ),
-        bannerImage: object({
-            id: string(),
-            focalPoint: object({
-                x: number(),
-                y: number(),
-            }),
-        }),
-    });
-
-    const initialValues = {
-        name: wedding?.name || '',
-        date: initialDate || new Date().toISOString().split('T')[0],
-        dayInvitationAmount: String(wedding?.dayInvitationAmount) || '0',
-        eveningInvitationAmount:
-            String(wedding?.eveningInvitationAmount) || '0',
-        bannerImage: {
-            id: wedding?.bannerImage?.asset.id || '',
-            focalPoint: {
-                x: wedding?.bannerImage?.metadata?.focalPoint?.x || 50,
-                y: wedding?.bannerImage?.metadata?.focalPoint?.y || 50,
-            },
-        },
-    };
-
-    const methods = useForm({
-        resolver: yupResolver(validationSchema),
-        defaultValues: initialValues,
-        mode: 'onBlur',
-    });
-
-    const formHasChanged = methods.formState.isDirty;
-
-    if (weddingLoading || !wedding) return null;
-
-    const onSubmit = async (values: InferType<typeof validationSchema>) => {
-        try {
-            await updateWedding({
-                variables: {
-                    id: wedding.id,
-                    input: {
-                        date: new Date(values.date).toISOString(),
-                        name: values.name,
-                        dayInvitationAmount: Number(values.dayInvitationAmount),
-                        eveningInvitationAmount: Number(
-                            values.eveningInvitationAmount
-                        ),
-                        bannerImageId: values.bannerImage.id || null,
-                        bannerImageMetadata: values.bannerImage.id
-                            ? {
-                                  focalPoint: {
-                                      x: values.bannerImage.focalPoint.x,
-                                      y: values.bannerImage.focalPoint.y,
-                                  },
-                              }
-                            : {},
-                    },
-                },
-            });
-            toast({
-                title: 'Bruiloft aangepast',
-                status: 'success',
-            });
-            methods.reset(values);
-        } catch (error) {
-            if (error instanceof Error) {
-                toast({
-                    title: 'Er is iets fout gegaan',
-                    description: error.message,
-                    status: 'error',
-                });
-            }
-        }
-    };
+    const { methods, onSubmit, formHasChanged, loading, wedding } =
+        useUpdateWeddingForm();
+    const { deleteWeddingById, loading: deleteLoading } =
+        useDeleteWeddingById();
 
     return (
         <>
-            <Box w={{ base: 'full', lg: '400px' }}>
-                <Metadata
-                    title="Bruiloft aanmaken"
-                    description="Bruiloft aanmaken pagina"
-                />
-                <Heading>Update de bruiloft</Heading>
-                <FormProvider {...methods}>
-                    <VStack
-                        as="form"
-                        onSubmit={methods.handleSubmit(onSubmit)}
-                        align="start"
-                        spacing={5}
-                    >
-                        <InputControl
-                            name="name"
-                            label="Naam bruiloft"
-                            inputProps={{
-                                placeholder: 'Naam',
+            <FormProvider {...methods}>
+                <Heading mb={4}>Update de bruiloft</Heading>
+                <Box as="form" onSubmit={methods.handleSubmit(onSubmit)}>
+                    <Flex w="full">
+                        <Grid
+                            gap={4}
+                            justifyContent="center"
+                            w="full"
+                            maxW={{
+                                lg: '800px',
                             }}
-                        />
-                        <InputControl
-                            name="date"
-                            label="Datum bruiloft"
-                            inputProps={{
-                                type: 'date',
-                            }}
-                        />
+                            gridTemplateColumns="repeat(2, 1fr)"
+                        >
+                            <GridItem colSpan={{ base: 2, lg: 1 }}>
+                                <InputControl
+                                    name="name"
+                                    label="Naam bruiloft"
+                                    inputProps={{
+                                        placeholder: 'Trouwdag Gru & Lucy',
+                                    }}
+                                />
+                            </GridItem>
+                            <GridItem colSpan={{ base: 2, lg: 1 }}>
+                                <InputControl
+                                    name="date"
+                                    label="Datum bruiloft"
+                                    inputProps={{
+                                        type: 'date',
+                                    }}
+                                />
+                            </GridItem>
+                            <GridItem colSpan={{ base: 2, lg: 1 }}>
+                                <InputControl
+                                    name="theme"
+                                    label="Dresscode / thema"
+                                    inputProps={{
+                                        placeholder: 'Pastelkleuren',
+                                    }}
+                                />
+                            </GridItem>
+                            <GridItem colSpan={{ base: 2, lg: 1 }}>
+                                <SelectControl
+                                    name="preferredSeason"
+                                    label="Voorkeur seizoen"
+                                    selectProps={{
+                                        placeholder: 'Kies een seizoen',
+                                    }}
+                                    tooltipText="Deze wordt automatisch ingevuld op basis van de gekozen datum, echter kan je hem ook handmatig aanpassen"
+                                    tooltipIconProps={{
+                                        color: 'blue.500',
+                                    }}
+                                >
+                                    <option value="WINTER">Winter</option>
+                                    <option value="SPRING">Lente</option>
+                                    <option value="SUMMER">Zomer</option>
+                                    <option value="AUTUMN">Herfst</option>
+                                </SelectControl>
+                            </GridItem>
 
-                        <InputControl
-                            name="dayInvitationAmount"
-                            label="Geschatte aantal dag gasten"
-                            inputProps={{
-                                placeholder: 'Bijv. 22',
-                                type: 'number',
-                            }}
-                        />
-                        <InputControl
-                            name="eveningInvitationAmount"
-                            label="Geschatte aantal avond gasten"
-                            inputProps={{
-                                placeholder: 'Bijv. 22',
-                                type: 'number',
-                            }}
-                        />
-                        <SelectAssetControl name="bannerImage" />
+                            <GridItem colSpan={{ base: 2, lg: 1 }}>
+                                <SelectAssetControl name="bannerImage" />
+                            </GridItem>
+                            <GridItem colSpan={{ base: 2, lg: 1 }}>
+                                <CheckboxSingleControl
+                                    formLabel="Bruiloft in het buitenland"
+                                    name="isAbroad"
+                                    label="Ja, bruiloft in het buitenland"
+                                    checkBoxProps={{
+                                        mt: { lg: 2 },
+                                    }}
+                                />
+                            </GridItem>
+                            <GridItem colSpan={{ base: 2 }}>
+                                <Flex justifyContent="flex-end" w="full" mt={4}>
+                                    <SubmitButton
+                                        colorScheme="secondary"
+                                        isLoading={loading}
+                                        isDisabled={loading || !formHasChanged}
+                                    >
+                                        Update bruiloft
+                                    </SubmitButton>
+                                </Flex>
+                            </GridItem>
+                        </Grid>
+                    </Flex>
+                </Box>
+            </FormProvider>
 
-                        <Flex justifyContent="flex-end" w="full">
-                            <SubmitButton
-                                colorScheme="secondary"
-                                isLoading={updateWeddingLoading}
-                                isDisabled={
-                                    updateWeddingLoading || !formHasChanged
-                                }
-                            >
-                                Update bruiloft
-                            </SubmitButton>
-                        </Flex>
-                    </VStack>
-                </FormProvider>
-            </Box>
             <Box mt={10}>
                 <Box
                     borderColor="red.500"
@@ -202,7 +132,7 @@ const UpdateWeddingForm = () => {
                             buttonLabel="Verwijder bruiloft"
                             buttonProps={{ ml: 0, mt: 4 }}
                             id={wedding.id}
-                            loading={loading}
+                            loading={deleteLoading}
                         >
                             <Text>
                                 Weet je zeker dat je de bruiloft wilt

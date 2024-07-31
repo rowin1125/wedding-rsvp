@@ -14,6 +14,7 @@ export const useControlledTabs = <
 }) => {
     const { search } = useLocation();
     const [tabIndex, setTabIndex] = React.useState(0);
+    const currentTab = tabs[tabIndex];
 
     const handleTabChange = useCallback(
         (index: number) => {
@@ -46,6 +47,7 @@ export const useControlledTabs = <
     }, []);
 
     return {
+        currentTab,
         tabIndex,
         handleTabChange,
     };

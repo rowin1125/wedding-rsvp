@@ -123,7 +123,6 @@ const GridGallery = ({
                             shadow="lg"
                             position="relative"
                             borderTopRadius="xl"
-                            overflow="hidden"
                             minH={resolveHeight(containerWidth)}
                         >
                             <Menu>

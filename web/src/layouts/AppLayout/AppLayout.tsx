@@ -22,20 +22,25 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     const { pathname } = useLocation();
     const toast = useToast();
 
-    const isSettingsPage = pathname === routes.weddingSettings();
+    const isOnboardingPage = pathname === routes.onboarding();
 
     useEffect(() => Sentry.setUser(currentUser), [currentUser]);
 
     useEffect(() => {
-        if (!currentUser) return;
-        if (loading || isSettingsPage || currentUser?.weddingId) return;
+        if (
+            !currentUser ||
+            loading ||
+            isOnboardingPage ||
+            currentUser?.weddingId
+        )
+            return;
 
-        navigate(routes.weddingSettings());
+        navigate(routes.onboarding());
         toast({
             title: 'Je hebt nog geen bruiloft aangemaakt',
             status: 'error',
         });
-    }, [currentUser, loading, pathname, isSettingsPage, toast]);
+    }, [currentUser, loading, pathname, isOnboardingPage, toast]);
 
     return (
         <Box>

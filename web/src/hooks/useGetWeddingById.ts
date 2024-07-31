@@ -13,6 +13,24 @@ export const GET_WEDDING_BY_ID = gql`
             date
             dayInvitationAmount
             eveningInvitationAmount
+            theme
+            isAbroad
+            preferredSeason
+            partners {
+                id
+                firstName
+                lastName
+                type
+                gender
+                weddingId
+            }
+            dayParts {
+                description
+                name
+                startTime
+                endTime
+                id
+            }
             bannerImage {
                 metadata {
                     focalPoint {

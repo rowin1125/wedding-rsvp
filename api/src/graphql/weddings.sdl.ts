@@ -10,6 +10,11 @@ export const schema = gql`
         weddingGuest: [WeddingGuest]!
         mediaLibrary: MediaLibrary
         bannerImage: AssetReference
+        partners: [Partner]!
+        theme: String
+        preferredSeason: String
+        isAbroad: Boolean
+        dayParts: [WeddingDayPart!]!
         createdAt: DateTime!
         updatedAt: DateTime!
     }
@@ -21,17 +26,23 @@ export const schema = gql`
     input CreateWeddingInput {
         date: DateTime!
         name: String!
-        dayInvitationAmount: Int!
-        eveningInvitationAmount: Int!
+        partners: [CreatePartnerInput!]!
+        theme: String
+        preferredSeason: String
+        isAbroad: Boolean
+        dayParts: [CreateWeddingDayPartInput!]!
     }
 
     input UpdateWeddingInput {
         date: DateTime
-        name: String!
-        dayInvitationAmount: Int
-        eveningInvitationAmount: Int
+        name: String
         bannerImageId: String
         bannerImageMetadata: JSON
+        partners: [UpdatePartnerInput]
+        theme: String
+        preferredSeason: String
+        isAbroad: Boolean
+        dayParts: [UpdateWeddingDayPartInput]
     }
 
     type Mutation {

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Flex, Button, Icon, IconProps } from '@chakra-ui/react';
 
-import RedwoodLink from 'src/components/RedwoodLink';
+import { Link } from '@redwoodjs/router';
 
 type SidebarItemClosedProps = {
     navOpen: boolean;
@@ -22,7 +22,7 @@ const SidebarItemClosed = ({
     return (
         <Flex justifyContent="center">
             <Button
-                as={RedwoodLink}
+                as={Link}
                 to={to}
                 my="12px"
                 colorScheme={active ? 'body' : 'primary'}

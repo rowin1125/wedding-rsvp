@@ -52,3 +52,5 @@ const CheckboxContainer = (props: CheckboxContainerProps) => {
 };
 
 CheckboxContainer.displayName = 'CheckboxContainer';
+
+export default CheckboxContainer;

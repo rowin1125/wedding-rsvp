@@ -30,7 +30,7 @@ const Hero = ({
     subtitle,
     fileType = 'image/png',
     title,
-    url = 'https://images.prismic.io/derow-v1/ZjZmyEMTzAJOCiGi_Screenshotfrom2023-08-2517-41-23.png?auto=format,compress',
+    url = 'https://images.prismic.io/derow-v1/ZjZuGEMTzAJOCiHa_beach-wedding.jpg?auto=format,compress',
     previewUrl,
     imageProps,
     height = '400px',
@@ -92,7 +92,7 @@ const Hero = ({
                             base: 'center',
                             lg: 'center',
                         }}
-                        fontSize="xl"
+                        fontSize="3xl"
                         textTransform="uppercase"
                         fontFamily="butler"
                     >

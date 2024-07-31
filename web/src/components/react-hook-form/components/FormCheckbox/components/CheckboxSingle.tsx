@@ -11,10 +11,19 @@ import FormControl, { BaseProps } from '../../FormControl/FormControl';
 export type CheckboxSingleProps = BaseProps & {
     checkBoxProps?: ChakraCheckboxProps;
     children?: ReactNode;
+    formLabel?: string;
 };
 
 const CheckboxSingleControl = (props: CheckboxSingleProps) => {
-    const { name, control, label, children, checkBoxProps, ...rest } = props;
+    const {
+        name,
+        control,
+        label,
+        children,
+        checkBoxProps,
+        formLabel,
+        ...rest
+    } = props;
     const {
         field,
         fieldState: { isTouched },
@@ -29,7 +38,7 @@ const CheckboxSingleControl = (props: CheckboxSingleProps) => {
     const isChecked = field.value;
 
     return (
-        <FormControl name={name} control={control} {...rest}>
+        <FormControl name={name} label={formLabel} control={control} {...rest}>
             <Checkbox
                 {...field}
                 id={name}
@@ -46,3 +55,5 @@ const CheckboxSingleControl = (props: CheckboxSingleProps) => {
 };
 
 CheckboxSingleControl.displayName = 'CheckboxSingleControl';
+
+export default CheckboxSingleControl;

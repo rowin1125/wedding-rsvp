@@ -10,6 +10,7 @@ import {
     FormHelperText,
     FormLabel,
     FormLabelProps,
+    IconProps,
     TextProps,
     Tooltip,
     TooltipProps,
@@ -34,7 +35,8 @@ export interface BaseReactHookFormProps {
     helperTextProps?: TextProps;
     errorMessageProps?: FormErrorMessageProps;
     tooltipText?: string;
-    tooltipProps?: TooltipProps;
+    tooltipProps?: Omit<TooltipProps, 'children'>;
+    tooltipIconProps?: IconProps;
 }
 
 /**
@@ -55,6 +57,7 @@ const FormControl = (props: BaseProps) => {
         tooltipText,
         tooltipProps,
         errorMessageProps,
+        tooltipIconProps,
         ...rest
     } = props;
 
@@ -79,6 +82,7 @@ const FormControl = (props: BaseProps) => {
                             <InfoOutlineIcon
                                 fontSize=".9em"
                                 color="blackAlpha.600"
+                                {...tooltipIconProps}
                             />
                         </Tooltip>
                     )}
