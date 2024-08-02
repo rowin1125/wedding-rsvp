@@ -16,20 +16,11 @@ import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWe
 import { db } from 'src/lib/db';
 
 export const wedding: QueryResolvers['wedding'] = async ({ id }) => {
-    isUserAssignedToWeddingValidator({
-        requestWeddingId: id,
-    });
-
     return db.wedding.findUnique({
         where: {
             id,
         },
         include: {
-            weddingInvitation: {
-                include: {
-                    weddingGuests: true,
-                },
-            },
             bannerImage: true,
             partners: true,
             dayParts: true,
@@ -67,9 +58,6 @@ export const createWedding: MutationResolvers['createWedding'] = async ({
             theme: input.theme,
             preferredSeason: input.preferredSeason ?? undefined,
             isAbroad: input.isAbroad ?? false,
-            // TODO: Remove this and add dependency on real guests
-            eveningInvitationAmount: 50,
-            dayInvitationAmount: 50,
         },
     });
 
@@ -192,16 +180,6 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
     const bucket = await getStorageClient();
 
     try {
-        const deleteGalleryImagesPromise = bucket.deleteFiles({
-            prefix: wedding.gcloudStoragePath,
-            force: true,
-        });
-
-        const deleteMediaLibraryPromise = await bucket.deleteFiles({
-            prefix: wedding?.mediaLibrary?.gcloudStoragePath,
-            force: true,
-        });
-
         const deleteWedding = db.wedding.delete({
             where: { id },
         });
@@ -213,20 +191,25 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
             },
         });
 
-        const deleteWeddingPromise = db.$transaction([
-            deleteWedding,
-            deleteUserRole,
-        ]);
+        await db.$transaction([deleteWedding, deleteUserRole]);
 
-        const [deletedWeddingTransaction] = await Promise.all([
-            deleteWeddingPromise,
+        // Finally delete the external files
+        const deleteGalleryImagesPromise = bucket.deleteFiles({
+            prefix: `galleries/${wedding.gcloudStoragePath}`,
+            force: true,
+        });
+
+        const deleteMediaLibraryPromise = bucket.deleteFiles({
+            prefix: wedding?.mediaLibrary?.gcloudStoragePath,
+            force: true,
+        });
+
+        await Promise.all([
             deleteGalleryImagesPromise,
             deleteMediaLibraryPromise,
         ]);
 
-        const deletedWedding = deletedWeddingTransaction[0];
-
-        return deletedWedding;
+        return wedding;
     } catch (error) {
         console.error(error);
         throw new UserInputError('Failed to delete wedding');
@@ -234,14 +217,24 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
 };
 
 export const Wedding: WeddingRelationResolvers = {
-    weddingInvitation: (_obj, { root }) => {
-        return db.wedding
-            .findUnique({ where: { id: root?.id } })
-            .weddingInvitation();
+    bannerImage: (_obj, { root }) => {
+        return db.wedding.findUnique({ where: { id: root?.id } }).bannerImage();
     },
-    weddingGuests: (_obj, { root }) => {
+    mediaLibrary: (_obj, { root }) => {
         return db.wedding
             .findUnique({ where: { id: root?.id } })
-            .weddingGuests();
+            .mediaLibrary();
+    },
+    partners: (_obj, { root }) => {
+        return db.wedding.findUnique({ where: { id: root?.id } }).partners();
+    },
+    dayParts: (_obj, { root }) => {
+        return db.wedding.findUnique({ where: { id: root?.id } }).dayParts();
+    },
+    guests: (_obj, { root }) => {
+        return db.wedding.findUnique({ where: { id: root?.id } }).guests();
+    },
+    guestGroups: (_obj, { root }) => {
+        return db.wedding.findUnique({ where: { id: root?.id } }).guestGroups();
     },
 };

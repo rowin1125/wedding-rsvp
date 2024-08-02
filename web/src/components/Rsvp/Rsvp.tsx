@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Card, Center, Container } from '@chakra-ui/react';
-import { InvitationType } from 'types/graphql';
+
+import { useParams } from '@redwoodjs/router';
+
+import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
 import RsvpForm from './components/RsvpForm/RsvpForm';
 import RsvpIntro from './components/RsvpIntro/RsvpIntro';
 
-type RsvpProps = {
-    invitationType: InvitationType;
-};
+const Rsvp = () => {
+    const { weddingId } = useParams();
+    const { wedding } = useGetWeddingById(weddingId);
 
-const Rsvp = ({ invitationType }: RsvpProps) => {
     return (
         <Box
             py={{ base: 10, lg: 20 }}
@@ -27,7 +29,7 @@ const Rsvp = ({ invitationType }: RsvpProps) => {
                         px={{ base: 10, lg: 20 }}
                         id="rsvpForm"
                     >
-                        <RsvpForm invitationType={invitationType} />
+                        {wedding && <RsvpForm wedding={wedding} />}
                     </Card>
                 </Center>
             </Container>

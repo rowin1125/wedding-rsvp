@@ -15,11 +15,11 @@ import { BsTrash } from 'react-icons/bs';
 
 export type DeleteDialogType = {
     onDelete: (id: string) => Promise<void>;
-    loading?: boolean;
     id: string;
     children: React.ReactNode;
-    buttonVariant?: ButtonProps['variant'];
     title: string;
+    buttonVariant?: ButtonProps['variant'];
+    loading?: boolean;
     buttonLabel?: string;
     buttonProps?: ButtonProps;
     deleteButtonLabel?: string;

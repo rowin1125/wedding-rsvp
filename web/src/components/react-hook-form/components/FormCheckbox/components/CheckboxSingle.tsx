@@ -36,7 +36,6 @@ const CheckboxSingleControl = (props: CheckboxSingleProps) => {
     const error = get(errors, name, '');
 
     const isChecked = field.value;
-
     return (
         <FormControl name={name} label={formLabel} control={control} {...rest}>
             <Checkbox

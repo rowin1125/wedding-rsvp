@@ -12,22 +12,16 @@ import {
     Flex,
     useToast,
 } from '@chakra-ui/react';
-import { BiPhotoAlbum, BiSun } from 'react-icons/bi';
-import { BsFillMoonStarsFill } from 'react-icons/bs';
-import { CgOptions, CgWebsite } from 'react-icons/cg';
-import { FaRegEnvelopeOpen } from 'react-icons/fa6';
-import { MdOutlinePermMedia } from 'react-icons/md';
-import { RiDashboard3Line } from 'react-icons/ri';
 import { TbHome } from 'react-icons/tb';
 
 import { routes } from '@redwoodjs/router';
 
 import { useAuth } from 'src/auth';
-import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
+import { useGetMenuItems } from 'src/hooks/useGetMenuItems';
 
 import AccordionDirectLink from './components/AccordionDirectLink';
-import AccordionWithNestedLinks from './components/AccordionWithNestedLinks';
 import FooterDrawerHeader from './components/FooterDrawerHeader';
+import FooterDrawerItemResolver from './components/FooterDrawerItemResolver';
 
 type FooterDrawerProps = {
     isOpen: boolean;
@@ -37,7 +31,6 @@ type FooterDrawerProps = {
 
 const FooterDrawer = ({ isOpen, onClose, btnRef }: FooterDrawerProps) => {
     const { logOut } = useAuth();
-    const { wedding } = useGetWeddingById();
     const toast = useToast();
     const handleLogout = () => {
         logOut();
@@ -47,8 +40,7 @@ const FooterDrawer = ({ isOpen, onClose, btnRef }: FooterDrawerProps) => {
         });
     };
 
-    if (!wedding) return null;
-
+    const menuItems = useGetMenuItems();
     return (
         <Drawer
             isOpen={isOpen}
@@ -70,86 +62,13 @@ const FooterDrawer = ({ isOpen, onClose, btnRef }: FooterDrawerProps) => {
                         >
                             Home
                         </AccordionDirectLink>
-                        <AccordionDirectLink
-                            onClose={onClose}
-                            to={routes.dashboard()}
-                            icon={RiDashboard3Line}
-                            iconProps={{
-                                fontSize: 'xl',
-                            }}
-                        >
-                            Dashboard
-                        </AccordionDirectLink>
-
-                        <AccordionWithNestedLinks
-                            title="Dagdelen"
-                            icon={FaRegEnvelopeOpen}
-                        >
-                            <AccordionDirectLink
+                        {menuItems.map((menuItem) => (
+                            <FooterDrawerItemResolver
                                 onClose={onClose}
-                                nested
-                                to={routes.dayGuests()}
-                                icon={BiSun}
-                            >
-                                Dag gasten
-                            </AccordionDirectLink>
-
-                            <AccordionDirectLink
-                                onClose={onClose}
-                                nested
-                                to={routes.eveningGuests()}
-                                icon={BsFillMoonStarsFill}
-                            >
-                                Avond gasten
-                            </AccordionDirectLink>
-                        </AccordionWithNestedLinks>
-                        <AccordionWithNestedLinks title="RSVP" icon={CgWebsite}>
-                            <AccordionDirectLink
-                                onClose={onClose}
-                                nested
-                                to={routes.weddingRsvp({
-                                    invitationType: 'F',
-                                    weddingId: wedding.id,
-                                })}
-                                icon={BiSun}
-                            >
-                                RSVP Dag
-                            </AccordionDirectLink>
-
-                            <AccordionDirectLink
-                                onClose={onClose}
-                                nested
-                                to={routes.weddingRsvp({
-                                    invitationType: 'E',
-                                    weddingId: wedding.id,
-                                })}
-                                icon={BsFillMoonStarsFill}
-                            >
-                                RSVP Avond
-                            </AccordionDirectLink>
-                        </AccordionWithNestedLinks>
-
-                        <AccordionDirectLink
-                            onClose={onClose}
-                            to={routes.galleries()}
-                            icon={BiPhotoAlbum}
-                        >
-                            Galerij
-                        </AccordionDirectLink>
-                        <AccordionDirectLink
-                            onClose={onClose}
-                            to={routes.media()}
-                            icon={MdOutlinePermMedia}
-                        >
-                            Media
-                        </AccordionDirectLink>
-                        <AccordionDirectLink
-                            onClose={onClose}
-                            to={routes.weddingSettings()}
-                            icon={CgOptions}
-                        >
-                            Instellingen
-                        </AccordionDirectLink>
+                                key={menuItem.label}
+                                item={menuItem}
+                            />
+                        ))}
                     </Accordion>
                 </DrawerBody>
 

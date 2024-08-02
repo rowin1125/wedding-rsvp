@@ -81,7 +81,7 @@ const FormControl = (props: BaseProps) => {
                         >
                             <InfoOutlineIcon
                                 fontSize=".9em"
-                                color="blackAlpha.600"
+                                color="info.600"
                                 {...tooltipIconProps}
                             />
                         </Tooltip>

@@ -3,48 +3,13 @@ import React from 'react';
 import { GridItem, Heading } from '@chakra-ui/react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import { GetWeddingQuery } from 'types/graphql';
-
-import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-type GuestType = NonNullable<
-    NonNullable<GetWeddingQuery['wedding']>['weddingInvitation'][0]
->['weddingGuests'];
-
 const EveningPresence = () => {
-    const { wedding } = useGetWeddingById();
-    const eveningInvitations = wedding?.weddingInvitation.filter(
-        (invitation) => invitation?.invitationType === 'EVENING'
-    );
-
-    const eveningPresenceInvitations = eveningInvitations?.filter(
-        (invitation) => invitation?.presence === true
-    );
-    const eveningNotPresenceInvitation = eveningInvitations?.filter(
-        (invitation) => invitation?.presence === false
-    );
-
-    const eveningGuestsPresent = eveningPresenceInvitations?.reduce<GuestType>(
-        (acc, invitation) => {
-            if (!invitation?.weddingGuests) return acc;
-
-            return [...acc, ...invitation.weddingGuests];
-        },
-        []
-    );
-
-    const eveningGuestsNotPresent =
-        eveningNotPresenceInvitation?.reduce<GuestType>((acc, invitation) => {
-            if (!invitation?.weddingGuests) return acc;
-
-            return [...acc, ...invitation.weddingGuests];
-        }, []);
-
-    const eveningGuestsPresentCount = eveningGuestsPresent?.length || 0;
-    const eveningGuestsNotPresentCount = eveningGuestsNotPresent?.length || 0;
-    const eveningInvitationAmount = wedding?.eveningInvitationAmount || 0;
+    const eveningGuestsPresentCount = 10;
+    const eveningGuestsNotPresentCount = 10;
+    const eveningInvitationAmount = 20;
 
     let eveningGuestsNotResponded =
         eveningInvitationAmount -

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Heading, Flex, Box, Text, Grid, GridItem } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
+import { GetWeddingQuery } from 'types/graphql';
 
 import DeleteDialog from 'src/components/DeleteDialog/DeleteDialog';
 import CheckboxSingleControl from 'src/components/react-hook-form/components/FormCheckbox/components/CheckboxSingle';
@@ -13,11 +14,18 @@ import SubmitButton from 'src/components/react-hook-form/components/SubmitButton
 import { useDeleteWeddingById } from './hooks/useDeleteWeddingById';
 import { useUpdateWeddingForm } from './hooks/useUpdateWeddingForm';
 
-const UpdateWeddingForm = () => {
-    const { methods, onSubmit, formHasChanged, loading, wedding } =
-        useUpdateWeddingForm();
+type UpdateWeddingFormProps = {
+    wedding: GetWeddingQuery['wedding'];
+};
+
+const UpdateWeddingForm = ({ wedding }: UpdateWeddingFormProps) => {
+    const { methods, onSubmit, formHasChanged, loading } = useUpdateWeddingForm(
+        { wedding }
+    );
     const { deleteWeddingById, loading: deleteLoading } =
         useDeleteWeddingById();
+
+    if (!wedding) return null;
 
     return (
         <>

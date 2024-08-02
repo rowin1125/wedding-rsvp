@@ -144,9 +144,11 @@ const Gallery = () => {
                 {...(!isDesktop ? { isFitted: true } : {})}
             >
                 <TabList position="sticky" top={0} zIndex={2}>
-                    <Tab>{`Foto's`}</Tab>
-                    <Tab>QR-Code</Tab>
-                    <Tab>Settings</Tab>
+                    <Container display="flex">
+                        <Tab>{`Foto's`}</Tab>
+                        <Tab>QR-Code</Tab>
+                        <Tab>Settings</Tab>
+                    </Container>
                 </TabList>
 
                 <TabPanels>

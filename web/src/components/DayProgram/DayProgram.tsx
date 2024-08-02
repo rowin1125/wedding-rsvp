@@ -11,13 +11,8 @@ import { HiOutlineUserGroup } from 'react-icons/hi';
 import { LuPartyPopper } from 'react-icons/lu';
 import { MdOutlineWavingHand } from 'react-icons/md';
 import { PiChampagneBold, PiForkKnifeBold } from 'react-icons/pi';
-import { InvitationType } from 'types/graphql';
 
-type DayProgramProps = {
-    invitationType: InvitationType;
-};
-
-const DayProgram = ({ invitationType }: DayProgramProps) => {
+const DayProgram = () => {
     const programData = {
         DAY: {
             title: 'Dagprogramma',
@@ -86,7 +81,7 @@ const DayProgram = ({ invitationType }: DayProgramProps) => {
         },
     };
 
-    const program = programData[invitationType];
+    const program = programData['DAY'];
     return (
         <Box py={{ base: 10, lg: 20 }} id="program">
             <Container>

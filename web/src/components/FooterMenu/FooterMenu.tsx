@@ -1,27 +1,21 @@
 import React from 'react';
 
 import { Box, Button, Flex, useDisclosure } from '@chakra-ui/react';
-import { BiPhotoAlbum, BiSun } from 'react-icons/bi';
-import { BsFillMoonStarsFill } from 'react-icons/bs';
-import { CgOptions, CgWebsite } from 'react-icons/cg';
-import { FaRegEnvelopeOpen } from 'react-icons/fa6';
-import { MdFormatListBulleted, MdOutlinePermMedia } from 'react-icons/md';
-import { RiDashboard3Line } from 'react-icons/ri';
+import { MdFormatListBulleted } from 'react-icons/md';
 
-import { routes } from '@redwoodjs/router';
-
-import { useAuth } from 'src/auth';
+import { useGetMenuItems } from 'src/hooks/useGetMenuItems';
 
 import FooterDrawer from './components/FooterDrawer';
 import FooterMenuItem from './components/FooterMenuItem';
-import FooterMenuItemChild from './components/FooterMenuItemChild';
+import FooterMenuItemResolver from './components/FooterMenuItemResolver';
 
 export const footerMenuHeight = '70px';
 
 const FooterMenu = () => {
     const { isOpen, onToggle, onClose } = useDisclosure();
     const btnRef = React.useRef(null);
-    const { currentUser } = useAuth();
+
+    const menuList = useGetMenuItems();
 
     return (
         <Box mt={footerMenuHeight} display={{ base: 'block', lg: 'none' }}>
@@ -38,68 +32,12 @@ const FooterMenu = () => {
                     alignItems="center"
                     h="full"
                 >
-                    <FooterMenuItem
-                        title="Dashboard"
-                        icon={RiDashboard3Line}
-                        to={routes.dashboard()}
-                        iconProps={{
-                            fontSize: 'xl',
-                        }}
-                    />
-                    <FooterMenuItem title="dagdelen" icon={FaRegEnvelopeOpen}>
-                        <FooterMenuItemChild
-                            icon={BiSun}
-                            to={routes.dayGuests()}
-                        >
-                            Dag gasten
-                        </FooterMenuItemChild>
-                        <FooterMenuItemChild
-                            icon={BsFillMoonStarsFill}
-                            divider={false}
-                            to={routes.eveningGuests()}
-                        >
-                            Avond gasten
-                        </FooterMenuItemChild>
-                    </FooterMenuItem>
-                    {currentUser?.weddingId && (
-                        <FooterMenuItem title="RSVP" icon={CgWebsite}>
-                            <FooterMenuItemChild
-                                icon={BiSun}
-                                to={routes.weddingRsvp({
-                                    invitationType: 'F',
-                                    weddingId: currentUser.weddingId,
-                                })}
-                            >
-                                RSVP Dag
-                            </FooterMenuItemChild>
-                            <FooterMenuItemChild
-                                icon={BsFillMoonStarsFill}
-                                divider={false}
-                                to={routes.weddingRsvp({
-                                    invitationType: 'E',
-                                    weddingId: currentUser.weddingId,
-                                })}
-                            >
-                                RSVP Avond
-                            </FooterMenuItemChild>
-                        </FooterMenuItem>
-                    )}
-
-                    <FooterMenuItem
-                        icon={BiPhotoAlbum}
-                        title="Galerij"
-                        to={routes.galleries()}
-                    />
-                    <FooterMenuItem
-                        icon={MdOutlinePermMedia}
-                        title="Media"
-                        to={routes.media()}
-                    />
-                    <FooterMenuItem
-                        icon={CgOptions}
-                        title="Instellingen"
-                        to={routes.weddingSettings()}
-                    />
+                    {menuList.map((listItem, index) => (
+                        <FooterMenuItemResolver
+                            item={listItem}
+                            key={`${listItem.label}-${index}`}
+                        />
+                    ))}
                     <FooterMenuItem
                         ref={btnRef}
                         onClick={onToggle}

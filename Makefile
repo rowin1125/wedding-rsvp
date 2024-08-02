@@ -33,18 +33,24 @@ docker-compose-up = ${set-ids} docker-compose up -d --remove-orphans
 docker-run-alpine = docker run --rm -u $$(id -u):$$(id -g) -v `pwd`:/app -w /app alpine:3.13
 
 ##
-## Project commands
+## Pm2 / Docker commands
 ##
 
+# Start the project
 start:
 	@pm2 start ecosystem.config.js
 
+# Stop the project
 stop:
 	@pm2 stop ecosystem.config.js
 
+# Restart the project
 restart:
 	@pm2 restart ecosystem.config.js
 
+# Stop and start the project
+down: stop
+	@pm2 restart ecosystem.config.js
 
 ##
 ## Logs
@@ -66,8 +72,13 @@ cron-logs:
 rwstudio-logs:
 	@pm2 logs "rwstudio"
 
+##
+## Project commands
+##
+
 # Initialize the project
 init: intro
+	@yarn install
 	@docker-compose up -d
 	@yarn rw prisma migrate deploy
 	@yarn rw prisma db seed
@@ -110,6 +121,9 @@ do-deploy-resize-all-function:
 	@echo "🚀 Build all-images-resize-function"
 	@cd functions/all-images-resize-function && gcloud functions deploy resizeImages --runtime nodejs20 --gen2 --timeout=3000 --region europe-west4 --allow-unauthenticated --memory 256Mi --trigger-http --entry-point=resizeImages --env-vars-file .env.yaml && cd ../..
 
+# Generate types
+types:
+	@yarn rw g types
 
 ##
 ## VPS commands

@@ -4,10 +4,6 @@ export const schema = gql`
         date: DateTime!
         name: String!
         gcloudStoragePath: String!
-        dayInvitationAmount: Int!
-        eveningInvitationAmount: Int!
-        weddingInvitation: [WeddingInvitation]!
-        weddingGuest: [WeddingGuest]!
         mediaLibrary: MediaLibrary
         bannerImage: AssetReference
         partners: [Partner]!
@@ -15,6 +11,8 @@ export const schema = gql`
         preferredSeason: String
         isAbroad: Boolean
         dayParts: [WeddingDayPart!]!
+        guests: [Guest!]!
+        guestGroups: [GuestGroup!]!
         createdAt: DateTime!
         updatedAt: DateTime!
     }

@@ -4,6 +4,7 @@ import theme from 'config/chakra.config';
 import { RedwoodProvider } from '@redwoodjs/web';
 import { RedwoodApolloProvider } from '@redwoodjs/web/apollo';
 
+import possibleTypes from 'src/graphql/possibleTypes';
 import Sentry from 'src/lib/sentry';
 import FatalErrorPage from 'src/pages/FatalErrorPage';
 import Routes from 'src/Routes';
@@ -14,6 +15,12 @@ import { AuthProvider, useAuth } from './auth';
 import './index.css';
 
 const extendedTheme = extendTheme(theme);
+
+const graphQLClientConfig = {
+    cacheConfig: {
+        possibleTypes: possibleTypes.possibleTypes,
+    },
+};
 
 const App = () => (
     <Sentry.ErrorBoundary fallback={FatalErrorPage}>
@@ -30,7 +37,10 @@ const App = () => (
                         },
                     }}
                 >
-                    <RedwoodApolloProvider useAuth={useAuth}>
+                    <RedwoodApolloProvider
+                        useAuth={useAuth}
+                        graphQLClientConfig={graphQLClientConfig}
+                    >
                         <Routes />
                     </RedwoodApolloProvider>
                 </ChakraProvider>

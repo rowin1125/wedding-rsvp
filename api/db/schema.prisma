@@ -8,11 +8,6 @@ generator client {
     binaryTargets = "native"
 }
 
-enum InvitationType {
-    DAY
-    EVENING
-}
-
 model User {
     id                  String     @id @default(cuid())
     email               String     @unique
@@ -30,39 +25,39 @@ model User {
 }
 
 model Wedding {
-    id                      String              @id @default(cuid())
-    date                    DateTime
-    name                    String
-    gcloudStoragePath       String              @default("")
-    dayInvitationAmount     Int                 @default(0)
-    eveningInvitationAmount Int                 @default(0)
-    weddingInvitation       WeddingInvitation[]
-    weddingGuests           WeddingGuest[]
-    user                    User?
-    createdAt               DateTime            @default(now())
-    updatedAt               DateTime            @updatedAt
-    gallery                 Gallery[]
-    mediaLibrary            MediaLibrary?
-    assets                  Asset[]
-    bannerImage             AssetReference?     @relation("weddingReferences", fields: [bannerImageId], references: [id], onDelete: SetNull)
-    bannerImageId           String?             @unique
-    partners                Partner[]
-    theme                   String?
-    preferredSeason         String?
-    isAbroad                Boolean             @default(false)
-    dayParts                WeddingDayPart[]
+    id                         String                      @id @default(cuid())
+    date                       DateTime
+    name                       String
+    gcloudStoragePath          String                      @default("")
+    user                       User?
+    createdAt                  DateTime                    @default(now())
+    updatedAt                  DateTime                    @updatedAt
+    gallery                    Gallery[]
+    mediaLibrary               MediaLibrary?
+    assets                     Asset[]
+    bannerImage                AssetReference?             @relation("weddingReferences", fields: [bannerImageId], references: [id], onDelete: SetNull)
+    bannerImageId              String?                     @unique
+    partners                   Partner[]
+    theme                      String?
+    preferredSeason            String?
+    isAbroad                   Boolean                     @default(false)
+    dayParts                   WeddingDayPart[]
+    guestGroups                GuestGroup[]
+    weddingInvitationResponses WeddingInvitationResponse[]
+    guests                     Guest[]
 }
 
 model WeddingDayPart {
-    id          String   @id @default(cuid())
-    name        String
-    startTime   DateTime
-    endTime     DateTime
-    description String?
-    wedding     Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
-    weddingId   String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    id                    String                @id @default(cuid())
+    name                  String
+    startTime             DateTime
+    endTime               DateTime
+    description           String?
+    wedding               Wedding               @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId             String
+    guestDayPartsPresents GuestDayPartPresent[]
+    createdAt             DateTime              @default(now())
+    updatedAt             DateTime              @updatedAt
 }
 
 enum Gender {
@@ -88,32 +83,111 @@ model Partner {
     updatedAt DateTime    @updatedAt
 }
 
-model WeddingInvitation {
-    id             String         @id @default(cuid())
-    weddingId      String
-    presence       Boolean        @default(false)
-    useCouponCode  Boolean        @default(false)
-    dietaryWishes  String?
-    remarks        String?
-    weddingGuests  WeddingGuest[]
-    invitationType InvitationType
-    email          String
-    wedding        Wedding        @relation(fields: [weddingId], references: [id], onDelete: Cascade)
-    createdAt      DateTime       @default(now())
-    updatedAt      DateTime       @updatedAt
+enum GuestGroupType {
+    FAMILY
+    PARTNERS
+    INDIVIDUAL
 }
 
-model WeddingGuest {
-    id                  String             @id @default(cuid())
-    weddingId           String
-    name                String?
-    firstName           String?
-    lastName            String?
-    weddingInvitation   WeddingInvitation? @relation(fields: [weddingInvitationId], references: [id], onDelete: Cascade)
-    weddingInvitationId String?
-    wedding             Wedding            @relation(fields: [weddingId], references: [id], onDelete: Cascade)
-    createdAt           DateTime           @default(now())
-    updatedAt           DateTime           @updatedAt
+model GuestGroup {
+    id                     String         @id @default(cuid())
+    name                   String?
+    guestGroupType         GuestGroupType
+    guestGroupRelationType String
+    guests                 Guest[]
+    address                Address?
+    addressId              String?        @unique
+    wedding                Wedding        @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId              String
+    createdAt              DateTime       @default(now())
+    updatedAt              DateTime       @updatedAt
+}
+
+model Address {
+    id                          String                     @id @default(cuid())
+    street                      String?
+    houseNumber                 String?
+    zipCode                     String?
+    city                        String?
+    country                     String?
+    livesAbroad                 Boolean                    @default(false)
+    createdAt                   DateTime                   @default(now())
+    updatedAt                   DateTime                   @updatedAt
+    guestGroup                  GuestGroup?                @relation(fields: [guestGroupId], references: [id], onDelete: Cascade)
+    guestGroupId                String?                    @unique
+    guests                      Guest[]
+    weddingInvitationResponse   WeddingInvitationResponse? @relation(fields: [weddingInvitationResponseId], references: [id])
+    weddingInvitationResponseId String?                    @unique
+}
+
+enum GuestOrigin {
+    GUEST_LIST
+    RSVP
+}
+
+model Guest {
+    id                    String                @id @default(cuid())
+    firstName             String
+    lastName              String
+    isChild               Boolean               @default(false)
+    phoneNumber           String?
+    email                 String?
+    dietary               String[]
+    notes                 String?
+    connectedViaRsvp      Boolean               @default(false)
+    guestOrigin           GuestOrigin           @default(GUEST_LIST)
+    guestGroup            GuestGroup?           @relation(fields: [guestGroupId], references: [id], onDelete: Cascade)
+    guestGroupId          String?
+    wedding               Wedding               @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId             String
+    guestWeddingResponse  GuestWeddingResponse?
+    guestDayPartsPresents GuestDayPartPresent[]
+    address               Address?              @relation(fields: [addressId], references: [id])
+    addressId             String?
+    createdAt             DateTime              @default(now())
+    updatedAt             DateTime              @updatedAt
+}
+
+model WeddingInvitationResponse {
+    id                    String                 @id @default(cuid())
+    guestWeddingResponses GuestWeddingResponse[]
+    address               Address?
+    addressId             String?                @unique
+    createdAt             DateTime               @default(now())
+    updatedAt             DateTime               @updatedAt
+    wedding               Wedding                @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId             String
+}
+
+model GuestWeddingResponse {
+    id                          String                     @id @default(cuid())
+    dayPartsPresent             GuestDayPartPresent[]
+    remarks                     String?
+    guest                       Guest                      @relation(fields: [guestId], references: [id])
+    guestId                     String                     @unique
+    createdAt                   DateTime                   @default(now())
+    updatedAt                   DateTime                   @updatedAt
+    weddingInvitationResponse   WeddingInvitationResponse? @relation(fields: [weddingInvitationResponseId], references: [id], onDelete: Cascade)
+    weddingInvitationResponseId String?
+}
+
+model GuestDayPartPresent {
+    id                         String                     @id @default(cuid())
+    guestWeddingResponseStatus GuestWeddingResponseStatus @default(UNKNOWN)
+    guestWeddingResponse       GuestWeddingResponse?      @relation(fields: [guestWeddingResponseId], references: [id], onDelete: Cascade)
+    guestWeddingResponseId     String?
+    weddingDayPart             WeddingDayPart             @relation(fields: [weddingDayPartId], references: [id], onDelete: Cascade)
+    weddingDayPartId           String
+    guest                      Guest?                     @relation(fields: [guestId], references: [id])
+    guestId                    String?
+    createdAt                  DateTime                   @default(now())
+    updatedAt                  DateTime                   @updatedAt
+}
+
+enum GuestWeddingResponseStatus {
+    UNKNOWN
+    ACCEPTED
+    DECLINED
 }
 
 enum Role {
@@ -195,7 +269,7 @@ model Asset {
     galleryId         String?
     mediaLibrary      MediaLibrary?    @relation(fields: [mediaLibraryId], references: [id])
     mediaLibraryId    String?
-    wedding           Wedding          @relation(fields: [weddingId], references: [id])
+    wedding           Wedding          @relation(fields: [weddingId], references: [id], onDelete: Cascade)
     weddingId         String
     assetReferences   AssetReference[]
 }

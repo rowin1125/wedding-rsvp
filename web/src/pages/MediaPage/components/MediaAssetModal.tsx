@@ -81,7 +81,7 @@ const MediaAssetModal = ({
                 <FormProvider {...methods}>
                     <Box as="form" onSubmit={methods.handleSubmit(onSubmit)}>
                         <ModalHeader color="secondary.900">
-                            Modal Title
+                            {currentAsset.title}
                         </ModalHeader>
                         <Box as="hr" />
                         <ModalCloseButton mt={2} />

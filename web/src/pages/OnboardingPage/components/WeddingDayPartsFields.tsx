@@ -12,6 +12,8 @@ import { Control, useFieldArray, useWatch } from 'react-hook-form';
 import { FaPlus, FaTrash } from 'react-icons/fa6';
 
 import InputControl from 'src/components/react-hook-form/components/InputControl';
+import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
+import { CustomDate } from 'src/lib/CustomDate';
 
 import { useWeddingFormContext } from '../context/WeddingFormContext';
 
@@ -22,6 +24,7 @@ type WeddingDayPartsFieldsProps = {
 
 const WeddingDayPartsFields = ({ control }: WeddingDayPartsFieldsProps) => {
     const { globalFormState } = useWeddingFormContext();
+    const { wedding } = useGetWeddingById();
     const [globalFormValues] = globalFormState ?? [];
 
     const { fields, append, remove } = useFieldArray({
@@ -133,16 +136,15 @@ const WeddingDayPartsFields = ({ control }: WeddingDayPartsFieldsProps) => {
                         colorScheme="body"
                         onClick={() =>
                             append({
-                                startTime: new Date(
-                                    globalFormValues?.date ?? new Date()
-                                )
-                                    .toISOString()
-                                    .slice(0, 16),
-                                endTime: new Date(
-                                    globalFormValues?.date ?? new Date()
-                                )
-                                    .toISOString()
-                                    .slice(0, 16),
+                                name: '',
+                                startTime: new CustomDate(
+                                    globalFormValues?.date ??
+                                        new Date(wedding?.date ?? new Date())
+                                ).formatForInput(),
+                                endTime: new CustomDate(
+                                    globalFormValues?.date ??
+                                        new Date(wedding?.date ?? new Date())
+                                ).formatForInput(),
                                 type: 'MORNING',
                                 description: '',
                             })

@@ -3,16 +3,19 @@ import { useEffect } from 'react';
 import { useToast } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, useWatch } from 'react-hook-form';
+import { GetWeddingQuery } from 'types/graphql';
 import { object, string, boolean, number, InferType } from 'yup';
 
 import useDebounce from 'src/hooks/useDebounce';
-import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 import { getSeason } from 'src/pages/OnboardingPage/helpers/getSeason';
 
 import { useUpdateWedding } from './useUpdateWedding';
 
-export const useUpdateWeddingForm = () => {
-    const { wedding, loading: weddingLoading } = useGetWeddingById();
+type UseUpdateWeddingFormType = {
+    wedding: GetWeddingQuery['wedding'];
+};
+
+export const useUpdateWeddingForm = ({ wedding }: UseUpdateWeddingFormType) => {
     const { updateWedding, loading: updateWeddingLoading } = useUpdateWedding();
     const toast = useToast();
 
@@ -116,7 +119,7 @@ export const useUpdateWeddingForm = () => {
         methods,
         onSubmit,
         formHasChanged,
-        loading: weddingLoading || updateWeddingLoading,
+        loading: updateWeddingLoading,
         wedding,
     };
 };

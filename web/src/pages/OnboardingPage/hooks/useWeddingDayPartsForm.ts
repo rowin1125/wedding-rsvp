@@ -183,7 +183,7 @@ export const useWeddingDayPartsForm = () => {
             !globalFormValues?.date ||
             !globalFormValues?.name ||
             !globalFormValues?.partners ||
-            !globalFormValues?.dayParts
+            !values.dayParts
         ) {
             throw new Error('Bruiloftsdatum of bruiloftsnaam is niet ingevuld');
         }
@@ -196,11 +196,11 @@ export const useWeddingDayPartsForm = () => {
                     theme: globalFormValues.theme,
                     isAbroad: globalFormValues.isAbroad,
                     partners: globalFormValues.partners,
-                    dayParts: globalFormValues.dayParts.map((part) => ({
+                    dayParts: values.dayParts.map((part) => ({
                         name: part.name,
                         description: part.description,
-                        startTime: new Date(part.startTime).toISOString(),
-                        endTime: new Date(part.endTime).toISOString(),
+                        startTime: part.startTime + ':00.000Z',
+                        endTime: part.endTime + ':00.000Z',
                     })),
                     preferredSeason: globalFormValues.preferredSeason,
                 },

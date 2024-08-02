@@ -66,7 +66,7 @@ const UpdateWeddingDayParts = ({ wedding }: UpdateWeddingDayPartsProps) => {
                         isLoading={loading}
                         isDisabled={loading}
                     >
-                        Bruiloft aanmaken
+                        Dagdelen opslaan
                     </Button>
                 </Flex>
             </Box>

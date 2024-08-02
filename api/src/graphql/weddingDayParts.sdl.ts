@@ -30,10 +30,14 @@ export const schema = gql`
         description: String
     }
 
+    input UpdateWeddingDayPartsInput {
+        id: String
+        input: UpdateWeddingDayPartInput!
+    }
+
     type Mutation {
         updateWeddingDayParts(
-            ids: [String!]!
-            input: [UpdateWeddingDayPartInput!]!
+            input: [UpdateWeddingDayPartsInput!]!
         ): [WeddingDayPart!]! @requireAuth
     }
 `;

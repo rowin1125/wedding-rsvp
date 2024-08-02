@@ -94,15 +94,17 @@ const WeddingSettingsPage = () => {
                 {...(!isDesktop ? { isFitted: true } : {})}
             >
                 <TabList position="sticky" top={0} zIndex={2}>
-                    <Tab>Bruiloft</Tab>
-                    <Tab>Partners</Tab>
-                    <Tab>Dagdelen</Tab>
+                    <Container display="flex">
+                        <Tab>Bruiloft</Tab>
+                        <Tab>Partners</Tab>
+                        <Tab>Dagdelen</Tab>
+                    </Container>
                 </TabList>
 
                 <TabPanels>
                     <TabPanel>
                         <Container>
-                            <UpdateWeddingForm />
+                            {wedding && <UpdateWeddingForm wedding={wedding} />}
                         </Container>
                     </TabPanel>
                     <TabPanel>

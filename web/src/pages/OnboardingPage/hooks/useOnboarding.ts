@@ -5,8 +5,12 @@ import { useSteps, useToast } from '@chakra-ui/react';
 import { usePageLoadingContext, navigate, routes } from '@redwoodjs/router';
 
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
+import { CustomDate } from 'src/lib/CustomDate';
 
-import { WeddingFormContextType } from '../context/WeddingFormContext';
+import {
+    initialDevFormValues,
+    WeddingFormContextType,
+} from '../context/WeddingFormContext';
 
 export const useOnboarding = () => {
     const { wedding, loading: weddingLoading } = useGetWeddingById();
@@ -33,35 +37,41 @@ export const useOnboarding = () => {
 
     const initialGlobalFormState = useState<
         WeddingFormContextType['formValues']
-    >({
-        name: '',
-        date: new Date().toISOString().split('T')[0],
-        partners: [
-            {
-                firstName: '',
-                lastName: '',
-                gender: 'MALE',
-                type: 'GROOM',
-            },
-            {
-                firstName: '',
-                lastName: '',
-                gender: 'FEMALE',
-                type: 'BRIDE',
-            },
-        ],
-        dayParts: [
-            {
-                startTime: new Date().toISOString().slice(0, 16),
-                endTime: new Date().toISOString().slice(0, 16),
-                name: '',
-                description: '',
-            },
-        ],
-    });
+    >(
+        process.env.NODE_ENV === 'development'
+            ? initialDevFormValues
+            : {
+                  name: '',
+                  date: new Date().toISOString().split('T')[0],
+                  partners: [
+                      {
+                          firstName: '',
+                          lastName: '',
+                          gender: 'MALE',
+                          type: 'GROOM',
+                      },
+                      {
+                          firstName: '',
+                          lastName: '',
+                          gender: 'FEMALE',
+                          type: 'BRIDE',
+                      },
+                  ],
+                  dayParts: [
+                      {
+                          startTime: new CustomDate(
+                              new Date()
+                          ).formatForInput(),
+                          endTime: new CustomDate(new Date()).formatForInput(),
+                          name: '',
+                          description: '',
+                      },
+                  ],
+              }
+    );
 
     const stepControls = useSteps({
-        index: 0,
+        index: process.env.NODE_ENV === 'development' ? 2 : 0,
         count: steps.length,
     });
 

@@ -93,23 +93,33 @@ export const useWeddingInformationForm = ({
     useEffect(() => {
         const season = getSeason(debouncedDateValue);
         methods.setValue('preferredSeason', season);
+
         setGlobalFormState?.((prev) => ({
             ...prev,
-            dayParts: prev.dayParts?.map((dayPart) => ({
-                ...dayPart,
-                startTime: (debouncedDateValue
-                    ? new Date(debouncedDateValue)
-                    : new Date()
-                )
-                    ?.toISOString()
-                    ?.slice(0, 16),
-                endTime: (debouncedDateValue
-                    ? new Date(debouncedDateValue)
-                    : new Date()
-                )
-                    ?.toISOString()
-                    ?.slice(0, 16),
-            })),
+            dayParts: prev.dayParts?.map((dayPart) => {
+                const currentStartDate = new Date(dayPart.startTime);
+                const newStartDate = new Date(debouncedDateValue);
+                newStartDate.setHours(currentStartDate.getHours());
+                newStartDate.setMinutes(currentStartDate.getMinutes());
+
+                const currentEndDate = new Date(dayPart.endTime);
+                const newEndDate = new Date(debouncedDateValue);
+                newEndDate.setHours(currentEndDate.getHours());
+                newEndDate.setMinutes(currentEndDate.getMinutes());
+
+                return {
+                    ...dayPart,
+                    startTime: (newStartDate
+                        ? new Date(newStartDate)
+                        : new Date()
+                    )
+                        ?.toISOString()
+                        ?.slice(0, 16),
+                    endTime: (newEndDate ? new Date(newEndDate) : new Date())
+                        ?.toISOString()
+                        ?.slice(0, 16),
+                };
+            }),
         }));
     }, [debouncedDateValue, methods, setGlobalFormState]);
 

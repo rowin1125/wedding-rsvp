@@ -6,23 +6,17 @@ import {
     useEventListener,
     useToast,
 } from '@chakra-ui/react';
-import { BiLogOut, BiPhotoAlbum, BiSun } from 'react-icons/bi';
-import { BsFillMoonStarsFill } from 'react-icons/bs';
-import { CgOptions, CgWebsite } from 'react-icons/cg';
-import { FaRegEnvelopeOpen } from 'react-icons/fa6';
-import { MdOutlinePermMedia } from 'react-icons/md';
-import { RiDashboard3Line } from 'react-icons/ri';
+import { BiLogOut } from 'react-icons/bi';
 
 import { routes } from '@redwoodjs/router';
 
 import { useAuth } from 'src/auth';
-import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
+import { useGetMenuItems } from 'src/hooks/useGetMenuItems';
 import useLocalStorage from 'src/hooks/useLocalStorage';
 
 import RedwoodLink from '../RedwoodLink';
 
-import SidebarItem from './components/SidebarItem';
-import SidebarItemChild from './components/SidebarItemChild';
+import SidebarItemResolver from './components/SidebarItemResolver';
 import SidebarToggle from './components/SidebarToggle';
 
 const ClOSE_SIDEBAR_KEYS = ['221', '['];
@@ -38,7 +32,6 @@ const Sidebar = () => {
         });
         logOut();
     };
-    const { wedding } = useGetWeddingById();
     const handler = ({ key }: { key: string }) => {
         if (ClOSE_SIDEBAR_KEYS.includes(String(key))) {
             toggleNav(!navOpen);
@@ -46,6 +39,8 @@ const Sidebar = () => {
     };
 
     useEventListener('keydown', handler);
+
+    const menuList = useGetMenuItems();
 
     return (
         <Flex
@@ -89,81 +84,15 @@ const Sidebar = () => {
                     </RedwoodLink>
                 </Flex>
 
-                <SidebarItem
-                    navOpen={navOpen}
-                    icon={RiDashboard3Line}
-                    title="Dashboard"
-                    to={routes.dashboard()}
-                />
-                <SidebarItem
-                    navOpen={navOpen}
-                    icon={FaRegEnvelopeOpen}
-                    title="Dagdelen"
-                    to={routes.dashboard()}
-                >
-                    <SidebarItemChild icon={BiSun} to={routes.dayGuests()}>
-                        Dag gasten
-                    </SidebarItemChild>
-                    <SidebarItemChild
-                        icon={BsFillMoonStarsFill}
-                        divider={false}
-                        to={routes.eveningGuests()}
-                    >
-                        Avond gasten
-                    </SidebarItemChild>
-                </SidebarItem>
-                <SidebarItem
-                    navOpen={navOpen}
-                    icon={CgWebsite}
-                    title="RSVP"
-                    to={routes.dashboard()}
-                >
-                    <SidebarItemChild
-                        icon={BiSun}
-                        to={
-                            wedding?.id
-                                ? routes.weddingRsvp({
-                                      invitationType: 'F',
-                                      weddingId: wedding.id,
-                                  })
-                                : routes.dashboard()
-                        }
-                    >
-                        RSVP Dag
-                    </SidebarItemChild>
-                    <SidebarItemChild
-                        icon={BsFillMoonStarsFill}
-                        to={
-                            wedding?.id
-                                ? routes.weddingRsvp({
-                                      invitationType: 'E',
-                                      weddingId: wedding.id,
-                                  })
-                                : routes.dashboard()
-                        }
-                        divider={false}
-                    >
-                        RSVP Avond
-                    </SidebarItemChild>
-                </SidebarItem>
-                <SidebarItem
-                    navOpen={navOpen}
-                    icon={BiPhotoAlbum}
-                    title="Galerij"
-                    to={routes.galleries()}
-                />
-                <SidebarItem
-                    navOpen={navOpen}
-                    icon={MdOutlinePermMedia}
-                    title="Media"
-                    to={routes.media()}
-                />
-                <SidebarItem
-                    navOpen={navOpen}
-                    icon={CgOptions}
-                    title="Instellingen"
-                    to={routes.weddingSettings()}
-                />
+                {menuList.map((item, index) => {
+                    return (
+                        <SidebarItemResolver
+                            key={index}
+                            item={item}
+                            navOpen={navOpen}
+                        />
+                    );
+                })}
                 <Button
                     borderBottomWidth={1}
                     borderTopWidth={1}

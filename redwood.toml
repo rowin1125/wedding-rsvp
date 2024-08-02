@@ -26,3 +26,6 @@
     userId = "clyy21qms000012nxklvqgfhw"
 [notifications]
   versionUpdates = ["latest"]
+
+[graphql]
+  fragments = true

@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
 
+import { useWeddingFormContext } from '../context/WeddingFormContext';
 import { useWeddingDayPartsForm } from '../hooks/useWeddingDayPartsForm';
 
 import WeddingDayPartsFields from './WeddingDayPartsFields';
@@ -22,6 +23,9 @@ type WeddingDayPartsFormProps = {
 
 const WeddingDayPartsForm = ({ handlePrevious }: WeddingDayPartsFormProps) => {
     const { methods, onSubmit, loading } = useWeddingDayPartsForm();
+    const { globalFormState } = useWeddingFormContext();
+
+    if (!globalFormState) return null;
 
     return (
         <FormProvider {...methods}>

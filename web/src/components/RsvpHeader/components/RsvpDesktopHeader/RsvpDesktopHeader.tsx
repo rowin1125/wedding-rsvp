@@ -21,11 +21,8 @@ import {
 } from '@chakra-ui/react';
 import { CiMail, CiPhone } from 'react-icons/ci';
 import { SlMenu } from 'react-icons/sl';
-import { InvitationType } from 'types/graphql';
 
 import { useLocation, useParams } from '@redwoodjs/router';
-
-import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
 
 import {
     fakeLinks,
@@ -34,19 +31,10 @@ import {
 
 const RsvpDesktopHeader = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { weddingId, weddingInvitationId } = useParams();
-    const { weddingInvitation } =
-        useGetGuestInvitationById(weddingInvitationId);
+    const { weddingId } = useParams();
+
     const btnRef = React.useRef(null);
     const { pathname } = useLocation();
-
-    let invitationType: InvitationType;
-
-    if (!weddingInvitation?.invitationType || pathname.includes('bruiloft')) {
-        invitationType = pathname.includes('F') ? 'DAY' : 'EVENING';
-    } else {
-        invitationType = weddingInvitation?.invitationType || 'DAY';
-    }
 
     return (
         <Center
@@ -63,12 +51,7 @@ const RsvpDesktopHeader = () => {
                 {fakeLinks.map((link) => (
                     <Link
                         onClick={() =>
-                            handleLinkClick(
-                                link.link,
-                                weddingId,
-                                invitationType === 'DAY' ? 'F' : 'E',
-                                pathname
-                            )
+                            handleLinkClick(link.link, weddingId, pathname)
                         }
                         key={link.label}
                         mx={4}

@@ -21,13 +21,9 @@ const WeddingRsvpPage = () => {
     const { currentUser } = useAuth();
     const { weddingId } = useParams();
     const toast = useToast();
-    const { invitationType } = useParams();
     const { wedding, loading } = useGetWeddingById(weddingId);
 
-    const isFullDay = invitationType.toUpperCase() === 'F';
-    const isEvening = invitationType.toUpperCase() === 'E';
-
-    if ((!loading && !wedding) || (!isFullDay && !isEvening)) {
+    if (!loading && !wedding) {
         toast({
             title: 'Deze bruiloft bestaat niet',
             status: 'error',
@@ -65,11 +61,9 @@ const WeddingRsvpPage = () => {
                     <Banner />
                     <StoryTimeline />
                     <Mvps />
-                    <DayProgram
-                        invitationType={isFullDay ? 'DAY' : 'EVENING'}
-                    />
+                    <DayProgram />
                     <PartyInformation />
-                    <Rsvp invitationType={isFullDay ? 'DAY' : 'EVENING'} />
+                    <Rsvp />
                 </Flex>
             </Flex>
         </>

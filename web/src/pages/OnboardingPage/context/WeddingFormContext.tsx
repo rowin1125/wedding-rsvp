@@ -3,6 +3,8 @@ import { createContext, useContext } from 'react';
 import { useSteps } from '@chakra-ui/react';
 import { CreateWeddingMutationVariables } from 'types/graphql';
 
+import { CustomDate } from 'src/lib/CustomDate';
+
 export type WeddingFormContextType = {
     formValues: Partial<CreateWeddingMutationVariables['input']>;
     steps: WeddingFormProviderProps['steps'];
@@ -10,8 +12,54 @@ export type WeddingFormContextType = {
     globalFormState?: WeddingFormProviderProps['initialGlobalFormState'];
 };
 
+export const initialDevFormValues: WeddingFormContextType['formValues'] = {
+    date: new Date('05-16-2025').toISOString().split('T')[0],
+    name: 'Bruiloft Demi & Rowin',
+    theme: 'Bohemian',
+    preferredSeason: 'Summer',
+    isAbroad: false,
+    dayParts: [
+        {
+            name: 'DayGuests',
+            startTime: new CustomDate(
+                '2025-05-15T00:01:00.000Z'
+            ).formatForInput(),
+
+            endTime: new CustomDate(
+                '2025-05-15T00:02:00.000Z'
+            ).formatForInput(),
+            description: 'Day guests arrive',
+        },
+        {
+            name: 'EveningGuests',
+            startTime: new CustomDate(
+                '2025-05-15T00:03:00.000Z'
+            ).formatForInput(),
+            endTime: new CustomDate(
+                '2025-05-15T00:04:00.000Z'
+            ).formatForInput(),
+            description: 'Evening guests arrive',
+        },
+    ],
+    partners: [
+        {
+            firstName: 'Demi',
+            lastName: 'Verdoren',
+            gender: 'FEMALE',
+            type: 'BRIDE',
+        },
+        {
+            firstName: 'Rowin',
+            lastName: 'Mol',
+            gender: 'MALE',
+            type: 'GROOM',
+        },
+    ],
+};
+
 export const WeddingFormContext = createContext<WeddingFormContextType>({
-    formValues: {},
+    formValues:
+        process.env.NODE_ENV === 'development' ? initialDevFormValues : {},
     stepControls: undefined,
     steps: [],
     globalFormState: undefined,

@@ -15,16 +15,6 @@ import OverallPresence from './components/OverallPresence';
 const DashboardPage = () => {
     const { wedding } = useGetWeddingById();
 
-    const amountOfVanDerValkGuest = wedding?.weddingInvitation.reduce(
-        (acc, cur) => {
-            if (!cur?.useCouponCode) return acc;
-
-            const amountOfGuests = cur.weddingGuests?.length || 0;
-            return acc + amountOfGuests;
-        },
-        0
-    );
-
     return (
         <>
             <Metadata title="Dashboard" description="Dashboard page" />
@@ -77,15 +67,9 @@ const DashboardPage = () => {
                                               navigator.language
                                           )
                                         : '',
-                                    '+/- overdag':
-                                        wedding?.dayInvitationAmount || 0,
-                                    '+/- avond':
-                                        wedding?.eveningInvitationAmount || 0,
-                                    '+/- totaaal':
-                                        (wedding?.dayInvitationAmount || 0) +
-                                        (wedding?.eveningInvitationAmount || 0),
-                                    'Van der Valk aantal':
-                                        amountOfVanDerValkGuest ?? 0,
+                                    '+/- overdag': 50,
+                                    '+/- avond': 50,
+                                    '+/- totaaal': 100,
                                 }}
                             />
                         </GridItem>

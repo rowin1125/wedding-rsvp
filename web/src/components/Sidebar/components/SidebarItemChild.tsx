@@ -28,7 +28,6 @@ const SidebarItemChild = ({
             <MenuItem p={0} {...props}>
                 <Button
                     py={8}
-                    colorScheme="primary"
                     as={Link}
                     to={to}
                     w="full"

@@ -12,6 +12,9 @@ import { object, array, string, ValidationError, InferType } from 'yup';
 
 import { useMutation } from '@redwoodjs/web';
 
+import { useAuth } from 'src/auth';
+import { GET_WEDDING_BY_ID } from 'src/hooks/useGetWeddingById';
+
 type UseUpdateWeddingDayPartsFormType = {
     dayParts: NonNullable<GetWeddingQuery['wedding']>['dayParts'];
     weddingDate: string;
@@ -19,10 +22,9 @@ type UseUpdateWeddingDayPartsFormType = {
 
 export const UPDATE_WEDDING_DAY_PARTS = gql`
     mutation UpdateWeddingDayPartsMutation(
-        $input: [UpdateWeddingDayPartInput!]!
-        $ids: [String!]!
+        $input: [UpdateWeddingDayPartsInput!]!
     ) {
-        updateWeddingDayParts(input: $input, ids: $ids) {
+        updateWeddingDayParts(input: $input) {
             id
         }
     }
@@ -33,6 +35,7 @@ export const useUpdateWeddingDayPartsForm = ({
     weddingDate,
 }: UseUpdateWeddingDayPartsFormType) => {
     const toast = useToast();
+    const { currentUser } = useAuth();
     const validationSchema = object().shape({
         dayParts: array()
             .of(
@@ -155,10 +158,22 @@ export const useUpdateWeddingDayPartsForm = ({
         (dayPart) => dayPart !== null
     );
 
+    const sortedInitialDayPartsValues = useMemo(
+        () =>
+            filteredInitialDayPartsValues
+                ? filteredInitialDayPartsValues.sort(
+                      (a, b) =>
+                          new Date(a.startTime).getTime() -
+                          new Date(b.startTime).getTime()
+                  )
+                : [],
+        [filteredInitialDayPartsValues]
+    );
+
     const initialValues: InferType<typeof validationSchema> = useMemo(
         () => ({
-            dayParts: filteredInitialDayPartsValues
-                ? filteredInitialDayPartsValues.map((part) => ({
+            dayParts: sortedInitialDayPartsValues
+                ? sortedInitialDayPartsValues.map((part) => ({
                       ...part,
                       startTime: part.startTime
                           ? new Date(part.startTime).toISOString().slice(0, 16)
@@ -177,7 +192,7 @@ export const useUpdateWeddingDayPartsForm = ({
                       },
                   ],
         }),
-        [filteredInitialDayPartsValues]
+        [sortedInitialDayPartsValues]
     );
 
     const methods = useForm({
@@ -189,25 +204,36 @@ export const useUpdateWeddingDayPartsForm = ({
     const [updateWeddingDayParts, updateWeddingDayPartsMeta] = useMutation<
         UpdateWeddingDayPartsMutation,
         UpdateWeddingDayPartsMutationVariables
-    >(UPDATE_WEDDING_DAY_PARTS);
+    >(UPDATE_WEDDING_DAY_PARTS, {
+        refetchQueries: [
+            {
+                query: GET_WEDDING_BY_ID,
+                variables: {
+                    id: currentUser?.weddingId,
+                },
+            },
+        ],
+    });
 
     const onSubmit = async (values: InferType<typeof validationSchema>) => {
         if (!values.dayParts) return;
 
         const dayPatsWithIds = values.dayParts.map((part, index) => ({
             ...part,
-            id: filteredInitialDayPartsValues[index].id,
+            id: filteredInitialDayPartsValues[index]?.id,
         }));
 
         try {
             await updateWeddingDayParts({
                 variables: {
-                    ids: dayPatsWithIds.map((part) => part.id),
                     input: dayPatsWithIds.map((part) => ({
-                        name: part.name,
-                        description: part.description,
-                        startTime: new Date(part.startTime).toISOString(),
-                        endTime: new Date(part.endTime).toISOString(),
+                        id: part.id,
+                        input: {
+                            name: part.name,
+                            description: part.description,
+                            startTime: part.startTime + ':00.000Z',
+                            endTime: part.endTime + ':00.000Z',
+                        },
                     })),
                 },
             });

@@ -20,12 +20,10 @@ import {
 } from '@chakra-ui/react';
 import { CiMail, CiPhone } from 'react-icons/ci';
 import { SlMenu } from 'react-icons/sl';
-import { InvitationType } from 'types/graphql';
 
 import { navigate, routes, useLocation, useParams } from '@redwoodjs/router';
 
 import { useAuth } from 'src/auth';
-import { useGetGuestInvitationById } from 'src/components/GuestDataTable/hooks/useGetGuestInvitationById';
 
 export const fakeLinks = [
     { link: 'story', label: 'Story' },
@@ -53,16 +51,15 @@ export const waitFor = (time = 1000) =>
 export const handleLinkClick = async (
     link: string,
     weddingId: string,
-    invitationType: 'F' | 'E',
     pathname: string,
     callBack?: () => void
 ) => {
     const element = document.getElementById(link);
 
     if (!pathname.includes('bruiloft')) {
-        navigate(routes.weddingRsvp({ weddingId, invitationType }));
+        navigate(routes.weddingRsvp({ weddingId }));
         await waitFor(1000);
-        handleLinkClick(link, weddingId, invitationType, pathname, callBack);
+        handleLinkClick(link, weddingId, pathname, callBack);
     }
 
     if (element) {
@@ -90,17 +87,7 @@ const RsvpMobileMenuDrawer = () => {
     const { currentUser } = useAuth();
     const { pathname } = useLocation();
 
-    const { weddingId, weddingInvitationId } = useParams();
-    const { weddingInvitation } =
-        useGetGuestInvitationById(weddingInvitationId);
-
-    let invitationType: InvitationType;
-
-    if (!weddingInvitation?.invitationType || pathname.includes('bruiloft')) {
-        invitationType = pathname.includes('F') ? 'DAY' : 'EVENING';
-    } else {
-        invitationType = weddingInvitation?.invitationType || 'DAY';
-    }
+    const { weddingId } = useParams();
 
     return (
         <>
@@ -158,9 +145,6 @@ const RsvpMobileMenuDrawer = () => {
                                             handleLinkClick(
                                                 link.link,
                                                 weddingId,
-                                                invitationType === 'DAY'
-                                                    ? 'F'
-                                                    : 'E',
                                                 pathname,
                                                 onClose
                                             )

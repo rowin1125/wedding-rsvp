@@ -10,7 +10,6 @@ export type SubmitButtonProps = ButtonProps & {
 export const SubmitButton = (props: SubmitButtonProps) => {
     const { children, control, ...rest } = props;
     const { isSubmitting, errors } = useFormState({ control });
-
     const hasErrors = Object.keys(errors).length > 0;
 
     return (

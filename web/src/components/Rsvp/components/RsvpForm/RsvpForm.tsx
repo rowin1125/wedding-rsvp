@@ -1,35 +1,26 @@
 import React from 'react';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Flex, Grid, Heading, VStack } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Heading } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { InvitationType } from 'types/graphql';
+import { GetWeddingQuery } from 'types/graphql';
 
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
 
-import { useCreateWeddingInvitation } from '../../hooks/useCreateWeddingInvitation';
-
-import EssentialInformationFields from './components/EssentialInformationFields/EssentialInformationFields';
-import ExtraInformationFields from './components/ExtraInformationFields/ExtraInformationFields';
-import WeddingGuestsField from './components/WeddingGuestsField/WeddingGuestsField';
+import GuestWeddingResponses from './components/GuestWeddingResponses';
+import WeddingInvitationResponseAddress from './components/WeddingInvitationResponseAddress';
+import { useRsvpForm } from './hooks/useRsvpForm';
 
 type RsvpFormProps = {
-    invitationType: InvitationType;
+    wedding: GetWeddingQuery['wedding'];
 };
 
-const RsvpForm = ({ invitationType }: RsvpFormProps) => {
-    const { createWeddingInvitation, loading, methods } =
-        useCreateWeddingInvitation({
-            invitationType,
-        });
+const RsvpForm = ({ wedding }: RsvpFormProps) => {
+    const { methods, onSubmit, createWeddingInvitationResponseMutationData } =
+        useRsvpForm({ wedding });
 
     return (
         <FormProvider {...methods}>
-            <VStack
-                spacing={4}
-                as={'form'}
-                onSubmit={methods.handleSubmit(createWeddingInvitation)}
-            >
+            <Box as={'form'} onSubmit={methods.handleSubmit(onSubmit)}>
                 <Heading textAlign="center" fontSize="md">
                     RSVP
                 </Heading>
@@ -38,23 +29,30 @@ const RsvpForm = ({ invitationType }: RsvpFormProps) => {
                 </Heading>
                 <Grid
                     mt={4}
-                    gridTemplateColumns={'repeat(8, 1fr)'}
+                    gridTemplateColumns={'repeat(2, 1fr)'}
                     gap={{ base: 4, lg: 4 }}
                 >
-                    <EssentialInformationFields />
-                    <WeddingGuestsField control={methods.control} />
-                    <ExtraInformationFields invitationType={invitationType} />
+                    <GuestWeddingResponses methods={methods} />
+                    <GridItem colSpan={2}>
+                        <Box as="hr" my={4} />
+                    </GridItem>
+
+                    <WeddingInvitationResponseAddress />
                 </Grid>
-                <Flex justifyContent="flex-end" w="full">
+                <Flex justifyContent="flex-end" w="full" mt={4}>
                     <SubmitButton
                         colorScheme="secondary"
-                        isLoading={loading}
-                        isDisabled={loading}
+                        isLoading={
+                            createWeddingInvitationResponseMutationData.loading
+                        }
+                        isDisabled={
+                            createWeddingInvitationResponseMutationData.loading
+                        }
                     >
                         Versturen
                     </SubmitButton>
                 </Flex>
-            </VStack>
+            </Box>
         </FormProvider>
     );
 };

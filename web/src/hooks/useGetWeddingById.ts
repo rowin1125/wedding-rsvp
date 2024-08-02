@@ -11,8 +11,6 @@ export const GET_WEDDING_BY_ID = gql`
             name
             createdAt
             date
-            dayInvitationAmount
-            eveningInvitationAmount
             theme
             isAbroad
             preferredSeason
@@ -49,31 +47,6 @@ export const GET_WEDDING_BY_ID = gql`
                     description
                     altText
                 }
-            }
-            weddingInvitation {
-                dietaryWishes
-                useCouponCode
-                email
-                id
-                invitationType
-                presence
-                remarks
-                wedding {
-                    date
-                    id
-                    name
-                }
-                weddingGuests {
-                    id
-                    name
-                    weddingId
-                    weddingInvitationId
-                    firstName
-                    lastName
-                }
-                weddingId
-                createdAt
-                updatedAt
             }
         }
     }
