@@ -2,10 +2,10 @@
 import '@measured/puck/puck.css';
 import React, { useMemo } from 'react';
 
-import { Box, ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import styled from '@emotion/styled';
 import { Config, Data, DefaultRootProps, Puck, Render } from '@measured/puck';
-import theme from 'config/chakra.config';
+import createEmotionCache from '@measured/puck-plugin-emotion-cache';
 import { TbDeviceDesktopShare } from 'react-icons/tb';
 
 import { BannerBlock, BannerBlockProps } from './blocks/BannerBlock';
@@ -35,6 +35,7 @@ import {
     VerticalSpaceBlockProps,
 } from './blocks/VerticalSpacingBlock';
 import PuckHeader from './components/PuckHeader';
+import PuckIFrame, { CHAKRA_CACHE_KEY } from './components/PuckIFrame';
 import PuckPreviewWrapper from './components/PuckPreviewWrapper';
 
 export type PuckConfigComponentType = {
@@ -72,7 +73,7 @@ type PuckStudioProps = {
     isActive?: boolean;
 };
 
-const extendedTheme = extendTheme(theme);
+const chakraEmotionCache = createEmotionCache(CHAKRA_CACHE_KEY);
 
 const PuckStudio = ({
     initialData,
@@ -177,17 +178,11 @@ const PuckStudio = ({
                             {children}
                         </PuckPreviewWrapper>
                     ),
-                    iframe: ({ children }) => (
-                        <ChakraProvider
-                            toastOptions={{
-                                component: () => <></>,
-                            }}
-                            theme={extendedTheme}
-                        >
-                            {children}
-                        </ChakraProvider>
+                    iframe: ({ children, document }) => (
+                        <PuckIFrame document={document}>{children}</PuckIFrame>
                     ),
                 }}
+                plugins={[chakraEmotionCache]}
             />
         </PuckWrapper>
     );

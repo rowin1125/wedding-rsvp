@@ -5738,6 +5738,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@measured/puck-plugin-emotion-cache@npm:^0.16.2":
+  version: 0.16.2
+  resolution: "@measured/puck-plugin-emotion-cache@npm:0.16.2"
+  peerDependencies:
+    "@emotion/react": ^11.0.0
+    react: ^17.0.0 || ^18.0.0
+  checksum: baa097b8a7edcc3648e8f822701b84ba54cc062418fdbb7f4dee3eb4f87cfd5e74dad8a6ae5830c2fcc2a9f117ca2f27c85c2549e8bfbeddedd80448da2b5076
+  languageName: node
+  linkType: hard
+
 "@measured/puck@npm:0.16.2":
   version: 0.16.2
   resolution: "@measured/puck@npm:0.16.2"
@@ -26152,6 +26162,7 @@ __metadata:
     "@gsap/react": ^2.1.1
     "@hookform/resolvers": ^3.3.4
     "@measured/puck": 0.16.2
+    "@measured/puck-plugin-emotion-cache": ^0.16.2
     "@paralleldrive/cuid2": ^2.2.2
     "@redwoodjs/auth-dbauth-web": 7.7.3
     "@redwoodjs/forms": 7.7.3
