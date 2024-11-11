@@ -14,6 +14,7 @@ import { UserInputError } from '@redwoodjs/graphql-server';
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWeddingValidator';
 import { db } from 'src/lib/db';
+import { logger } from 'src/lib/logger';
 
 export const wedding: QueryResolvers['wedding'] = async ({ id }) => {
     return db.wedding.findUnique({
@@ -77,7 +78,6 @@ export const updateWedding: MutationResolvers['updateWedding'] = async ({
     id,
     input: { bannerImageId, bannerImageMetadata, ...input },
 }) => {
-    // Validate user permissions
     isUserAssignedToWeddingValidator({
         requestWeddingId: id,
     });
@@ -176,10 +176,63 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
             );
         }
     }
+    const qrCodes = await db.qrCode.findMany({
+        where: { weddingId: id },
+    });
+
+    if (qrCodes.length > 0) {
+        const deleteQrCodePromises = qrCodes.map((qrCode) => {
+            return db.qrCode.delete({
+                where: { id: qrCode.id },
+            });
+        });
+
+        try {
+            await Promise.all(deleteQrCodePromises);
+        } catch (error) {
+            Sentry.captureException(error);
+            console.error(error);
+            throw new UserInputError('Failed to delete qr codes');
+        }
+    }
+
+    const assetReferences = await db.assetReference.findMany({
+        where: {
+            weddingReferences: {
+                id,
+            },
+        },
+    });
+
+    if (assetReferences.length > 0) {
+        const deleteAssetReferencesPromises = assetReferences.map(
+            (assetReference) => {
+                return db.assetReference.delete({
+                    where: { id: assetReference.id },
+                });
+            }
+        );
+
+        try {
+            await Promise.all(deleteAssetReferencesPromises);
+        } catch (error) {
+            Sentry.captureException(error);
+            console.error(error);
+            throw new UserInputError('Failed to delete asset references');
+        }
+    }
 
     const bucket = await getStorageClient();
 
     try {
+        await db.assetReference.deleteMany({
+            where: {
+                weddingRsvpLandingPage: {
+                    weddingId: id,
+                },
+            },
+        });
+
         const deleteWedding = db.wedding.delete({
             where: { id },
         });
@@ -212,6 +265,7 @@ export const deleteWedding: MutationResolvers['deleteWedding'] = async ({
         return wedding;
     } catch (error) {
         console.error(error);
+        logger.error(error);
         throw new UserInputError('Failed to delete wedding');
     }
 };
@@ -236,5 +290,16 @@ export const Wedding: WeddingRelationResolvers = {
     },
     guestGroups: (_obj, { root }) => {
         return db.wedding.findUnique({ where: { id: root?.id } }).guestGroups();
+    },
+    qrCodes: (_obj, { root }) => {
+        return db.wedding.findUnique({ where: { id: root?.id } }).qrCodes();
+    },
+    weddingRsvpLandingPages: (_obj, { root }) => {
+        return db.wedding
+            .findUnique({ where: { id: root?.id } })
+            .weddingRsvpLandingPages();
+    },
+    addresses: (_obj, { root }) => {
+        return db.wedding.findUnique({ where: { id: root?.id } }).addresses();
     },
 };

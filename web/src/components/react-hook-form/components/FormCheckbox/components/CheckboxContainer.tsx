@@ -37,14 +37,14 @@ const CheckboxContainer = (props: CheckboxContainerProps) => {
                 checkboxValue: value,
                 setCheckboxValue: setValue,
                 control,
-            } as any);
+            } as never);
         }
         return child;
     });
 
     return (
         <FormControl name={name} label={label} control={control} {...rest}>
-            <Stack pl={6} mt={1} spacing={1} {...stackProps}>
+            <Stack mt={1} spacing={1} {...stackProps}>
                 {childrenWithProps}
             </Stack>
         </FormControl>

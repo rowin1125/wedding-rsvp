@@ -18,6 +18,7 @@ const PublicGallery = () => {
                 title={gallery.name || 'Foto galerij'}
                 subtitle="Bekijk of upload hier de foto’s van onze bruiloft"
                 url={gallery.bannerImage?.asset.url}
+                color="white"
                 fileType={gallery.bannerImage?.asset.fileType}
                 previewUrl={gallery.bannerImage?.asset.previewUrl}
                 objectPosition={

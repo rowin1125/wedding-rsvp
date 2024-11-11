@@ -71,11 +71,14 @@ export const handler = async (
         errors: {
             usernameOrPasswordMissing:
                 'Both username and password are required',
-            usernameNotFound: 'Username ${username} not found',
+            // for security reasons this message should be the same as the incorrectPassword message
+            usernameNotFound:
+                'Combinatie van gebruikersnaam en wachtwoord is onjuist of dit account bestaat niet',
             // For security reasons you may want to make this the same as the
             // usernameNotFound error so that a malicious user can't use the error
             // to narrow down if it's the username or password that's incorrect
-            incorrectPassword: 'Incorrect password for ${username}',
+            incorrectPassword:
+                'Combinatie van gebruikersnaam en wachtwoord is onjuist of dit account bestaat niet',
         },
 
         // How long a user will remain logged in, in seconds

@@ -12,6 +12,7 @@ export const DayPartsPresentBody = registerFragment(
                 name
                 endTime
             }
+            weddingRsvpLandingPageId
         }
     `
 );

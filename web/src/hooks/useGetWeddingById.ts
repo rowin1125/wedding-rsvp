@@ -3,6 +3,9 @@ import { GetWeddingQuery, GetWeddingQueryVariables } from 'types/graphql';
 import { useQuery } from '@redwoodjs/web';
 
 import { useAuth } from 'src/auth';
+import { AssetBody } from 'src/lib/fragments/assetFragment';
+import { PartnersBody } from 'src/lib/fragments/partnersFragment';
+import { WeddingDayPartBody } from 'src/lib/fragments/weddingDayPartFragment';
 
 export const GET_WEDDING_BY_ID = gql`
     query GetWeddingQuery($id: String!) {
@@ -15,19 +18,10 @@ export const GET_WEDDING_BY_ID = gql`
             isAbroad
             preferredSeason
             partners {
-                id
-                firstName
-                lastName
-                type
-                gender
-                weddingId
+                ...PartnersBody
             }
             dayParts {
-                description
-                name
-                startTime
-                endTime
-                id
+                ...WeddingDayPartBody
             }
             bannerImage {
                 metadata {
@@ -37,19 +31,17 @@ export const GET_WEDDING_BY_ID = gql`
                     }
                 }
                 asset {
-                    id
-                    fileType
-                    originalFilename
-                    previewUrl
-                    url
-                    thumbnailUrl
-                    title
-                    description
-                    altText
+                    ...AssetBody
                 }
+            }
+            weddingRsvpLandingPages {
+                id
             }
         }
     }
+    ${AssetBody.fragment}
+    ${WeddingDayPartBody.fragment}
+    ${PartnersBody.fragment}
 `;
 
 export const useGetWeddingById = (id?: string) => {

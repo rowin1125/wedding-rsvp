@@ -10,8 +10,8 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { FindGalleryQuery } from 'types/graphql';
-import { number, object, string } from 'yup';
+import { FindQrCodeById, QrCodeVariants } from 'types/graphql';
+import { InferType, number, object, string } from 'yup';
 
 import Loader from 'src/components/Loader';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
@@ -22,16 +22,19 @@ import SwitchControl from 'src/components/react-hook-form/components/SwitchContr
 import QrFormAlert from './components/QrFormAlert';
 import QRPreview from './components/QRPreview';
 import RedirectInput from './components/RedirectInput';
-import { useQRCodeForm } from './hooks/useQRCodeForm';
+import { useGalleryQRCodeForm } from './hooks/useGalleryQRCodeForm';
 
-type QRCodeFormProps = {
+export type QRCodeFormProps = {
     formType: 'create' | 'update';
-    qrCodeId?: string | null;
     loading: boolean;
-    gallery?: FindGalleryQuery['gallery'];
+    name?: string;
+    methods: ReturnType<typeof useGalleryQRCodeForm>['methods'];
+    qrCode?: FindQrCodeById['qrCode'];
+    onSubmit: (data: InferType<typeof QRValidationSchema>) => Promise<void>;
+    variant: QrCodeVariants;
 };
 
-export const validationSchema = object({
+export const QRValidationSchema = object({
     id: string(),
     redirectUrl: string().required('Redirect URL is required'),
     isActive: string().required('Verplicht veld').oneOf(['true', 'false']),
@@ -43,7 +46,6 @@ export const validationSchema = object({
     metadata: object({
         scale: number(),
         margin: number(),
-        version: number(),
         color: object({
             dark: object({
                 isTransparent: string()
@@ -63,35 +65,24 @@ export const validationSchema = object({
 
 const QRCodeForm = ({
     formType,
-    qrCodeId,
-    loading: galleryLoading = false,
-    gallery,
+    loading = false,
+    name,
+    methods,
+    qrCode,
+    onSubmit,
+    variant,
 }: QRCodeFormProps) => {
-    const {
-        qrCode,
-        updateGalleryMutationData,
-        qrCodeLoading,
-        loading: qrCodeFormLoading,
-        methods,
-        onSubmit,
-    } = useQRCodeForm({
-        formType,
-        qrCodeId,
-    });
-
-    const loading =
-        qrCodeFormLoading || updateGalleryMutationData.loading || qrCodeLoading;
     const waitForQrCode = formType === 'update' && !qrCode;
 
-    const hasExpireDate = methods.watch('hasExpireDate');
-    const darkIsTransparent = methods.watch(
+    const hasExpireDate = methods?.watch('hasExpireDate');
+    const darkIsTransparent = methods?.watch(
         'metadata.color.dark.isTransparent'
     );
-    const lightIsTransparent = methods.watch(
+    const lightIsTransparent = methods?.watch(
         'metadata.color.light.isTransparent'
     );
 
-    if (galleryLoading || waitForQrCode) return <Loader />;
+    if (loading || waitForQrCode) return <Loader />;
 
     return (
         <Box mt={4}>
@@ -168,6 +159,7 @@ const QRCodeForm = ({
                                             base: 2,
                                             lg: 4,
                                         }}
+                                        tooltipText="Maak de achtergrondkleur transparant om de achtergrondkleur van de QR code te negeren. Dit is erg handig als je de QR code wilt gebruiken voor op bijvoorbeeld een uitnodiging"
                                         name="metadata.color.dark.isTransparent"
                                         label="Transparant?"
                                     />
@@ -193,6 +185,7 @@ const QRCodeForm = ({
                                         }}
                                         ml={{ lg: 4 }}
                                         name="metadata.color.light.isTransparent"
+                                        tooltipText="Maak de achtergrondkleur transparant om de achtergrondkleur van de QR code te negeren. Dit is erg handig als je de QR code wilt gebruiken voor op bijvoorbeeld een uitnodiging"
                                         label="Transparant?"
                                     />
                                 </Box>
@@ -211,14 +204,6 @@ const QRCodeForm = ({
                                 sliderProps={{
                                     min: 0,
                                     max: 4,
-                                }}
-                            />
-                            <SliderControl
-                                name="metadata.version"
-                                label="QR complexiteit"
-                                sliderProps={{
-                                    min: 4,
-                                    max: 10,
                                 }}
                             />
 
@@ -243,7 +228,9 @@ const QRCodeForm = ({
                         <QRPreview
                             loading={waitForQrCode}
                             formType={formType}
-                            gallery={gallery}
+                            name={name}
+                            qrCodeId={qrCode?.id}
+                            variant={variant}
                         />
                     </GridItem>
                 </Grid>

@@ -10,6 +10,8 @@ export const schema = gql`
         metadata: QrCodeMetadata
         createdAt: DateTime!
         updatedAt: DateTime!
+        wedding: Wedding!
+        weddingId: String!
     }
 
     type QrCodeMetadata {
@@ -59,10 +61,16 @@ export const schema = gql`
         metadata: QrCodeMetadataInput
     }
 
+    enum QrCodeVariants {
+        GALLERY
+        RSVP
+    }
+
     type Mutation {
         createQrCode(input: CreateQrCodeInput!): QrCode! @requireAuth
         updateQrCode(id: String!, input: UpdateQrCodeInput!): QrCode!
             @requireAuth
-        deleteQrCode(id: String!): QrCode! @requireAuth
+        deleteQrCode(id: String!, variant: QrCodeVariants!): QrCode!
+            @requireAuth
     }
 `;

@@ -2,7 +2,7 @@ import type { Prisma } from '@prisma/client';
 import type { MutationResolvers, AssetRelationResolvers } from 'types/graphql';
 
 import { validateWithSync } from '@redwoodjs/api';
-import { UserInputError } from '@redwoodjs/graphql-server';
+import { ForbiddenError, UserInputError } from '@redwoodjs/graphql-server';
 
 import { getStorageClient } from 'src/helpers/getGCPCredentials';
 import { isUserAssignedToWeddingValidator } from 'src/helpers/isUserAssignedToWeddingValidator';
@@ -129,7 +129,13 @@ export const updateAsset: MutationResolvers['updateAsset'] = async ({
 };
 
 export const requestSigningUrl: MutationResolvers['requestSigningUrl'] =
-    async ({ gcloudStoragePath }) => {
+    async ({ gcloudStoragePath, weddingId }) => {
+        // Somewhat of a hecky way to check if the user is assigned to the wedding
+        if (!gcloudStoragePath.includes(weddingId)) {
+            throw new ForbiddenError(
+                'You are not allowed to upload assets to this wedding'
+            );
+        }
         try {
             const bucket = await getStorageClient();
 
@@ -242,7 +248,7 @@ export const Asset: AssetRelationResolvers = {
     gallery: (_obj, { root }) => {
         return db.asset.findUnique({ where: { id: root?.id } }).gallery();
     },
-    previewUrl: (obj, { root }) => {
+    previewUrl: (_obj, { root }) => {
         const googleDomain = root.url.split(
             process.env.GCLOUD_STORAGE_BUCKET
         )[0];
@@ -259,5 +265,13 @@ export const Asset: AssetRelationResolvers = {
         return `${googleDomain}${
             process.env.GCLOUD_STORAGE_BUCKET
         }/${root.gcloudStoragePath.replace('original', 'thumbnail')}`;
+    },
+    mediaLibrary: (_obj, { root }) => {
+        return db.asset.findUnique({ where: { id: root?.id } }).mediaLibrary();
+    },
+    assetReferences: (_obj, { root }) => {
+        return db.asset
+            .findUnique({ where: { id: root?.id } })
+            .assetReferences();
     },
 };

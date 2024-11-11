@@ -9,6 +9,7 @@ import { useAuth } from 'src/auth';
 import Footer from 'src/components/Footer/Footer';
 import FooterMenu from 'src/components/FooterMenu/FooterMenu';
 import Sidebar from 'src/components/Sidebar/Sidebar';
+import useLocalStorage from 'src/hooks/useLocalStorage';
 import Sentry from 'src/lib/sentry';
 
 import SamsungAlert from './components/SamsungAlert';
@@ -21,6 +22,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     const { currentUser, loading } = useAuth();
     const { pathname } = useLocation();
     const toast = useToast();
+    const [navOpen, toggleNav] = useLocalStorage('navOpen', true);
 
     const isOnboardingPage = pathname === routes.onboarding();
 
@@ -49,7 +51,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             <Box as="main">
                 <Flex justifyContent="space-between" position="relative">
                     <Box position="relative">
-                        <Sidebar />
+                        <Sidebar navOpen={navOpen} toggleNav={toggleNav} />
                     </Box>
                     <Flex flexDir="column" w="full" mb={10}>
                         {children}

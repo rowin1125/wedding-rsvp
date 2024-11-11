@@ -7,7 +7,7 @@ import ResolveAssetType from 'src/components/ImageGallery/components/ResolveAsse
 
 type SelectAssetModalGridProps = {
     mediaLibrary: GetMediaAssets['mediaLibrary'];
-    handleClickAsset: (assetId: string) => void;
+    handleClickAsset: (assetId: string) => Promise<void>;
     hasAssets?: boolean;
 };
 

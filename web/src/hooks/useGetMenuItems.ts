@@ -39,6 +39,12 @@ export const useGetMenuItems = (): UseGetMenuItemsReturnType[] => {
                         to: routes.guestsList(),
                         showOnMobile: true,
                     },
+                    {
+                        label: "Rsvp Landingspagina's",
+                        icon: BsCardChecklist,
+                        to: routes.rsvpLandings(),
+                        showOnMobile: true,
+                    },
                 ],
             },
             {

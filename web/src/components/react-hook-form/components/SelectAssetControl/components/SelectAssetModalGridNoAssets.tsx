@@ -24,7 +24,7 @@ const SelectAssetModalGridNoAssets = ({
                         navigate(routes.media());
                     }}
                 >
-                    Upload een asset
+                    Naar bibliotheek
                 </Button>
             </Box>
         </Flex>

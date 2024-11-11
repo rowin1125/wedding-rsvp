@@ -1,27 +1,52 @@
-import { Box, Flex, useToast } from '@chakra-ui/react';
+import {
+    Alert,
+    AlertIcon,
+    Box,
+    Flex,
+    Image,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
+    useDisclosure,
+    useToast,
+} from '@chakra-ui/react';
+import { Data } from '@measured/puck';
+import { InferType } from 'yup';
 
 import { useParams } from '@redwoodjs/router';
 import { Metadata } from '@redwoodjs/web';
 
-import { useAuth } from 'src/auth';
-import Banner from 'src/components/Banner';
-import Countdown from 'src/components/Countdown/Countdown';
-import DayProgram from 'src/components/DayProgram/DayProgram';
-import Hero from 'src/components/Hero';
-import Mvps from 'src/components/Mvps';
-import PartyInformation from 'src/components/PartyInformation';
-import Rsvp from 'src/components/Rsvp';
-import Sidebar from 'src/components/Sidebar/Sidebar';
-import StoryTimeline from 'src/components/StoryTimeline/StoryTimeline';
+import Loader from 'src/components/Loader';
+import PuckStudio from 'src/components/PuckStudio/PuckStudio';
+import { Salter } from 'src/helpers/Salter';
 import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
+import useLocalStorage from 'src/hooks/useLocalStorage';
 
+import { useGetWeddingRsvpLandingPage } from '../RsvpLandingsPage/hooks/useGetWeddingRsvpLandingPage';
+
+import RsvpPasswordForm, {
+    passwordValidationSchema,
+} from './components/RsvpPasswordForm';
 import WeddingNotFound from './components/WeddingNotFound';
 
 const WeddingRsvpPage = () => {
-    const { currentUser } = useAuth();
     const { weddingId } = useParams();
     const toast = useToast();
     const { wedding, loading } = useGetWeddingById(weddingId);
+    const { weddingRsvpLandingPage, loading: rsvpPageLoading } =
+        useGetWeddingRsvpLandingPage();
+    const passwordRequired = !!weddingRsvpLandingPage?.password;
+
+    const [validPassword, toggleNav] = useLocalStorage(
+        `${weddingId}-password`,
+        false
+    );
+
+    const { isOpen, onClose } = useDisclosure({
+        defaultIsOpen: !validPassword,
+    });
 
     if (!loading && !wedding) {
         toast({
@@ -31,41 +56,89 @@ const WeddingRsvpPage = () => {
 
         return <WeddingNotFound />;
     }
+    const handleOnClose = () => {
+        if (!validPassword) return;
 
-    const isConnectedToWedding =
-        currentUser?.weddingId === weddingId && !loading;
+        onClose();
+    };
+
+    const handleSubmit = async (
+        data: InferType<typeof passwordValidationSchema>
+    ) => {
+        if (!weddingRsvpLandingPage?.password) return;
+
+        const desaltedPassword = await new Salter().parseString(
+            weddingRsvpLandingPage.password
+        );
+
+        if (data.password === desaltedPassword) {
+            toggleNav(true);
+            onClose();
+            toast({
+                title: 'Wachtwoord is juist',
+                status: 'success',
+            });
+        } else {
+            toast({
+                title: 'Wachtwoord is onjuist',
+                status: 'error',
+            });
+        }
+    };
 
     return (
         <>
             <Metadata title="Uitnodiging" description="WeddingRsvp page" />
-            <Flex
-                justifyContent="space-between"
-                mx={{ base: 0, xl: 0 }}
-                position="relative"
-            >
-                {isConnectedToWedding && (
-                    <Box position="relative">
-                        <Sidebar />
-                    </Box>
-                )}
-                <Flex flexDir="column" w="full" mb={10}>
-                    <Hero
-                        title="Wij gaan trouwen!"
-                        subtitle="Demi & Rowin"
-                        h={{
-                            base: '50vh',
-                            lg: 'calc(80vh - 93px)',
-                        }}
+            {(loading || rsvpPageLoading || !weddingRsvpLandingPage) && (
+                <Loader />
+            )}
+            {!validPassword && passwordRequired && weddingRsvpLandingPage && (
+                <Flex
+                    justifyContent="center"
+                    alignItems="center"
+                    pt={{ base: 32, lg: 40 }}
+                    h="100svh"
+                    w="100svw"
+                >
+                    <Image
+                        src="https://derow-v1.cdn.prismic.io/derow-v1/ZvpG_rVsGrYSwHg6_Group.svg"
+                        alt="Password protected"
+                        w="50svw"
+                        h="auto"
                     />
-                    <Countdown targetDate={'2024-05-16T00:00:00+02:00'} />
-                    <Banner />
-                    <StoryTimeline />
-                    <Mvps />
-                    <DayProgram />
-                    <PartyInformation />
-                    <Rsvp />
+                    <Modal isOpen={isOpen} onClose={handleOnClose} size="lg">
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>
+                                {wedding?.name} - Uitnodiging
+                            </ModalHeader>
+                            <ModalBody>
+                                <Alert status="info">
+                                    <AlertIcon />
+                                    Deze pagina is beveiligd met een wachtwoord.
+                                    Vul het wachtwoord in dat je hebt ontvangen
+                                    om verder te gaan.
+                                </Alert>
+                                <RsvpPasswordForm
+                                    onSubmit={handleSubmit}
+                                    loading={loading}
+                                />
+                            </ModalBody>
+                        </ModalContent>
+                    </Modal>
                 </Flex>
-            </Flex>
+            )}
+            {(validPassword || !passwordRequired) && weddingRsvpLandingPage && (
+                <Box pt={{ base: 32, lg: 36 }}>
+                    <PuckStudio
+                        initialData={
+                            weddingRsvpLandingPage.pageBuilderData as Partial<Data>
+                        }
+                        renderView
+                        isLoading={loading || rsvpPageLoading}
+                    />
+                </Box>
+            )}
         </>
     );
 };

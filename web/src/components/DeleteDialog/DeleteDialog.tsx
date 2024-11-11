@@ -53,7 +53,7 @@ const DeleteDialog = ({
                 isLoading={loading}
                 {...buttonProps}
             >
-                <Icon as={BsTrash} mr={2} />
+                <Icon as={BsTrash} mr={buttonLabel ? 2 : 0} />
 
                 {buttonLabel}
             </Button>

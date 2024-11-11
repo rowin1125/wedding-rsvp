@@ -33,7 +33,7 @@ const Hero = ({
     url = 'https://images.prismic.io/derow-v1/ZjZuGEMTzAJOCiHa_beach-wedding.jpg?auto=format,compress',
     previewUrl,
     imageProps,
-    height = '400px',
+    height = '350px',
     objectPosition,
     ...props
 }: HeroProps) => {
@@ -77,7 +77,7 @@ const Hero = ({
                 <Heading
                     fontWeight="normal"
                     fontSize={{ base: '40px', lg: '80px' }}
-                    color="white"
+                    color="inherit"
                     textAlign={{
                         base: 'center',
                         lg: 'center',
@@ -87,7 +87,7 @@ const Hero = ({
                 </Heading>
                 {subtitle && (
                     <Text
-                        color="white"
+                        color="inherit"
                         textAlign={{
                             base: 'center',
                             lg: 'center',

@@ -15,11 +15,17 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
+    Alert,
+    AlertIcon,
 } from '@chakra-ui/react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import { FaTrash, FaCheck, FaPlus } from 'react-icons/fa6';
 import { IoMdClose } from 'react-icons/io';
 import { MdOutlineQuestionMark } from 'react-icons/md';
+import {
+    GetWeddingInvitationResponse,
+    GetWeddingRsvpLandingPage,
+} from 'types/graphql';
 import { InferType } from 'yup';
 
 import CheckboxSingleControl from 'src/components/react-hook-form/components/FormCheckbox/components/CheckboxSingle';
@@ -29,7 +35,6 @@ import RadioGroupControl from 'src/components/react-hook-form/components/RadioGr
 import ReactSelectControl from 'src/components/react-hook-form/components/ReactSelectControl/ReactSelectControl';
 import TextareaControl from 'src/components/react-hook-form/components/TextareaControl';
 import { dietaryOptions } from 'src/config/guestList';
-import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 import { useUpdateRsvpForm } from 'src/pages/UpdateWeddingInvitationResponsePage/components/UpdateRsvpForm/hooks/useUpdateRsvpForm';
 
 import {
@@ -38,17 +43,27 @@ import {
 } from '../hooks/useRsvpForm';
 
 type GuestWeddingResponsesProps = {
+    weddingInvitationResponse?: GetWeddingInvitationResponse['weddingInvitationResponse'];
+    weddingRsvpLandingPage: GetWeddingRsvpLandingPage['weddingRsvpLandingPage'];
+    type?: 'create' | 'update';
     methods:
         | ReturnType<typeof useRsvpForm>['methods']
         | ReturnType<typeof useUpdateRsvpForm>['methods'];
 };
 
-const GuestWeddingResponses = ({ methods }: GuestWeddingResponsesProps) => {
-    const { wedding } = useGetWeddingById();
+const GuestWeddingResponses = ({
+    methods,
+    weddingRsvpLandingPage,
+    type,
+    weddingInvitationResponse,
+}: GuestWeddingResponsesProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = useRef(null);
+    const isUpdate = type === 'update';
 
-    const { fields, append, remove } = useFieldArray({
+    const { fields, append, remove } = useFieldArray<
+        InferType<typeof weddingInvitationValidationSchema>
+    >({
         control: methods.control as never,
         name: 'guestWeddingResponses',
     });
@@ -61,10 +76,20 @@ const GuestWeddingResponses = ({ methods }: GuestWeddingResponsesProps) => {
 
     return (
         <>
-            {fields.map((field, index) => {
+            {fields.map((f, index) => {
+                const field = f as InferType<
+                    typeof weddingInvitationValidationSchema
+                >['guestWeddingResponses'][0] & { id: string };
                 const addExtraInfo =
                     guestWeddingResponses?.[index]?.guest?.addExtraInfo;
                 const guestWeddingResponse = guestWeddingResponses?.[index];
+                const isNewGuest =
+                    !!weddingInvitationResponse?.guestWeddingResponses?.find(
+                        (response) =>
+                            response?.guest?.firstName !==
+                                field.guest.firstName ||
+                            response?.guest?.lastName !== field.guest.lastName
+                    );
 
                 return (
                     <Fragment key={`${field.id}-${index}`}>
@@ -137,6 +162,7 @@ const GuestWeddingResponses = ({ methods }: GuestWeddingResponsesProps) => {
                             <InputControl
                                 name={`guestWeddingResponses[${index}].guest.firstName`}
                                 label="Voornaam"
+                                isDisabled={isUpdate && !isNewGuest}
                                 inputProps={{
                                     placeholder: 'Voornaam',
                                 }}
@@ -146,18 +172,25 @@ const GuestWeddingResponses = ({ methods }: GuestWeddingResponsesProps) => {
                             <InputControl
                                 name={`guestWeddingResponses[${index}].guest.lastName`}
                                 label="Achternaam"
+                                isDisabled={isUpdate && !isNewGuest}
                                 inputProps={{
                                     placeholder: 'Achternaam',
                                 }}
                             />
                         </GridItem>
                         <GridItem colSpan={2}>
+                            <Alert status="info" mb={2}>
+                                <AlertIcon />
+                                {
+                                    "Geef per dagdeel aan of je aanwezig bent. Als je het nog niet zeker weet, kies dan 'Ik weet het nog niet'."
+                                }
+                            </Alert>
                             {guestWeddingResponse?.dayPartsPresent?.map(
                                 (dayPart, dayIndex) => {
                                     const weddingDayPart =
-                                        wedding?.dayParts.find(
+                                        weddingRsvpLandingPage?.weddingDayParts.find(
                                             (part) =>
-                                                part.id ===
+                                                part?.id ===
                                                 dayPart.weddingDayPartId
                                         );
                                     return (
@@ -235,6 +268,9 @@ const GuestWeddingResponses = ({ methods }: GuestWeddingResponsesProps) => {
                                         .firstName || index + 1
                                 }`}
                                 helperText="Vul de aanvullende informatie in, dit helpt het bruidspaar enorm met de voorbereidingen en communicatie."
+                                helperTextProps={{
+                                    color: 'orange.500',
+                                }}
                             />
                         </GridItem>
                         {addExtraInfo && (
@@ -311,17 +347,18 @@ const GuestWeddingResponses = ({ methods }: GuestWeddingResponsesProps) => {
                                     isChild: false,
                                     notes: '',
                                 },
-                                dayPartsPresent: wedding?.dayParts.map(
-                                    (dayPart) => ({
-                                        guestWeddingResponseStatus: '',
-                                        weddingDayPartId: dayPart.id,
-                                    })
-                                ) ?? [
-                                    {
-                                        guestWeddingResponseStatus: '',
-                                        weddingDayPartId: '',
-                                    },
-                                ],
+                                dayPartsPresent:
+                                    weddingRsvpLandingPage?.weddingDayParts.map(
+                                        (dayPart) => ({
+                                            guestWeddingResponseStatus: '',
+                                            weddingDayPartId: dayPart?.id || '',
+                                        })
+                                    ) ?? [
+                                        {
+                                            guestWeddingResponseStatus: '',
+                                            weddingDayPartId: '',
+                                        },
+                                    ],
                                 remarks: '',
                             })
                         }

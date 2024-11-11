@@ -30,10 +30,9 @@ const UpdateWeddingDayParts = ({ wedding }: UpdateWeddingDayPartsProps) => {
     return (
         <FormProvider {...methods}>
             <Box as="form" onSubmit={methods.handleSubmit(onSubmit)}>
-                <Flex justifyContent="center" w="full">
+                <Flex w="full">
                     <Grid
                         gap={4}
-                        justifyContent="center"
                         w="full"
                         maxW={{
                             lg: '800px',

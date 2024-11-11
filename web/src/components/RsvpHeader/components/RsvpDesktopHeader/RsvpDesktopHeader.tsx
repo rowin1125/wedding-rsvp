@@ -16,25 +16,33 @@ import {
     Icon,
     Image,
     Link,
-    Text,
     useDisclosure,
 } from '@chakra-ui/react';
-import { CiMail, CiPhone } from 'react-icons/ci';
+import { JSONContent } from '@tiptap/react';
 import { SlMenu } from 'react-icons/sl';
 
 import { useLocation, useParams } from '@redwoodjs/router';
 
-import {
-    fakeLinks,
-    handleLinkClick,
-} from '../RsvpMobileMenuDrawer/RsvpMobileMenuDrawer';
+import Loader from 'src/components/Loader';
+import Tiptap from 'src/components/PuckStudio/blocks/RickTextBlock/components/Tiptap/components/Tiptap';
+import { useGetWeddingRsvpLandingPage } from 'src/pages/RsvpLandingsPage/hooks/useGetWeddingRsvpLandingPage';
+
+import { useWeddingRsvpLandingPageLinks } from '../../hooks/useWeddingRsvpLandingPageLinks';
+import { handleLinkClick } from '../RsvpMobileMenuDrawer/RsvpMobileMenuDrawer';
 
 const RsvpDesktopHeader = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { weddingId } = useParams();
+    const { weddingId, landingPageId } = useParams();
 
     const btnRef = React.useRef(null);
     const { pathname } = useLocation();
+
+    const { contentLinks } = useWeddingRsvpLandingPageLinks();
+    const { weddingRsvpLandingPage, loading } = useGetWeddingRsvpLandingPage();
+
+    const sidebarData = weddingRsvpLandingPage?.sidebarData as JSONContent;
+    const hasContent =
+        sidebarData?.content && sidebarData.content?.[0].content?.length;
 
     return (
         <Center
@@ -48,27 +56,48 @@ const RsvpDesktopHeader = () => {
         >
             <Box />
             <Flex justifyContent="space" alignItems="center">
-                {fakeLinks.map((link) => (
+                {!contentLinks?.length && (
+                    <Image
+                        src={'/Bruiloft buddy logo.png'}
+                        w={{
+                            base: 14,
+                        }}
+                        objectPosition={'center'}
+                        objectFit={'contain'}
+                    />
+                )}
+                {contentLinks?.map((link) => (
                     <Link
                         onClick={() =>
-                            handleLinkClick(link.link, weddingId, pathname)
+                            handleLinkClick(
+                                link?.id,
+                                weddingId,
+                                pathname,
+                                landingPageId
+                            )
                         }
-                        key={link.label}
+                        key={link?.label}
                         mx={4}
                     >
-                        <Heading fontSize="lg">{link.label}</Heading>
+                        <Heading fontSize="lg">{link?.label}</Heading>
                     </Link>
                 ))}
             </Flex>
             <Box>
-                <Button
-                    ref={btnRef}
-                    variant="ghost"
-                    colorScheme="primary"
-                    onClick={onOpen}
-                >
-                    <Icon as={SlMenu} color="secondary.900" fontSize="2xl" />
-                </Button>
+                {hasContent && (
+                    <Button
+                        ref={btnRef}
+                        variant="ghost"
+                        colorScheme="primary"
+                        onClick={onOpen}
+                    >
+                        <Icon
+                            as={SlMenu}
+                            color="secondary.900"
+                            fontSize="2xl"
+                        />
+                    </Button>
+                )}
                 <Drawer
                     isOpen={isOpen}
                     placement="right"
@@ -77,7 +106,7 @@ const RsvpDesktopHeader = () => {
                     finalFocusRef={btnRef}
                 >
                     <DrawerOverlay />
-                    <DrawerContent bg="white" color="white">
+                    <DrawerContent bg="white">
                         <DrawerCloseButton color="black" />
                         <DrawerHeader
                             display="flex"
@@ -92,84 +121,17 @@ const RsvpDesktopHeader = () => {
                                 alt="Demi & Rowin"
                                 style={{ objectFit: 'contain' }}
                             />
-                            <Heading mt={4}>Onze speciale dag</Heading>
                         </DrawerHeader>
-
                         <DrawerBody>
-                            <Text textAlign="center">
-                                Wij kijken er ontzetten naar uit om onze
-                                speciale dag met jullie te delen.
-                            </Text>
-                            <Heading
-                                mt={10}
-                                as="h3"
-                                size="h3"
-                                textAlign="center"
-                            >
-                                Contactgegevens ceremoniemeesters
-                            </Heading>
-                            <Text>
-                                Mocht je ons willen verrassen met een dansje,
-                                slechte grap of lieve woorden? Bespreek dit dan
-                                met onze ceremoniemeesters. Zij weten wat wij
-                                wel of niet willen op onze dag.
-                            </Text>
-                            <Box mt={8}>
-                                <Text mb={2} fontWeight="bold">
-                                    Tirza Voss
-                                </Text>
-                                <Flex alignItems="center">
-                                    <Icon
-                                        as={CiMail}
-                                        color="black"
-                                        fontSize="2xl"
-                                    />
-                                    <Link
-                                        ml={4}
-                                        href="mailto:tirzavoss@hotmail.com"
-                                    >
-                                        tirzavoss@hotmail.com
-                                    </Link>
-                                </Flex>
-                                <Flex mt={2} alignItems="center">
-                                    <Icon
-                                        as={CiPhone}
-                                        color="black"
-                                        fontSize="2xl"
-                                    />
-                                    <Link ml={4} href="tel:+31654308330">
-                                        +31654308330
-                                    </Link>
-                                </Flex>
-                            </Box>
-                            <Box mt={8}>
-                                <Text mb={2} fontWeight="bold">
-                                    Xander Greuter
-                                </Text>
-                                <Flex alignItems="center">
-                                    <Icon
-                                        as={CiMail}
-                                        color="black"
-                                        fontSize="2xl"
-                                    />
-                                    <Link
-                                        ml={4}
-                                        href="mailto:asgreuter@gmail.com"
-                                    >
-                                        asgreuter@gmail.com
-                                    </Link>
-                                </Flex>
-                                <Flex mt={2} alignItems="center">
-                                    <Icon
-                                        as={CiPhone}
-                                        color="black"
-                                        fontSize="2xl"
-                                    />
-                                    <Link ml={4} href="tel:+31638190312">
-                                        +31638190312
-                                    </Link>
-                                </Flex>
-                            </Box>
+                            {loading && <Loader />}
+                            {sidebarData && (
+                                <Tiptap
+                                    content={sidebarData}
+                                    editorConfig={{
+                                        editable: false,
+                                    }}
+                                />
+                            )}
                         </DrawerBody>
                         <DrawerFooter>
                             <Button colorScheme="body" onClick={onClose}>

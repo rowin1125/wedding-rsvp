@@ -1,7 +1,10 @@
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
+import { GuestWeddingResponseStatus } from 'types/graphql';
 import { array, boolean, InferType, object, string } from 'yup';
+
+import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
 import { useCreateGuest } from './useCreateGuest';
 
@@ -18,6 +21,16 @@ export const guestValidationSchema = object().shape({
         })
     ),
     notes: string(),
+    dayPartsPresent: array()
+        .of(
+            object({
+                guestWeddingResponseStatus: string().required(
+                    'Dagdeel is verplicht'
+                ),
+                weddingDayPartId: string().required('Dagdeel is verplicht'),
+            })
+        )
+        .required('Dagdelen zijn verplicht'),
 });
 
 type UseGuestCreateFormType = {
@@ -29,6 +42,7 @@ export const useGuestCreateForm = ({
     guestGroupId,
     disclosure,
 }: UseGuestCreateFormType) => {
+    const { wedding } = useGetWeddingById();
     const toast = useToast();
 
     const defaultValues = {
@@ -39,6 +53,11 @@ export const useGuestCreateForm = ({
         dietary: [],
         isChild: false,
         notes: '',
+        dayPartsPresent:
+            wedding?.dayParts.map((dayPart) => ({
+                guestWeddingResponseStatus: 'UNKNOWN',
+                weddingDayPartId: dayPart.id,
+            })) ?? [],
     };
 
     const methods = useForm({
@@ -63,6 +82,11 @@ export const useGuestCreateForm = ({
                     notes: data.notes,
                     guestGroupId,
                     guestOrigin: 'GUEST_LIST',
+                    dayPartsPresent: data.dayPartsPresent.map((dayPart) => ({
+                        guestWeddingResponseStatus:
+                            dayPart.guestWeddingResponseStatus as GuestWeddingResponseStatus,
+                        weddingDayPartId: dayPart.weddingDayPartId,
+                    })),
                 },
             },
         });
@@ -87,12 +111,20 @@ export const useGuestCreateForm = ({
                         value: diet ?? '',
                     })
                 ),
+                dayPartsPresent:
+                    guestResponse.data?.createGuest.guestDayPartsPresents?.map(
+                        (dayPart) => ({
+                            guestWeddingResponseStatus:
+                                dayPart?.guestWeddingResponseStatus ??
+                                'UNKNOWN',
+                            weddingDayPartId: dayPart?.weddingDayPartId,
+                        })
+                    ),
                 isChild: guestResponse.data?.createGuest.isChild ?? false,
                 notes: guestResponse.data?.createGuest.notes ?? '',
             });
+            disclosure.onClose();
         }
-
-        disclosure.onClose();
     };
 
     return {

@@ -14,7 +14,4 @@ export const schema = gql`
         WEDDING_OWNER
         USER
     }
-
-    # type Query {}
-    # type Mutation {}
 `;

@@ -66,15 +66,18 @@ const WeddingInvitationResponseConnectModal = ({
                 lg: 'auto',
             }}
             justifyContent="flex-end"
-            mt={2}
         >
             <Tooltip label="Link de inschrijving van deze gast aan een gast op de gastenlijst">
                 <Button
                     as="div"
-                    mx={4}
+                    mx={{
+                        base: 4,
+                        lg: 2,
+                    }}
                     colorScheme="secondary"
                     size="sm"
                     variant="outline"
+                    onClick={disclosure.onOpen}
                 >
                     <Icon as={FaLink} fontSize="lg" />
                 </Button>

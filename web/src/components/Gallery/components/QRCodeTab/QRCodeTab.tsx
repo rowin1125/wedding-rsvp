@@ -4,7 +4,8 @@ import { Box } from '@chakra-ui/react';
 
 import { useFindGallery } from '../../hooks/useFindGallery';
 
-import QRCodeForm from './components/QRCodeForm/QRCodeForm';
+import GalleryQrCreateForm from './components/GalleryQrCreateForm';
+import GalleryQrUpdateForm from './components/GalleryQrUpdateForm';
 
 const QRCodeTab = () => {
     const { gallery, loading } = useFindGallery();
@@ -13,21 +14,15 @@ const QRCodeTab = () => {
     return (
         <Box w="full">
             {!hasQRCode && (
-                <QRCodeForm
-                    formType="create"
-                    loading={loading}
-                    gallery={gallery}
-                />
+                <GalleryQrCreateForm formType="create" loading={loading} />
             )}
             {hasQRCode && (
-                <>
-                    <QRCodeForm
-                        formType="update"
-                        qrCodeId={gallery.qrCodeId}
-                        gallery={gallery}
-                        loading={loading}
-                    />
-                </>
+                <GalleryQrUpdateForm
+                    formType="update"
+                    qrCodeId={gallery.qrCodeId}
+                    gallery={gallery}
+                    loading={loading}
+                />
             )}
         </Box>
     );

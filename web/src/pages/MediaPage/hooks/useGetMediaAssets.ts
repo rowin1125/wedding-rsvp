@@ -17,6 +17,7 @@ export const GET_MEDIA_ASSETS = gql`
         $sortField: AssetSortField
         $sortOrder: SortOrder
         $query: String
+        $fileTypes: [String!]
     ) {
         mediaLibrary(id: $id) {
             id
@@ -31,6 +32,7 @@ export const GET_MEDIA_ASSETS = gql`
                 sortField: $sortField
                 sortOrder: $sortOrder
                 query: $query
+                fileTypes: $fileTypes
             ) {
                 count
                 totalCount
@@ -45,16 +47,24 @@ export const GET_MEDIA_ASSETS = gql`
                     id
                     mediaLibraryId
                     originalFilename
+                    mediaLibrary {
+                        weddingId
+                    }
                     title
                     altText
                     description
                     assetReferences {
                         id
+                        objectReference
                         galleryReferences {
                             id
                             name
                         }
                         weddingReferences {
+                            id
+                            name
+                        }
+                        weddingRsvpLandingPage {
                             id
                             name
                         }
@@ -86,6 +96,7 @@ export const useGetMediaAssets = () => {
             sortField: currentSorting?.sortField,
             sortOrder: currentSorting?.sortOrder,
             query: finalSearchQuery,
+            fileTypes: ['image'],
         },
         skip: !mediaLibraryId,
         onCompleted: (data) =>

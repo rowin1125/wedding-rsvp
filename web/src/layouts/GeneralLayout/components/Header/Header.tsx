@@ -10,15 +10,24 @@ import DesktopHeader from './components/DesktopHeader';
 import MobileMenuDrawer from './components/MobileMenuDrawer';
 import { useNavigationAnimation } from './hooks/useNavigationAnimation';
 
-const Header = () => {
+type HeaderProps = {
+    navOpen: boolean;
+};
+
+const Header = ({ navOpen }: HeaderProps) => {
     const { isDesktop } = useIsDevice();
     const { pathname } = useLocation();
     const { weddingId } = useParams();
     const { currentUser, loading } = useAuth();
 
-    const isInvitationRoute = pathname.includes(`/bruiloft/${weddingId}/rsvp`);
+    const isInvitationRoute =
+        pathname.includes(`/bruiloft/${weddingId}/rsvp`) ||
+        pathname.includes(`/studio`);
     const headerNeedsSidebarAdjustment =
-        currentUser?.weddingId === weddingId && !loading && isInvitationRoute;
+        currentUser?.weddingId === weddingId &&
+        !!currentUser?.weddingId &&
+        !loading &&
+        isInvitationRoute;
 
     const { navBarRef, navigationListRef, mobileNavbarRef } =
         useNavigationAnimation({
@@ -27,17 +36,24 @@ const Header = () => {
 
     return (
         <Box
-            ml={headerNeedsSidebarAdjustment ? { lg: '197px' } : undefined}
+            ml={
+                headerNeedsSidebarAdjustment
+                    ? navOpen
+                        ? { lg: '197px' }
+                        : { lg: '88px' }
+                    : undefined
+            }
             w={
                 headerNeedsSidebarAdjustment
-                    ? { base: 'full', lg: 'calc(100% - 197px)' }
+                    ? navOpen
+                        ? { base: 'full', lg: 'calc(100% - 197px)' }
+                        : { base: 'full', lg: 'calc(100% - 88px)' }
                     : '100%'
             }
             ref={navBarRef}
             bg={isInvitationRoute ? 'body.50' : 'transparent'}
             position="fixed"
             transition="background-color 0.2s ease"
-            top={0}
             zIndex={11}
             as="header"
             color={isInvitationRoute ? 'secondary.900' : 'white'}

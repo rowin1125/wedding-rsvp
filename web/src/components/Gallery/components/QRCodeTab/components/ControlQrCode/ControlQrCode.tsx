@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, Flex, FlexProps, Text } from '@chakra-ui/react';
-import { FindGalleryQuery } from 'types/graphql';
+import { QrCodeVariants } from 'types/graphql';
 
 import DeleteDialog, {
     DeleteDialogType,
@@ -11,18 +11,23 @@ import { useDeleteQrCode } from './hooks/useDeleteQrCode';
 
 type ControlQrCodeProps = {
     wrapperProps?: FlexProps;
-    gallery?: FindGalleryQuery['gallery'];
+    name?: string;
     qrPreview?: string;
+    qrCodeId?: string | null;
+    variant: QrCodeVariants;
 } & Omit<Partial<DeleteDialogType>, 'id'>;
 
 const ControlQrCode = ({
-    gallery,
+    name,
     wrapperProps,
     qrPreview,
+    qrCodeId,
+    variant,
     ...props
 }: ControlQrCodeProps) => {
-    const qrId = gallery?.qrCodeId;
-    const { deleteQrCode, loading } = useDeleteQrCode();
+    const { deleteQrCode, loading } = useDeleteQrCode({
+        variant,
+    });
 
     const handleDownload = async () => {
         if (!qrPreview) return;
@@ -30,11 +35,11 @@ const ControlQrCode = ({
         const image = qrPreview;
         const a = document.createElement('a');
         a.href = image;
-        a.download = `QR code - Album - ${gallery?.name}.png`;
+        a.download = `QR code - ${name}.png`;
         a.click();
     };
 
-    if (!qrId) return null;
+    if (!qrCodeId) return null;
 
     return (
         <Flex
@@ -58,8 +63,8 @@ const ControlQrCode = ({
                     mr: { base: 0, lg: 4 },
                 }}
                 deleteButtonLabel="Verwijderen"
-                onDelete={() => deleteQrCode(qrId)}
-                id={qrId}
+                onDelete={() => deleteQrCode(qrCodeId)}
+                id={qrCodeId}
                 loading={loading}
                 {...props}
             >

@@ -1,22 +1,33 @@
 import React from 'react';
 
 import {
+    Alert,
+    AlertIcon,
     Box,
     Button,
     ButtonGroup,
     Flex,
     Grid,
     GridItem,
+    Icon,
+    Tooltip,
     useDisclosure,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
+import { FaCheck } from 'react-icons/fa6';
+import { IoMdClose } from 'react-icons/io';
+import { MdOutlineQuestionMark } from 'react-icons/md';
+import { TbMailX } from 'react-icons/tb';
 
 import CheckboxSingleControl from 'src/components/react-hook-form/components/FormCheckbox/components/CheckboxSingle';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
+import PresenceButton from 'src/components/react-hook-form/components/PresenceControl/PresenceControl';
+import RadioGroupControl from 'src/components/react-hook-form/components/RadioGroupControl';
 import ReactSelectControl from 'src/components/react-hook-form/components/ReactSelectControl/ReactSelectControl';
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
 import TextareaControl from 'src/components/react-hook-form/components/TextareaControl';
 import { dietaryOptions } from 'src/config/guestList';
+import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
 import { useGuestCreateForm } from './hooks/useGuestCreateForm';
 
@@ -29,6 +40,7 @@ const GuestCreateForm = ({
     disclosure,
     guestGroupId,
 }: GuestCreateFormProps) => {
+    const { wedding } = useGetWeddingById();
     const { loading, methods, onSubmit } = useGuestCreateForm({
         guestGroupId,
         disclosure,
@@ -55,6 +67,70 @@ const GuestCreateForm = ({
                                 placeholder: 'Achternaam',
                             }}
                         />
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                        <Alert status="info" mt={2} mb={4}>
+                            <AlertIcon />
+                            {
+                                "Vul hier je initiële idee van de aanwezigheid in. Dit wordt later aangepast/ingevuld door de gasten zelf door middel van een koppeling aan de rsvp landingspagina's"
+                            }
+                        </Alert>
+                        {wedding?.dayParts.map((dayPart, dayIndex) => (
+                            <RadioGroupControl
+                                control={methods.control}
+                                key={dayPart.id}
+                                name={`dayPartsPresent[${dayIndex}].guestWeddingResponseStatus`}
+                                label={`Aanwezig voor dagdeel: ${dayPart.name}`}
+                            >
+                                <PresenceButton
+                                    value="ACCEPTED"
+                                    colorScheme="green"
+                                >
+                                    <Tooltip
+                                        label="Ja, ik ben erbij"
+                                        shouldWrapChildren
+                                    >
+                                        <Icon as={FaCheck} fontSize="xl" />
+                                    </Tooltip>
+                                </PresenceButton>
+                                <PresenceButton
+                                    value="UNKNOWN"
+                                    colorScheme="orange"
+                                >
+                                    <Tooltip
+                                        label="Ik weet het nog niet"
+                                        shouldWrapChildren
+                                    >
+                                        <Icon
+                                            as={MdOutlineQuestionMark}
+                                            fontSize="xl"
+                                        />
+                                    </Tooltip>
+                                </PresenceButton>
+                                <PresenceButton
+                                    value="DECLINED"
+                                    colorScheme="red"
+                                >
+                                    <Tooltip
+                                        label="Nee, ik ben er niet bij"
+                                        shouldWrapChildren
+                                    >
+                                        <Icon as={IoMdClose} fontSize="xl" />
+                                    </Tooltip>
+                                </PresenceButton>
+                                <PresenceButton
+                                    value="UNINVITED"
+                                    colorScheme="gray"
+                                >
+                                    <Tooltip
+                                        label="Niet uitgenodigd voor dit dagdeel"
+                                        shouldWrapChildren
+                                    >
+                                        <Icon as={TbMailX} fontSize="xl" />
+                                    </Tooltip>
+                                </PresenceButton>
+                            </RadioGroupControl>
+                        ))}
                     </GridItem>
                     <GridItem colSpan={{ base: 2, lg: 1 }}>
                         <InputControl

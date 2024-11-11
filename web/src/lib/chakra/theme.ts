@@ -8,6 +8,7 @@ import { Heading } from './components/heading';
 import { Input } from './components/InputTheme';
 import { Link } from './components/link';
 import { Select } from './components/Select';
+import { switchTheme } from './components/Switch';
 import { Tabs } from './components/TabsTheme';
 import { Text } from './components/text';
 import { Textarea } from './components/Textarea';
@@ -30,6 +31,7 @@ const theme = extendTheme({
         FormLabel,
         Tabs,
         Select,
+        Switch: switchTheme,
     },
 });
 

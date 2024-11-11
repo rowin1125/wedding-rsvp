@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import {
     GetWeddingInvitationResponse,
     GetWeddingQuery,
+    GetWeddingRsvpLandingPage,
     GuestWeddingResponseStatus,
     UpdateWeddingInvitationResponse,
     UpdateWeddingInvitationResponseInput,
@@ -115,59 +116,82 @@ export const UPDATE_WEDDING_INVITATION_RESPONSE = gql`
 type UseUpdateRsvpFormType = {
     weddingInvitationResponse: GetWeddingInvitationResponse['weddingInvitationResponse'];
     wedding: GetWeddingQuery['wedding'];
+    weddingRsvpLandingPage: GetWeddingRsvpLandingPage['weddingRsvpLandingPage'];
 };
 
 export const useUpdateRsvpForm = ({
     weddingInvitationResponse,
     wedding,
+    weddingRsvpLandingPage,
 }: UseUpdateRsvpFormType) => {
     const toast = useToast();
 
+    const allowedRsvpDayParts = weddingRsvpLandingPage?.weddingDayParts?.map(
+        (dayPart) => dayPart?.id
+    );
+
     const defaultValues: InferType<typeof weddingInvitationValidationSchema> = {
         guestWeddingResponses:
-            weddingInvitationResponse?.guestWeddingResponses.map((gwr) => ({
-                guestWeddingResponseId: gwr?.id ?? '',
-                remarks: gwr?.remarks ?? '',
-                dayPartsPresent: gwr?.dayPartsPresent.length
-                    ? gwr?.dayPartsPresent.map((dpp) => ({
-                          guestWeddingResponseStatus:
-                              dpp?.guestWeddingResponseStatus ?? 'UNKNOWN',
-                          weddingDayPartId: dpp?.weddingDayPartId ?? '',
-                          dayPartPresentId: dpp?.id ?? '',
-                      }))
-                    : wedding?.dayParts.map((dayPart) => ({
-                          guestWeddingResponseStatus: 'UNKNOWN',
-                          weddingDayPartId: dayPart.id,
-                          dayPartPresentId: '',
-                      })) ?? [
-                          {
+            weddingInvitationResponse?.guestWeddingResponses.map((gwr) => {
+                const allowedDayParts = gwr?.dayPartsPresent
+                    .map((dayPartPresent) => {
+                        if (
+                            allowedRsvpDayParts?.includes(
+                                dayPartPresent?.weddingDayPartId
+                            )
+                        )
+                            return dayPartPresent;
+                    })
+                    .filter((dayPartPresent) => dayPartPresent);
+
+                return {
+                    guestWeddingResponseId: gwr?.id ?? '',
+                    remarks: gwr?.remarks ?? '',
+                    dayPartsPresent: allowedDayParts?.length
+                        ? allowedDayParts.map((dpp) => ({
+                              guestWeddingResponseStatus:
+                                  dpp?.guestWeddingResponseStatus ===
+                                  'UNINVITED'
+                                      ? 'UNKNOWN'
+                                      : dpp?.guestWeddingResponseStatus ??
+                                        'UNKNOWN',
+                              weddingDayPartId: dpp?.weddingDayPartId ?? '',
+                              dayPartPresentId: dpp?.id ?? '',
+                          }))
+                        : wedding?.dayParts.map((dayPart) => ({
                               guestWeddingResponseStatus: 'UNKNOWN',
-                              weddingDayPartId: '',
+                              weddingDayPartId: dayPart.id,
                               dayPartPresentId: '',
-                              id: '',
-                          },
-                      ],
-                guest: {
-                    id: gwr?.guest?.id ?? '',
-                    firstName: gwr?.guest?.firstName ?? '',
-                    lastName: gwr?.guest?.lastName ?? '',
-                    email: gwr?.guest?.email ?? '',
-                    phoneNumber: gwr?.guest?.phoneNumber ?? '',
-                    dietary:
-                        gwr?.guest?.dietary.map((diet) => ({
-                            label:
-                                dietaryOptions.find(
-                                    (option) => option.value === diet
-                                )?.label ??
-                                diet ??
-                                '',
-                            value: diet ?? '',
-                        })) ?? [],
-                    isChild: gwr?.guest?.isChild ?? false,
-                    notes: gwr?.guest?.notes ?? '',
-                    addExtraInfo: true,
-                },
-            })) ?? [
+                          })) ?? [
+                              {
+                                  guestWeddingResponseStatus: 'UNKNOWN',
+                                  weddingDayPartId: '',
+                                  dayPartPresentId: '',
+                                  id: '',
+                              },
+                          ],
+                    guest: {
+                        id: gwr?.guest?.id ?? '',
+                        firstName: gwr?.guest?.firstName ?? '',
+                        lastName: gwr?.guest?.lastName ?? '',
+                        email: gwr?.guest?.email ?? '',
+                        phoneNumber: gwr?.guest?.phoneNumber ?? '',
+                        dietary:
+                            gwr?.guest?.dietary.map((diet) => ({
+                                label:
+                                    dietaryOptions.find(
+                                        (option) => option.value === diet
+                                    )?.label ??
+                                    diet ??
+                                    '',
+                                value: diet ?? '',
+                            })) ?? [],
+                        isChild: gwr?.guest?.isChild ?? false,
+                        notes: gwr?.guest?.notes ?? '',
+                        addExtraInfo: true,
+                    },
+                };
+            }) ?? [
                 {
                     guestWeddingResponseId: '',
                     remarks: '',
@@ -255,43 +279,48 @@ export const useUpdateRsvpForm = ({
         const input: UpdateWeddingInvitationResponseInput = {
             weddingId: wedding.id,
             guestWeddingResponses: data.guestWeddingResponses.map(
-                (guestWeddingResponse) => ({
-                    guestWeddingResponseId:
-                        guestWeddingResponse.guestWeddingResponseId,
-                    input: {
-                        remarks: guestWeddingResponse.remarks,
-                        dayPartsPresent:
-                            guestWeddingResponse.dayPartsPresent.map(
-                                (dayPartPresent) => ({
-                                    id: dayPartPresent.dayPartPresentId,
-                                    input: {
-                                        weddingDayPartId:
-                                            dayPartPresent.weddingDayPartId,
-                                        guestWeddingResponseStatus:
-                                            dayPartPresent.guestWeddingResponseStatus as GuestWeddingResponseStatus,
-                                        guestWeddingResponseId:
-                                            weddingInvitationResponse.id,
-                                    },
-                                })
-                            ),
-                        guest: {
-                            guestId: guestWeddingResponse.guest.id,
-                            input: {
-                                firstName: guestWeddingResponse.guest.firstName,
-                                lastName: guestWeddingResponse.guest.lastName,
-                                email: guestWeddingResponse.guest.email,
-                                phoneNumber:
-                                    guestWeddingResponse.guest.phoneNumber,
-                                dietary:
-                                    guestWeddingResponse.guest.dietary?.map(
-                                        (diet) => diet.value ?? ''
-                                    ) ?? [],
-                                isChild: guestWeddingResponse.guest.isChild,
-                                notes: guestWeddingResponse.guest.notes,
+                (guestWeddingResponse) => {
+                    return {
+                        guestWeddingResponseId:
+                            guestWeddingResponse.guestWeddingResponseId,
+                        input: {
+                            remarks: guestWeddingResponse.remarks,
+                            dayPartsPresent: [
+                                ...guestWeddingResponse.dayPartsPresent.map(
+                                    (dayPartPresent) => ({
+                                        id: dayPartPresent.dayPartPresentId,
+                                        input: {
+                                            weddingDayPartId:
+                                                dayPartPresent.weddingDayPartId,
+                                            guestWeddingResponseStatus:
+                                                dayPartPresent.guestWeddingResponseStatus as GuestWeddingResponseStatus,
+                                            guestWeddingResponseId:
+                                                weddingInvitationResponse.id,
+                                        },
+                                    })
+                                ),
+                            ],
+                            guest: {
+                                guestId: guestWeddingResponse.guest.id,
+                                input: {
+                                    firstName:
+                                        guestWeddingResponse.guest.firstName,
+                                    lastName:
+                                        guestWeddingResponse.guest.lastName,
+                                    email: guestWeddingResponse.guest.email,
+                                    phoneNumber:
+                                        guestWeddingResponse.guest.phoneNumber,
+                                    dietary:
+                                        guestWeddingResponse.guest.dietary?.map(
+                                            (diet) => diet.value ?? ''
+                                        ) ?? [],
+                                    isChild: guestWeddingResponse.guest.isChild,
+                                    notes: guestWeddingResponse.guest.notes,
+                                },
                             },
                         },
-                    },
-                })
+                    };
+                }
             ),
             address: {
                 street: data.address.street,

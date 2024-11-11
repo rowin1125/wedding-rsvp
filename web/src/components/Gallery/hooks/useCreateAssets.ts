@@ -41,8 +41,14 @@ export const CREATE_ASSETS_MUTATION = gql`
 `;
 
 export const REQUEST_SIGNING_URL = gql`
-    mutation RequestSigningUrlMutation($gcloudStoragePath: String!) {
-        requestSigningUrl(gcloudStoragePath: $gcloudStoragePath)
+    mutation RequestSigningUrlMutation(
+        $gcloudStoragePath: String!
+        $weddingId: String!
+    ) {
+        requestSigningUrl(
+            gcloudStoragePath: $gcloudStoragePath
+            weddingId: $weddingId
+        )
     }
 `;
 
@@ -114,6 +120,7 @@ export const useCreateAssets = ({
                 return requestSigningUrl({
                     variables: {
                         gcloudStoragePath,
+                        weddingId,
                     },
                 }).then((response) => {
                     uploadedFiles.current.push(file);

@@ -12,10 +12,13 @@ import {
     ModalBody,
     ModalCloseButton,
     ModalContent,
+    Link as ChakraLink,
     ModalOverlay,
 } from '@chakra-ui/react';
 import { BsPersonPlus } from 'react-icons/bs';
 import { GetWeddingQuery } from 'types/graphql';
+
+import { Link, routes } from '@redwoodjs/router';
 
 import CreateGuestGroupForm from './components/CreateGuestGroupForm';
 
@@ -35,6 +38,18 @@ const GuestListIntro = ({ wedding, disclosure }: GuestListIntroProps) => {
                         kun je gasten toevoegen, verwijderen en hun gegevens
                         inzien. Ook kun je hier de RSVP status van de gasten
                         inzien, bijwerken en dit koppelen aan jouw gastenlijst.
+                        <br />
+                        <br />
+                        Klik{' '}
+                        <ChakraLink
+                            textDecoration="underline"
+                            as={Link}
+                            to={routes.rsvpLandings()}
+                        >
+                            hier
+                        </ChakraLink>{' '}
+                        om een landingspagina aan te maken om de gasten
+                        bijvoorbeeld via een QR code zich te laten aanmelden.
                     </Text>
                 </Alert>
                 <Button

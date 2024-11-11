@@ -9,11 +9,14 @@ import {
     Flex,
     IconButton,
     Tooltip,
+    Alert,
+    AlertIcon,
 } from '@chakra-ui/react';
 import { Control, useFieldArray, useWatch } from 'react-hook-form';
 import { FaCheck, FaPlus, FaTrash } from 'react-icons/fa6';
 import { IoMdClose } from 'react-icons/io';
 import { MdOutlineQuestionMark } from 'react-icons/md';
+import { TbMailX } from 'react-icons/tb';
 
 import CheckboxSingleControl from 'src/components/react-hook-form/components/FormCheckbox/components/CheckboxSingle';
 import InputControl from 'src/components/react-hook-form/components/InputControl';
@@ -91,11 +94,17 @@ const GuestGroupPersonalInfo = ({ control }: GuestGroupPersonalInfoProps) => {
                             />
                         </GridItem>
                         <GridItem colSpan={2}>
+                            <Alert status="info" mb={4} mt={2}>
+                                <AlertIcon />
+                                {
+                                    "Vul hier je initiële idee van de aanwezigheid in. Dit wordt later aangepast/ingevuld door de gasten zelf door middel van een koppeling aan de rsvp landingspagina's"
+                                }
+                            </Alert>
                             {wedding?.dayParts.map((dayPart, dayIndex) => (
                                 <RadioGroupControl
                                     control={control}
                                     key={dayPart.id}
-                                    name={`guestWeddingResponses[${index}].dayPartsPresent[${dayIndex}].guestWeddingResponseStatus`}
+                                    name={`guests[${index}].dayPartsPresent[${dayIndex}].guestWeddingResponseStatus`}
                                     label={`Aanwezig voor dagdeel: ${dayPart.name}`}
                                 >
                                     <PresenceButton
@@ -135,6 +144,17 @@ const GuestGroupPersonalInfo = ({ control }: GuestGroupPersonalInfoProps) => {
                                                 as={IoMdClose}
                                                 fontSize="xl"
                                             />
+                                        </Tooltip>
+                                    </PresenceButton>
+                                    <PresenceButton
+                                        value="UNINVITED"
+                                        colorScheme="gray"
+                                    >
+                                        <Tooltip
+                                            label="Niet uitgenodigd voor dit dagdeel"
+                                            shouldWrapChildren
+                                        >
+                                            <Icon as={TbMailX} fontSize="xl" />
                                         </Tooltip>
                                     </PresenceButton>
                                 </RadioGroupControl>

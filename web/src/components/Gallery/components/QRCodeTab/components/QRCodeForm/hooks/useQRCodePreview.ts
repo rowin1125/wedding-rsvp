@@ -7,7 +7,7 @@ import { routes } from '@redwoodjs/router';
 
 import useDebounce from 'src/hooks/useDebounce';
 
-import { validationSchema } from '../QRCodeForm';
+import { QRValidationSchema } from '../QRCodeForm';
 
 const defaultOptions = {
     scale: 10, // 3 to 10
@@ -20,7 +20,7 @@ const defaultOptions = {
 };
 
 export const useQRCodePreview = (
-    values: InferType<typeof validationSchema>
+    values: InferType<typeof QRValidationSchema>
 ) => {
     const [qrCode, setQRCode] = useState<string>('');
     const debouncedValues = useDebounce(qrCode, 400);
@@ -41,7 +41,7 @@ export const useQRCodePreview = (
                     ? '#0000'
                     : values.metadata.color.light.color,
             },
-            version: values.metadata.version,
+            version: 5,
             scale: values.metadata.scale,
             margin: values.metadata.margin,
         };

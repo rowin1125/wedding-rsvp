@@ -2,7 +2,11 @@ import React from 'react';
 
 import { Box, Heading, Grid, GridItem, Flex } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { GetWeddingInvitationResponse, GetWeddingQuery } from 'types/graphql';
+import {
+    GetWeddingInvitationResponse,
+    GetWeddingQuery,
+    GetWeddingRsvpLandingPage,
+} from 'types/graphql';
 
 import SubmitButton from 'src/components/react-hook-form/components/SubmitButton';
 import GuestWeddingResponses from 'src/components/Rsvp/components/RsvpForm/components/GuestWeddingResponses';
@@ -13,15 +17,18 @@ import { useUpdateRsvpForm } from './hooks/useUpdateRsvpForm';
 type UpdateRsvpFormProps = {
     weddingInvitationResponse: GetWeddingInvitationResponse['weddingInvitationResponse'];
     wedding: GetWeddingQuery['wedding'];
+    weddingRsvpLandingPage: GetWeddingRsvpLandingPage['weddingRsvpLandingPage'];
 };
 
 const UpdateRsvpForm = ({
     weddingInvitationResponse,
     wedding,
+    weddingRsvpLandingPage,
 }: UpdateRsvpFormProps) => {
     const { methods, onSubmit, mutationData } = useUpdateRsvpForm({
         weddingInvitationResponse,
         wedding,
+        weddingRsvpLandingPage,
     });
 
     return (
@@ -38,7 +45,12 @@ const UpdateRsvpForm = ({
                     gridTemplateColumns={'repeat(2, 1fr)'}
                     gap={{ base: 4, lg: 4 }}
                 >
-                    <GuestWeddingResponses methods={methods} />
+                    <GuestWeddingResponses
+                        weddingRsvpLandingPage={weddingRsvpLandingPage}
+                        methods={methods}
+                        weddingInvitationResponse={weddingInvitationResponse}
+                        type="update"
+                    />
                     <GridItem colSpan={2}>
                         <Box as="hr" my={4} />
                     </GridItem>

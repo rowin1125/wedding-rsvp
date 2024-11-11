@@ -10,15 +10,17 @@ import {
     Icon,
     Text,
     Tooltip,
-    useToast,
 } from '@chakra-ui/react';
 import { FaCheck } from 'react-icons/fa6';
 import { IoMdClose } from 'react-icons/io';
 import { MdOutlineQuestionMark } from 'react-icons/md';
-import { GetGuestById, GuestWeddingResponseStatus } from 'types/graphql';
+import { TbMailX } from 'react-icons/tb';
+import { GetGuestById } from 'types/graphql';
 
 import PresenceButton from 'src/components/react-hook-form/components/PresenceControl/PresenceControl';
+import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
 
+import { useCreateMissingDayPartPresent } from '../hooks/useCreateMissingDayPartPresent';
 import { useUpdateDayPartsPresent } from '../hooks/useUpdateDayPartsPresent';
 
 type GuestUpdateDayPartsPresentProps = {
@@ -29,39 +31,21 @@ const GuestUpdateDayPartsPresent = ({
     guest,
 }: GuestUpdateDayPartsPresentProps) => {
     const { updateDayPartsPresent, loading } = useUpdateDayPartsPresent();
-    const toast = useToast();
+    const { createMissingDayPartPresent, loading: createLoading } =
+        useCreateMissingDayPartPresent();
+    const { wedding } = useGetWeddingById();
 
-    const handleUpdateDayPartPresent = async (
-        dayPartPresentId: string,
-        status: GuestWeddingResponseStatus
-    ) => {
-        if (!guest?.id) {
-            toast({
-                title: 'Error updating day parts present',
-                description: 'Guest id not found',
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
-            return;
-        }
+    const missingDayParts = useMemo(() => {
+        if (!wedding?.dayParts) return [];
 
-        await updateDayPartsPresent({
-            variables: {
-                id: dayPartPresentId,
-                input: {
-                    guestWeddingResponseStatus: status,
-                },
-            },
-        });
-
-        toast({
-            title: 'Aanwezigheid aangepast',
-            description: 'De aanwezigheid van de gast is geüpdatet',
-            status: 'success',
-            duration: 2000,
-        });
-    };
+        return wedding?.dayParts.filter(
+            (dayPart) =>
+                !guest?.guestDayPartsPresents?.some(
+                    (dayPartPresent) =>
+                        dayPartPresent?.weddingDayPartId === dayPart?.id
+                )
+        );
+    }, [guest?.guestDayPartsPresents, wedding?.dayParts]);
 
     const sortedDayPartsPresent = useMemo(() => {
         return [...(guest?.guestDayPartsPresents || [])].sort((a, b) => {
@@ -74,6 +58,13 @@ const GuestUpdateDayPartsPresent = ({
             );
         });
     }, [guest?.guestDayPartsPresents]);
+
+    const guestWeddingResponseId = sortedDayPartsPresent.find(
+        (dayPartPresent) => dayPartPresent?.guestWeddingResponseId
+    )?.guestWeddingResponseId;
+    const rsvpLandingPageId = sortedDayPartsPresent.find(
+        (dayPartPresent) => dayPartPresent?.weddingRsvpLandingPageId
+    )?.weddingRsvpLandingPageId;
 
     return (
         <TabPanel p={8}>
@@ -108,10 +99,11 @@ const GuestUpdateDayPartsPresent = ({
                                     value="ACCEPTED"
                                     isLoading={loading}
                                     onClick={() =>
-                                        handleUpdateDayPartPresent(
-                                            dayPart?.id,
-                                            'ACCEPTED'
-                                        )
+                                        updateDayPartsPresent({
+                                            guestId: guest?.id,
+                                            status: 'ACCEPTED',
+                                            dayPartPresentId: dayPart?.id,
+                                        })
                                     }
                                     colorScheme="green"
                                 >
@@ -131,10 +123,11 @@ const GuestUpdateDayPartsPresent = ({
                                     }
                                     isLoading={loading}
                                     onClick={() =>
-                                        handleUpdateDayPartPresent(
-                                            dayPart?.id,
-                                            'UNKNOWN'
-                                        )
+                                        updateDayPartsPresent({
+                                            guestId: guest?.id,
+                                            status: 'UNKNOWN',
+                                            dayPartPresentId: dayPart?.id,
+                                        })
                                     }
                                     value="UNKNOWN"
                                     colorScheme="orange"
@@ -160,10 +153,11 @@ const GuestUpdateDayPartsPresent = ({
                                     value="DECLINED"
                                     colorScheme="red"
                                     onClick={() =>
-                                        handleUpdateDayPartPresent(
-                                            dayPart?.id,
-                                            'DECLINED'
-                                        )
+                                        updateDayPartsPresent({
+                                            guestId: guest?.id,
+                                            status: 'DECLINED',
+                                            dayPartPresentId: dayPart?.id,
+                                        })
                                     }
                                 >
                                     <Tooltip
@@ -173,11 +167,159 @@ const GuestUpdateDayPartsPresent = ({
                                         <Icon as={IoMdClose} fontSize="sm" />
                                     </Tooltip>
                                 </PresenceButton>
+                                <PresenceButton
+                                    variant={
+                                        dayPart?.guestWeddingResponseStatus ===
+                                        'UNINVITED'
+                                            ? 'solid'
+                                            : 'outline'
+                                    }
+                                    isLoading={loading}
+                                    value="UNINVITED"
+                                    colorScheme="gray"
+                                    onClick={() =>
+                                        updateDayPartsPresent({
+                                            dayPartPresentId: dayPart?.id,
+                                            status: 'UNINVITED',
+                                            guestId: guest?.id,
+                                        })
+                                    }
+                                >
+                                    <Tooltip
+                                        label="De gast is helaas niet aanwezig"
+                                        shouldWrapChildren
+                                    >
+                                        <Icon as={TbMailX} fontSize="sm" />
+                                    </Tooltip>
+                                </PresenceButton>
                             </Flex>
                         </Box>
                     );
                 })}
             </Box>
+            {missingDayParts.length > 0 && (
+                <>
+                    {missingDayParts.map((dayPart) => {
+                        if (!guest?.id) return null;
+
+                        return (
+                            <Box key={dayPart?.id} mb={4}>
+                                <Text
+                                    fontWeight="semibold"
+                                    mb={2}
+                                    fontSize="sm"
+                                >
+                                    {dayPart?.name}
+                                </Text>
+                                <Flex gap={2}>
+                                    <PresenceButton
+                                        variant={'outline'}
+                                        value="ACCEPTED"
+                                        isLoading={createLoading}
+                                        onClick={() =>
+                                            createMissingDayPartPresent({
+                                                guestId: guest.id,
+                                                guestWeddingResponseId,
+                                                weddingDayPartId: dayPart.id,
+                                                weddingRsvpLandingPageId:
+                                                    rsvpLandingPageId,
+                                                guestWeddingResponseStatus:
+                                                    'ACCEPTED',
+                                            })
+                                        }
+                                        colorScheme="green"
+                                    >
+                                        <Tooltip
+                                            label="De gast is aanwezig"
+                                            shouldWrapChildren
+                                        >
+                                            <Icon as={FaCheck} fontSize="sm" />
+                                        </Tooltip>
+                                    </PresenceButton>
+                                    <PresenceButton
+                                        variant={'outline'}
+                                        isLoading={createLoading}
+                                        onClick={() =>
+                                            createMissingDayPartPresent({
+                                                guestId: guest.id,
+                                                guestWeddingResponseId,
+                                                weddingDayPartId: dayPart.id,
+                                                weddingRsvpLandingPageId:
+                                                    rsvpLandingPageId,
+                                                guestWeddingResponseStatus:
+                                                    'UNKNOWN',
+                                            })
+                                        }
+                                        value="UNKNOWN"
+                                        colorScheme="orange"
+                                    >
+                                        <Tooltip
+                                            label="De gast weet het nog niet"
+                                            shouldWrapChildren
+                                        >
+                                            <Icon
+                                                as={MdOutlineQuestionMark}
+                                                fontSize="sm"
+                                            />
+                                        </Tooltip>
+                                    </PresenceButton>
+                                    <PresenceButton
+                                        variant={'outline'}
+                                        isLoading={createLoading}
+                                        value="DECLINED"
+                                        colorScheme="red"
+                                        onClick={() =>
+                                            createMissingDayPartPresent({
+                                                guestId: guest.id,
+                                                guestWeddingResponseId,
+                                                weddingDayPartId: dayPart.id,
+                                                weddingRsvpLandingPageId:
+                                                    rsvpLandingPageId,
+                                                guestWeddingResponseStatus:
+                                                    'DECLINED',
+                                            })
+                                        }
+                                    >
+                                        <Tooltip
+                                            label="De gast is helaas niet aanwezig"
+                                            shouldWrapChildren
+                                        >
+                                            <Icon
+                                                as={IoMdClose}
+                                                fontSize="sm"
+                                            />
+                                        </Tooltip>
+                                    </PresenceButton>
+                                    <PresenceButton
+                                        variant={'outline'}
+                                        isLoading={createLoading}
+                                        value="UNINVITED"
+                                        colorScheme="gray"
+                                        onClick={() =>
+                                            createMissingDayPartPresent({
+                                                guestId: guest.id,
+                                                guestWeddingResponseId,
+                                                weddingDayPartId: dayPart.id,
+                                                weddingRsvpLandingPageId:
+                                                    rsvpLandingPageId,
+                                                guestWeddingResponseStatus:
+                                                    'UNINVITED',
+                                            })
+                                        }
+                                    >
+                                        <Tooltip
+                                            label="De gast is helaas niet aanwezig"
+                                            shouldWrapChildren
+                                        >
+                                            <Icon as={TbMailX} fontSize="sm" />
+                                        </Tooltip>
+                                    </PresenceButton>
+                                </Flex>
+                            </Box>
+                        );
+                    })}
+                </>
+            )}
         </TabPanel>
     );
 };

@@ -23,7 +23,7 @@ const GalleryPage = () => {
         <>
             <Metadata title="Galerij pagina" description="Gallery page" />
 
-            <Hero {...heroData} />
+            <Hero color="white" {...heroData} />
             <AppContentWrapper p={0} setHeroData={setHeroData}>
                 <QueryControlsProvider
                     defaultOffset={DEFAULT_GALLERY_PAGINATION_OFFSET}

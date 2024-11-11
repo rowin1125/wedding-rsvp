@@ -111,6 +111,9 @@ export const createGuestGroup: MutationResolvers['createGuestGroup'] = async ({
             guestGroup: {
                 connect: { id: guestGroup.id },
             },
+            wedding: {
+                connect: { id: input.address?.weddingId ?? weddingId },
+            },
         },
     });
 
@@ -166,6 +169,32 @@ export const deleteGuestGroup: MutationResolvers['deleteGuestGroup'] = async ({
     isUserAssignedToWeddingValidator({
         requestWeddingId: group?.weddingId,
     });
+
+    const address = await db.address.findUnique({
+        where: { guestGroupId: id },
+        include: {
+            weddingInvitationResponse: {
+                include: {
+                    guestWeddingResponses: {
+                        include: {
+                            guest: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    const addressHasGuestWhichAreNotConnectedViaRsvp =
+        address?.weddingInvitationResponse?.guestWeddingResponses?.some(
+            (response) => !response.guest.connectedViaRsvp
+        );
+
+    if (!addressHasGuestWhichAreNotConnectedViaRsvp) {
+        await db.address.delete({
+            where: { id: address?.id },
+        });
+    }
 
     return db.guestGroup.delete({
         where: { id },

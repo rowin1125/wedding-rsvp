@@ -28,7 +28,7 @@ const RedirectInput = () => {
             inputProps={{
                 isDisabled: true,
             }}
-            label="Link naar het album"
+            label="Link naar de pagina"
             rightElement={
                 <>
                     <Button onClick={handleCopy} ml={2} color="white">

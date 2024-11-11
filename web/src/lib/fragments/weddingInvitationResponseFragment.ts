@@ -14,6 +14,7 @@ export const WeddingInvitationResponseBody = registerFragment(
                 ...AddressBody
             }
             createdAt
+            weddingRsvpLandingPageId
         }
         ${AddressBody.fragment}
         ${GuestWeddingResponseBody.fragment}

@@ -48,6 +48,7 @@ const GalleriesPage = () => {
                         : 'center',
                 }}
                 title="Foto galerij"
+                color="white"
                 subtitle="Bekijk hier de foto’s van jullie bruiloft"
             />
 

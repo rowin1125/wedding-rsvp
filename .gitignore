@@ -26,3 +26,4 @@ storage-key.json
 functions/images-resize-function/lib/**/*
 functions/images-resize-function/.env.yaml
 functions/all-images-resize-function/.env.yaml
+.npmrc

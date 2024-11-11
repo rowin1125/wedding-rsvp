@@ -25,6 +25,13 @@ export const GET_GUEST_GROUPS = gql`
                 guestGroupId
                 guestWeddingResponse {
                     weddingInvitationResponseId
+                    weddingRsvpLandingPageId
+                }
+                guestDayPartsPresents {
+                    weddingDayPart {
+                        name
+                    }
+                    guestWeddingResponseStatus
                 }
             }
             name

@@ -20,6 +20,8 @@ const Routes = () => {
                     <Route path="/app/dashboard" page={DashboardPage} name="dashboard" />
                     <Route path="/app/media" page={MediaPage} name="media" />
                     <Route path="/app/gasten/guests-list" page={GuestsListPage} name="guestsList" />
+                    <Route path="/app/gasten/rsvp-landings" page={RsvpLandingsPage} name="rsvpLandings" />
+                    <Route path="/app/gasten/rsvp-landings/{landingPageId}/studio" page={RsvpLandingPageStudioPage} name="rsvpLandingPageStudio" />
                     <Route path="/app/galerij/{galleryId}" page={GalleryPage} name="gallery" />
                     <Route path="/app/galerijen" page={GalleriesPage} name="galleries" />
                 </PrivateSet>
@@ -29,8 +31,8 @@ const Routes = () => {
                 <Route path="/{weddingId}/galerij/{galleryId}" page={PublicGalleryPage} name="publicGallery" />
                 <Route prerender path="/" page={HomePage} name="home" />
                 <Route prerender notfound page={NotFoundPage} />
-                <Route path="/bruiloft/{weddingId}/rsvp" page={WeddingRsvpPage} name="weddingRsvp" />
-                <Route path="/bruiloft/{weddingId}/rsvp/{weddingInvitationResponseId}" page={UpdateWeddingInvitationResponsePage} name="updateWeddingInvitationResponse" />
+                <Route path="/bruiloft/{weddingId}/rsvp/{landingPageId}" page={WeddingRsvpPage} name="weddingRsvpLandingPage" />
+                <Route path="/bruiloft/{weddingId}/rsvp/{landingPageId}/{weddingInvitationResponseId}" page={UpdateWeddingInvitationResponsePage} name="updateWeddingInvitationResponse" />
             </Set>
             <Set wrap={AuthLayout}>
                 <Route prerender path="/inloggen" page={LoginPage} name="login" />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
     AccordionButton,
@@ -9,6 +9,7 @@ import {
     Text,
     Tooltip,
 } from '@chakra-ui/react';
+import { CiWarning } from 'react-icons/ci';
 import { FaCheckCircle } from 'react-icons/fa';
 import {
     FaHouseCircleCheck,
@@ -38,18 +39,41 @@ const GuestGroupTypeAccordionButton = ({
     isExpanded,
     label,
 }: GuestGroupTypeAccordionButtonProps) => {
-    const totalGuests = value.reduce(
-        (acc, curr) => acc + curr.guests.length,
-        0
-    );
-    const totalGuestConnectedViaRsvp = value.reduce(
-        (acc, curr) =>
-            acc + curr.guests.filter((guest) => guest?.connectedViaRsvp).length,
-        0
-    );
+    const totalGuests = useMemo(() => {
+        return value.reduce((acc, curr) => acc + curr.guests.length, 0);
+    }, [value]);
+
+    const totalGuestConnectedViaRsvp = useMemo(() => {
+        return value.reduce(
+            (acc, curr) =>
+                acc +
+                curr.guests.filter((guest) => guest?.connectedViaRsvp).length,
+            0
+        );
+    }, [value]);
+
     const allGuestsAllCompleteViaRsvp =
         totalGuests === totalGuestConnectedViaRsvp;
     const rowIsComplete = allGuestsAllCompleteViaRsvp && allComplete;
+
+    const totalGuestsWithoutCorrectDayPresentsResponse = useMemo(() => {
+        return (
+            value.reduce(
+                (acc, curr) =>
+                    acc +
+                    curr.guests.filter((guest) =>
+                        guest?.guestDayPartsPresents.some(
+                            (dayPart) =>
+                                (!!dayPart?.guestWeddingResponseStatus &&
+                                    dayPart?.guestWeddingResponseStatus ===
+                                        'UNKNOWN') ??
+                                true
+                        )
+                    ).length,
+                0
+            ) ?? 0
+        );
+    }, [value]);
 
     return (
         <AccordionButton
@@ -103,6 +127,41 @@ const GuestGroupTypeAccordionButton = ({
                 }}
                 color="secondary.900"
             >
+                {totalGuestsWithoutCorrectDayPresentsResponse > 0 && (
+                    <>
+                        <Tooltip
+                            label="Aantal gasten zonder dagdeel reactie"
+                            aria-label="Aantal gasten zonder dagdeel reactie"
+                        >
+                            <Flex alignItems="center">
+                                <Text
+                                    fontWeight="semibold"
+                                    color={
+                                        totalGuestsWithoutCorrectDayPresentsResponse
+                                            ? 'orange.500'
+                                            : 'secondary.900'
+                                    }
+                                >
+                                    {
+                                        totalGuestsWithoutCorrectDayPresentsResponse
+                                    }
+                                </Text>
+                                <Icon
+                                    ml={2}
+                                    as={CiWarning}
+                                    fontSize="lg"
+                                    color={
+                                        totalGuestsWithoutCorrectDayPresentsResponse
+                                            ? 'orange.500'
+                                            : 'secondary.900'
+                                    }
+                                />
+                            </Flex>
+                        </Tooltip>
+                        <Box mx={4}>|</Box>
+                    </>
+                )}
+
                 <Tooltip
                     label="Aantal gasten via RSVP"
                     aria-label="Aantal gasten via RSVP"

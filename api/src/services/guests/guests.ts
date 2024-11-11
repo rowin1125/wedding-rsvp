@@ -42,7 +42,7 @@ export const createGuest: MutationResolvers['createGuest'] = async ({
 
     if (!payload.guestGroupId) throw new Error('Guest group ID is required');
 
-    const { guestGroupId, ...input } = payload;
+    const { guestGroupId, dayPartsPresent, ...input } = payload;
 
     const group = await db.guestGroup.findUnique({
         where: { id: guestGroupId },
@@ -63,6 +63,17 @@ export const createGuest: MutationResolvers['createGuest'] = async ({
             guestGroup: { connect: { id: guestGroupId } },
             wedding: { connect: { id: context.currentUser?.weddingId } },
             address: { connect: { id: group.address?.id } },
+            guestDayPartsPresents: {
+                createMany: {
+                    data: dayPartsPresent?.length
+                        ? dayPartsPresent?.map((dayPart) => ({
+                              weddingDayPartId: dayPart.weddingDayPartId,
+                              guestWeddingResponseStatus:
+                                  dayPart.guestWeddingResponseStatus,
+                          }))
+                        : [],
+                },
+            },
         },
     });
 };
@@ -169,10 +180,6 @@ export const connectGuestToRsvp: MutationResolvers['connectGuestToRsvp'] =
         });
 
         return db.$transaction(async (db) => {
-            if (!guestListGuest.addressId) {
-                throw new Error('Please select an guest which has an address');
-            }
-
             const deleteGuestPromise = db.guest.delete({
                 where: { id: input.guestListGuestId },
             });
@@ -184,8 +191,15 @@ export const connectGuestToRsvp: MutationResolvers['connectGuestToRsvp'] =
                 },
             });
 
+            if (!guestListGuest.addressId) {
+                throw new Error(
+                    'Please select an guestList which has an address'
+                );
+            }
             if (!rsvpGuest.addressId) {
-                throw new Error('Please select an guest which has an address');
+                throw new Error(
+                    'Please select a rsvpGuest which has an address'
+                );
             }
 
             const updateGuestAddressesPromises =
@@ -230,6 +244,47 @@ export const connectGuestToRsvp: MutationResolvers['connectGuestToRsvp'] =
                 });
             }
 
+            const allDayParts = await db.weddingDayPart.findMany({
+                where: { weddingId: rsvpGuest.weddingId },
+            });
+
+            const guestWeddingResponse =
+                await db.guestWeddingResponse.findUnique({
+                    where: { id: rsvpGuest.guestWeddingResponse?.id },
+                    include: {
+                        dayPartsPresent: {
+                            select: {
+                                weddingDayPartId: true,
+                            },
+                        },
+                    },
+                });
+
+            const missingDayParts = allDayParts?.filter(
+                (dayPart) =>
+                    !guestWeddingResponse?.dayPartsPresent.some(
+                        (presentDayPart) =>
+                            presentDayPart.weddingDayPartId === dayPart.id
+                    )
+            );
+
+            if (missingDayParts.length > 0) {
+                await db.guestWeddingResponse.update({
+                    data: {
+                        dayPartsPresent: {
+                            createMany: {
+                                data: missingDayParts.map((dayPart) => ({
+                                    weddingDayPartId: dayPart.id,
+                                    guestId: rsvpGuest.id,
+                                    guestWeddingResponseStatus: 'UNKNOWN',
+                                })),
+                            },
+                        },
+                    },
+                    where: { id: rsvpGuest.guestWeddingResponse?.id },
+                });
+            }
+
             return db.guest.update({
                 where: { id: input.rsvpGuestId },
                 data: {
@@ -260,5 +315,8 @@ export const Guest: GuestRelationResolvers = {
     },
     address: (_obj, { root }) => {
         return db.guest.findUnique({ where: { id: root?.id } }).address();
+    },
+    wedding: (_obj, { root }) => {
+        return db.guest.findUnique({ where: { id: root?.id } }).wedding();
     },
 };

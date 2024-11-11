@@ -14,6 +14,8 @@ export const schema = gql`
         guests: [Guest]
         weddingInvitationResponse: WeddingInvitationResponse
         weddingInvitationResponseId: String
+        wedding: Wedding
+        weddingId: String
     }
 
     type Query {
@@ -29,6 +31,7 @@ export const schema = gql`
         country: String
         livesAbroad: Boolean!
         weddingInvitationResponseId: String
+        weddingId: String
     }
 
     input ExternalUpdateAddressInput {

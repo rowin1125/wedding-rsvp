@@ -28,6 +28,7 @@ const MediaPage = () => {
 
             <Hero
                 {...heroData}
+                color="white"
                 imageProps={{
                     objectPosition: wedding?.bannerImage?.metadata
                         ? `${wedding?.bannerImage?.metadata?.focalPoint?.x}% ${wedding?.bannerImage?.metadata?.focalPoint?.y}%`

@@ -13,8 +13,11 @@ export const schema = gql`
         dayParts: [WeddingDayPart!]!
         guests: [Guest!]!
         guestGroups: [GuestGroup!]!
+        qrCodes: [QrCode!]
         createdAt: DateTime!
         updatedAt: DateTime!
+        weddingRsvpLandingPages: [WeddingRsvpLandingPage!]
+        addresses: [Address!]
     }
 
     type Query {

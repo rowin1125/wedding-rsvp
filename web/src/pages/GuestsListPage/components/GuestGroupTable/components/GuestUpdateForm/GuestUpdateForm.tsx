@@ -139,7 +139,13 @@ const GuestUpdateForm = ({ disclosure, guest }: GuestUpdateFormProps) => {
                                             )
                                         </strong>{' '}
                                         wilt verwijderen? Dit kan niet ongedaan
-                                        worden gemaakt
+                                        worden gemaakt.
+                                        <br />
+                                        <br />
+                                        Indien deze persoon niet aanwezig kan
+                                        zijn op de bruiloft, kun je deze persoon
+                                        beter op <strong>afwezig</strong>{' '}
+                                        zetten.
                                     </DeleteDialog>
                                 )}
                             </Flex>

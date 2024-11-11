@@ -17,8 +17,8 @@ import { FaChildReaching } from 'react-icons/fa6';
 import { IoIosPeople } from 'react-icons/io';
 import { GetGuestGroupsQuery } from 'types/graphql';
 
-import { getGuestListStats } from './helpers/getGuestListStats';
 import { getProgressPercentage } from './helpers/getProgressPercentage';
+import { useGuestListStats } from './hooks/useGuestListStats';
 
 type GuestListStatsProps = {
     guestGroups?: GetGuestGroupsQuery['guestGroups'];
@@ -35,7 +35,9 @@ const GuestListStats = ({ guestGroups }: GuestListStatsProps) => {
         totalGuestCount,
         totalGuestCountWithConnectViaRsvp,
         totalGuestCountWithConnectViaRsvpPercentage,
-    } = getGuestListStats(guestGroups);
+        totalGuestWithCorrectDayPresentsResponse,
+        totalGuestWithCorrectDayPresentsResponsePercentage,
+    } = useGuestListStats(guestGroups);
 
     return (
         <GridItem colSpan={{ base: 12, lg: 5 }}>
@@ -58,7 +60,7 @@ const GuestListStats = ({ guestGroups }: GuestListStatsProps) => {
                 <Box>
                     <Text>
                         <strong>{totalGuestCountWithConnectViaRsvp}</strong> van
-                        de <strong>{totalGuestCount}</strong> RSVP ingevuld
+                        de <strong>{totalGuestCount}</strong> RSVP geconnect
                     </Text>
                     <Progress
                         mt={2}
@@ -66,6 +68,25 @@ const GuestListStats = ({ guestGroups }: GuestListStatsProps) => {
                         borderRadius="5px"
                         colorScheme={getProgressPercentage(
                             totalGuestCountWithConnectViaRsvpPercentage
+                        )}
+                    />
+                </Box>
+                <Box mt={4}>
+                    <Text>
+                        <strong>
+                            {totalGuestWithCorrectDayPresentsResponse}
+                        </strong>{' '}
+                        van de <strong>{totalGuestCount}</strong> aanwezigheden
+                        compleet
+                    </Text>
+                    <Progress
+                        mt={2}
+                        value={
+                            totalGuestWithCorrectDayPresentsResponsePercentage
+                        }
+                        borderRadius="5px"
+                        colorScheme={getProgressPercentage(
+                            totalGuestWithCorrectDayPresentsResponsePercentage
                         )}
                     />
                 </Box>

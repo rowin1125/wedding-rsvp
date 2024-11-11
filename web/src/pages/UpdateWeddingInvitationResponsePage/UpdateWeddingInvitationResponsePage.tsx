@@ -1,24 +1,38 @@
-import { Flex, Box, Container, Center, Card } from '@chakra-ui/react';
+import { Flex, useToast } from '@chakra-ui/react';
+import { Data } from '@measured/puck';
 
-import { useParams } from '@redwoodjs/router';
+import { navigate, routes } from '@redwoodjs/router';
 import { Metadata } from '@redwoodjs/web';
 
-import { useAuth } from 'src/auth';
-import RsvpIntro from 'src/components/Rsvp/components/RsvpIntro/RsvpIntro';
-import Sidebar from 'src/components/Sidebar/Sidebar';
-import { useGetWeddingById } from 'src/hooks/useGetWeddingById';
+import PuckStudio from 'src/components/PuckStudio/PuckStudio';
 
-import UpdateRsvpForm from './components/UpdateRsvpForm/UpdateRsvpForm';
+import { useGetWeddingRsvpLandingPage } from '../RsvpLandingsPage/hooks/useGetWeddingRsvpLandingPage';
+
 import { useGetWeddingInvitationResponse } from './hooks/useGetWeddingInvitationResponse';
 
 const UpdateWeddingInvitationResponsePage = () => {
-    const { weddingId } = useParams();
-    const { currentUser, loading } = useAuth();
-    const { weddingInvitationResponse } = useGetWeddingInvitationResponse();
-    const { wedding } = useGetWeddingById();
+    const { weddingInvitationResponse, loading: invitationLoading } =
+        useGetWeddingInvitationResponse();
+    const toast = useToast();
+    const { weddingRsvpLandingPage, loading } = useGetWeddingRsvpLandingPage();
 
-    const isConnectedToWedding =
-        currentUser?.weddingId === weddingId && !loading;
+    if (!loading && !weddingInvitationResponse && !invitationLoading) {
+        toast({
+            title: 'Deze pagina bestaat niet, controleer de link',
+            status: 'error',
+        });
+
+        navigate(routes.home(), { replace: true });
+    }
+    if (!weddingRsvpLandingPage?.pageBuilderData) return null;
+
+    const landingPage = {
+        ...(weddingRsvpLandingPage.pageBuilderData as object),
+    } as Partial<Data>;
+    const filteredContent = landingPage?.content?.filter(
+        (content) => content.type === 'RsvpForm'
+    );
+    landingPage.content = filteredContent;
 
     return (
         <>
@@ -28,38 +42,18 @@ const UpdateWeddingInvitationResponsePage = () => {
                 mx={{ base: 0, xl: 0 }}
                 position="relative"
             >
-                {isConnectedToWedding && (
-                    <Box position="relative">
-                        <Sidebar />
-                    </Box>
-                )}
                 <Flex
                     flexDir="column"
                     w="full"
                     mb={10}
-                    pt={{ base: 32, lg: 52 }}
+                    pt={{ base: 32, lg: 36 }}
                     pb={{ base: 10, lg: 20 }}
                 >
-                    <RsvpIntro />
-                    <Container>
-                        <Center>
-                            <Card
-                                mt={{ base: 16, lg: 28 }}
-                                maxW="750px"
-                                px={{ base: 10, lg: 20 }}
-                                id="rsvpForm"
-                            >
-                                {weddingInvitationResponse && (
-                                    <UpdateRsvpForm
-                                        weddingInvitationResponse={
-                                            weddingInvitationResponse
-                                        }
-                                        wedding={wedding}
-                                    />
-                                )}
-                            </Card>
-                        </Center>
-                    </Container>
+                    <PuckStudio
+                        initialData={landingPage}
+                        renderView
+                        isLoading={loading}
+                    />
                 </Flex>
             </Flex>
         </>

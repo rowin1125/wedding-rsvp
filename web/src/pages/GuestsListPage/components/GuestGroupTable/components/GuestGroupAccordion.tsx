@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { GetGuestGroupsQuery } from 'types/graphql';
 
-import GuestAccordionItem from './GuestAccordionItem';
+import GuestAccordionItem from './GuestAccordionItem/GuestAccordionItem';
 import GuestGroupAccordionButton from './GuestGroupAccordionButton';
 import GuestGroupAccordionControls from './GuestGroupAccordionControls';
 

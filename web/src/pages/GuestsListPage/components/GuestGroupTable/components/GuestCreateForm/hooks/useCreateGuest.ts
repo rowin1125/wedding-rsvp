@@ -18,6 +18,11 @@ export const CREATE_GUEST = gql`
             notes
             weddingId
             guestOrigin
+            guestDayPartsPresents {
+                id
+                weddingDayPartId
+                guestWeddingResponseStatus
+            }
         }
     }
 `;

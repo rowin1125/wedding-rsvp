@@ -1,12 +1,23 @@
 import React from 'react';
 
-import { Center, Container, ContainerProps, Spinner } from '@chakra-ui/react';
+import {
+    Center,
+    Container,
+    ContainerProps,
+    Spinner,
+    SpinnerProps,
+} from '@chakra-ui/react';
 
 type LoaderProps = {
     hideMargin?: boolean;
+    spinnerProps?: SpinnerProps;
 } & ContainerProps;
 
-const Loader = ({ hideMargin = false, ...props }: LoaderProps) => {
+const Loader = ({
+    hideMargin = false,
+    spinnerProps,
+    ...props
+}: LoaderProps) => {
     return (
         <Container
             p="1rem"
@@ -15,7 +26,7 @@ const Loader = ({ hideMargin = false, ...props }: LoaderProps) => {
             {...props}
         >
             <Center>
-                <Spinner />
+                <Spinner {...spinnerProps} />
             </Center>
         </Container>
     );

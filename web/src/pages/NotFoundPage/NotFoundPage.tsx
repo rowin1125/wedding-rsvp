@@ -12,6 +12,7 @@ export default () => (
             description="Pagina niet gevonden"
         />
         <Hero
+            color="white"
             title="Pagina niet gevonden"
             subtitle="Check de url en probeer het opnieuw"
             height={{

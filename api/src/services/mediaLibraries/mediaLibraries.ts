@@ -24,7 +24,10 @@ export const mediaLibrary: QueryResolvers['mediaLibrary'] = async ({ id }) => {
 export const DEFAULT_MEDIA_PAGINATION_OFFSET = 1;
 
 export const MediaLibrary: MediaLibraryRelationResolvers = {
-    assets: async ({ skip, sortField, sortOrder, take, query }, { root }) => {
+    assets: async (
+        { skip, sortField, sortOrder, take, query, fileTypes },
+        { root }
+    ) => {
         const orderBy: Record<string, string> = {};
 
         switch (sortField) {
@@ -64,7 +67,19 @@ export const MediaLibrary: MediaLibraryRelationResolvers = {
             skip: skip ?? 0,
             take: take ?? DEFAULT_MEDIA_PAGINATION_OFFSET,
             orderBy,
-            where,
+            where: {
+                ...where,
+                ...(fileTypes?.length
+                    ? {
+                          OR: fileTypes.map((type) => ({
+                              fileType: {
+                                  startsWith: type,
+                                  mode: 'insensitive',
+                              },
+                          })),
+                      }
+                    : {}),
+            },
             include: {
                 assetReferences: {
                     include: {

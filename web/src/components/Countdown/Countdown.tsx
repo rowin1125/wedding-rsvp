@@ -27,7 +27,6 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
                 minuten: 0,
                 uren: 0,
                 dagen: 0,
-                maanden: 0,
             };
         }
 
@@ -41,7 +40,6 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
             minuten,
             uren,
             dagen,
-            // maanden,
         };
     }, [targetDate]);
 
@@ -61,18 +59,25 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
         .map((key) => key)
         .reverse();
 
+    const month = new Date(targetDate).toLocaleString('default', {
+        month: 'long',
+    });
+
+    const day = new Date(targetDate).getDate();
+    const year = new Date(targetDate).getFullYear();
+
     return (
-        <Container as="section" my={20} w="full" {...props}>
+        <Container as="section" py={20} w="full" {...props}>
             <Box maxW="1000px" mx="auto">
                 <Grid
                     templateColumns={{
-                        base: 'repeat(4, 1fr)',
-                        lg: 'repeat(4, 1fr)',
+                        base: 'repeat(12, 1fr)',
+                        lg: 'repeat(12, 1fr)',
                     }}
                     gap={4}
                 >
                     {!hideDate && (
-                        <GridItem colSpan={4} mb={10}>
+                        <GridItem colSpan={12} mb={10}>
                             <Flex justifyContent="center">
                                 <Heading
                                     fontSize={{
@@ -80,11 +85,12 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
                                         lg: '4xl',
                                     }}
                                     borderRightWidth={2}
-                                    borderColor="secondary.900"
+                                    borderColor={props.color}
                                     py={4}
                                     px={8}
+                                    color={props.color}
                                 >
-                                    16
+                                    {day}
                                 </Heading>
 
                                 <Heading
@@ -93,11 +99,12 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
                                         lg: '4xl',
                                     }}
                                     borderRightWidth={2}
-                                    borderColor="secondary.900"
+                                    borderColor={props.color}
                                     py={4}
                                     px={8}
+                                    color={props.color}
                                 >
-                                    mei
+                                    {month}
                                 </Heading>
                                 <Heading
                                     fontSize={{
@@ -106,8 +113,9 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
                                     }}
                                     py={4}
                                     px={8}
+                                    color={props.color}
                                 >
-                                    2024
+                                    {year}
                                 </Heading>
                             </Flex>
                         </GridItem>
@@ -115,7 +123,7 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
 
                     {timeMap.map((key) => {
                         return (
-                            <GridItem colSpan={{ base: 2, lg: 1 }} key={key}>
+                            <GridItem colSpan={{ base: 6, lg: 3 }} key={key}>
                                 <Box>
                                     <Heading
                                         fontSize={{
@@ -123,12 +131,16 @@ const Countdown = ({ targetDate, hideDate, ...props }: CountdownProps) => {
                                             lg: '100px',
                                         }}
                                         fontWeight="bold"
-                                        color="#f1e8db"
+                                        color={props.color}
                                         textAlign="center"
                                     >
                                         {timeLeft[key as keyof typeof timeLeft]}
                                     </Heading>
-                                    <Heading fontSize="3xl" textAlign="center">
+                                    <Heading
+                                        fontSize="3xl"
+                                        textAlign="center"
+                                        color={props.color}
+                                    >
                                         {key.split('')[0].toUpperCase() +
                                             key.slice(1)}
                                     </Heading>

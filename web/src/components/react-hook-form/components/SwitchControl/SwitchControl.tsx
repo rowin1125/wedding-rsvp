@@ -39,7 +39,7 @@ const SwitchControl = (props: SwitchControlProps) => {
                 {...field}
                 id={name}
                 isInvalid={!!error && isTouched}
-                isChecked={field.value === 'true'}
+                isChecked={field.value === 'true' || field.value === true}
                 isDisabled={isSubmitting}
                 {...switchProps}
                 onChange={handleSwitchChange}

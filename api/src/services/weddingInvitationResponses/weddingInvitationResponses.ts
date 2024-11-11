@@ -2,6 +2,7 @@ import type {
     QueryResolvers,
     MutationResolvers,
     WeddingInvitationResponseRelationResolvers,
+    GuestWeddingResponseStatus,
 } from 'types/graphql';
 
 import { removeNulls } from '@redwoodjs/api';
@@ -66,6 +67,9 @@ export const createWeddingInvitationResponse: MutationResolvers['createWeddingIn
         // Check if the wedding exists
         const wedding = await db.wedding.findUnique({
             where: { id: input.weddingId },
+            include: {
+                dayParts: true,
+            },
         });
 
         if (!wedding) {
@@ -75,7 +79,10 @@ export const createWeddingInvitationResponse: MutationResolvers['createWeddingIn
         return db.$transaction(async (db) => {
             // Create address
             const address = await db.address.create({
-                data: input.address,
+                data: {
+                    ...removeNulls(input.address),
+                    wedding: { connect: { id: input.weddingId } },
+                },
             });
 
             // Create guests and their responses
@@ -103,18 +110,43 @@ export const createWeddingInvitationResponse: MutationResolvers['createWeddingIn
                             data: {
                                 remarks: gwr.remarks,
                                 guest: { connect: { id: guest.id } },
+                                weddingRsvpLandingPage: {
+                                    connect: {
+                                        id: input.weddingRsvpLandingPageId,
+                                    },
+                                },
                             },
                         });
 
+                    const uninvitedDayParts = wedding.dayParts.filter(
+                        (dayPart) =>
+                            !gwr.dayPartsPresent.some(
+                                (dpp) => dpp.weddingDayPartId === dayPart.id
+                            )
+                    );
+
                     // Create GuestDayPartPresent entries
                     await db.guestDayPartPresent.createMany({
-                        data: gwr.dayPartsPresent.map((dpp) => ({
-                            guestWeddingResponseId: guestWeddingResponse.id,
-                            weddingDayPartId: dpp.weddingDayPartId,
-                            guestWeddingResponseStatus:
-                                dpp.guestWeddingResponseStatus,
-                            guestId: guest.id,
-                        })),
+                        data: [
+                            ...gwr.dayPartsPresent.map((dpp) => ({
+                                guestWeddingResponseId: guestWeddingResponse.id,
+                                weddingDayPartId: dpp.weddingDayPartId,
+                                guestWeddingResponseStatus:
+                                    dpp.guestWeddingResponseStatus,
+                                guestId: guest.id,
+                                weddingRsvpLandingPageId:
+                                    input.weddingRsvpLandingPageId,
+                            })),
+                            ...uninvitedDayParts.map((dayPart) => ({
+                                guestWeddingResponseId: guestWeddingResponse.id,
+                                weddingDayPartId: dayPart.id,
+                                guestWeddingResponseStatus:
+                                    'UNINVITED' as GuestWeddingResponseStatus,
+                                guestId: guest.id,
+                                weddingRsvpLandingPageId:
+                                    input.weddingRsvpLandingPageId,
+                            })),
+                        ],
                     });
 
                     return guestWeddingResponse;
@@ -132,6 +164,11 @@ export const createWeddingInvitationResponse: MutationResolvers['createWeddingIn
                             connect: guestWeddingResponses.map((gwr) => ({
                                 id: gwr.id,
                             })),
+                        },
+                        weddingRsvpLandingPage: {
+                            connect: {
+                                id: input.weddingRsvpLandingPageId,
+                            },
                         },
                     },
                     include: {
@@ -249,7 +286,7 @@ export const updateWeddingInvitationResponse: MutationResolvers['updateWeddingIn
                         },
                         create: {
                             ...removeNulls(dpp.input),
-                            weddingDayPartId: dpp.input.weddingDayPartId,
+                            weddingDayPartId: dpp.input.weddingDayPartId ?? '',
                             guestWeddingResponseId:
                                 updatedGuestWeddingResponse.id,
                             guestId: newOrUpdatedGuest.id,
@@ -359,5 +396,10 @@ export const WeddingInvitationResponse: WeddingInvitationResponseRelationResolve
             return db.weddingInvitationResponse
                 .findUnique({ where: { id: root?.id } })
                 .wedding();
+        },
+        weddingRsvpLandingPage: (_obj, { root }) => {
+            return db.weddingInvitationResponse
+                .findUnique({ where: { id: root?.id } })
+                .weddingRsvpLandingPage();
         },
     };

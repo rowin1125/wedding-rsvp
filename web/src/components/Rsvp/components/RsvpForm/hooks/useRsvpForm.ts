@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import {
     CreateWeddingInvitationResponseInput,
     GetWeddingQuery,
+    GetWeddingRsvpLandingPage,
     GuestWeddingResponseStatus,
 } from 'types/graphql';
 import { object, array, string, boolean, InferType } from 'yup';
@@ -14,6 +15,7 @@ import { countriesOptions } from 'src/config/guestList';
 
 type UseRsvpFormType = {
     wedding: GetWeddingQuery['wedding'];
+    weddingRsvpLandingPage: GetWeddingRsvpLandingPage['weddingRsvpLandingPage'];
 };
 
 export const weddingInvitationValidationSchema = object().shape({
@@ -77,21 +79,24 @@ export const CREATE_WEDDING_INVITATION_RESPONSE = gql`
     }
 `;
 
-export const useRsvpForm = ({ wedding }: UseRsvpFormType) => {
+export const useRsvpForm = ({
+    wedding,
+    weddingRsvpLandingPage,
+}: UseRsvpFormType) => {
     const toast = useToast();
     const defaultValues = {
         guestWeddingResponses: [
             {
                 dayPartsPresent:
-                    wedding?.dayParts.map((dayPart) => ({
+                    weddingRsvpLandingPage?.weddingDayParts.map((dayPart) => ({
                         guestWeddingResponseStatus: '',
-                        weddingDayPartId: dayPart.id,
+                        weddingDayPartId: dayPart?.id ?? '',
                     })) ?? [],
                 remarks: '',
                 guest: {
                     firstName: '',
                     lastName: '',
-                    addExtraInfo: false,
+                    addExtraInfo: true,
                     email: '',
                     phoneNumber: '',
                     dietary: [],
@@ -178,6 +183,7 @@ export const useRsvpForm = ({ wedding }: UseRsvpFormType) => {
                 country: data.address.country.value,
                 livesAbroad: data.address.livesAbroad,
             },
+            weddingRsvpLandingPageId: weddingRsvpLandingPage?.id ?? '',
         };
 
         try {

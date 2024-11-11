@@ -81,6 +81,7 @@ const GuestsListPage = () => {
                         : 'center',
                 }}
                 fileType={wedding?.bannerImage?.asset.fileType || 'image'}
+                color="white"
                 title="Gastenlijst"
             />
             <AppContentWrapper p={0}>

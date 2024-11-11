@@ -189,6 +189,10 @@ export const guestGroupRelationTypeOptions = [
         value: 'colleagues_mutual',
         label: "Collega's gedeeld",
     },
+    {
+        value: 'other',
+        label: 'Overig',
+    },
 ];
 
 export const countriesOptions = [

@@ -37,7 +37,10 @@ const MediaAssetInformationTable = ({
     return (
         <TableContainer mt={10}>
             <Table variant="simple" fontSize="sm" size="sm">
-                <TableCaption title={asset.originalFilename}>
+                <TableCaption
+                    justifyContent="space-between"
+                    title={asset.originalFilename}
+                >
                     Bestand informatie voor{' '}
                     {truncateText(asset.originalFilename, 30)}
                 </TableCaption>

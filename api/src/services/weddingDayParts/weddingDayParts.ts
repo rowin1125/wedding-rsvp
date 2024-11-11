@@ -91,6 +91,67 @@ export const updateWeddingDayParts: MutationResolvers['updateWeddingDayParts'] =
             });
         }
 
+        if (createdWeddingDayParts.length > 0) {
+            // For any existing weddingInvitationResponse that has dayPartPresent, make new responses for
+            // all existing dayPartPresent  for the new dayPart and set the new dayParts to UNKNOWN
+            const allGuests = await db.guest.findMany({
+                where: {
+                    weddingId: context.currentUser.weddingId,
+                },
+                include: {
+                    guestWeddingResponse: true,
+                },
+            });
+            await Promise.all(
+                createdWeddingDayParts
+                    .map(async (part) =>
+                        allGuests.map(async (guest) => {
+                            return db.guestDayPartPresent.create({
+                                data: {
+                                    guest: {
+                                        connect: {
+                                            id: guest.id,
+                                        },
+                                    },
+                                    weddingDayPart: {
+                                        connect: {
+                                            id: part.id,
+                                        },
+                                    },
+                                    guestWeddingResponseStatus: 'UNKNOWN',
+                                    // If the guest has a wedding response, connect it
+                                    ...(guest.guestWeddingResponse?.id
+                                        ? {
+                                              guestWeddingResponse: {
+                                                  connect: {
+                                                      id: guest
+                                                          .guestWeddingResponse
+                                                          .id,
+                                                  },
+                                              },
+                                          }
+                                        : {}),
+                                    // If the guest has a weddingRsvpLandingPageId, connect it
+                                    ...(guest.guestWeddingResponse
+                                        ?.weddingRsvpLandingPageId
+                                        ? {
+                                              weddingRsvpLandingPage: {
+                                                  connect: {
+                                                      id: guest
+                                                          .guestWeddingResponse
+                                                          ?.weddingRsvpLandingPageId,
+                                                  },
+                                              },
+                                          }
+                                        : {}),
+                                },
+                            });
+                        })
+                    )
+                    .flat()
+            );
+        }
+
         return [...updatedWeddingDayParts, ...createdWeddingDayParts];
     };
 
@@ -99,5 +160,27 @@ export const WeddingDayPart: WeddingDayPartRelationResolvers = {
         return db.weddingDayPart
             .findUnique({ where: { id: root?.id } })
             .wedding();
+    },
+    guestDayPartsPresents: (_obj, { root }) => {
+        return db.weddingDayPart
+            .findUnique({ where: { id: root?.id } })
+            .guestDayPartsPresents();
+    },
+    totalGuests: async (_obj, { root }) => {
+        const totalCount = await db.guestDayPartPresent.count({
+            where: {
+                weddingDayPartId: root.id,
+                AND: {
+                    guestWeddingResponseStatus: 'ACCEPTED',
+                },
+            },
+        });
+
+        return totalCount;
+    },
+    weddingRsvpLandingPages: (_obj, { root }) => {
+        return db.weddingDayPart
+            .findUnique({ where: { id: root?.id } })
+            .weddingRsvpLandingPages();
     },
 };

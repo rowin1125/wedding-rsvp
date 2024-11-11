@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
     Button,
     Flex,
@@ -8,11 +10,11 @@ import {
 } from '@chakra-ui/react';
 import { BiLogOut } from 'react-icons/bi';
 
-import { routes } from '@redwoodjs/router';
+import { routes, useLocation } from '@redwoodjs/router';
 
 import { useAuth } from 'src/auth';
 import { useGetMenuItems } from 'src/hooks/useGetMenuItems';
-import useLocalStorage from 'src/hooks/useLocalStorage';
+import { SetValue } from 'src/hooks/useLocalStorage';
 
 import RedwoodLink from '../RedwoodLink';
 
@@ -21,9 +23,14 @@ import SidebarToggle from './components/SidebarToggle';
 
 const ClOSE_SIDEBAR_KEYS = ['221', '['];
 
-const Sidebar = () => {
-    const [navOpen, toggleNav] = useLocalStorage('navOpen', true);
+type SidebarProps = {
+    navOpen: boolean;
+    toggleNav: SetValue<boolean>;
+};
+
+const Sidebar = ({ navOpen, toggleNav }: SidebarProps) => {
     const { logOut } = useAuth();
+    const location = useLocation();
     const toast = useToast();
     const handleLogout = () => {
         toast({
@@ -37,6 +44,11 @@ const Sidebar = () => {
             toggleNav(!navOpen);
         }
     };
+    useEffect(() => {
+        if (!location.pathname.includes('studio')) return;
+
+        toggleNav(false);
+    }, [location, toggleNav]);
 
     useEventListener('keydown', handler);
 

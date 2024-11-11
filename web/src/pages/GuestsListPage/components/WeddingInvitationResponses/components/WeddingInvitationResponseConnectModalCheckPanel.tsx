@@ -3,7 +3,6 @@ import React from 'react';
 import {
     Alert,
     AlertIcon,
-    Box,
     Flex,
     Grid,
     Heading,
@@ -66,7 +65,7 @@ const WeddingInvitationResponseConnectModalCheckPanel = ({
     };
 
     return (
-        <Box>
+        <>
             <Heading as="h3" size="h3" mb={4}>
                 Controleer de data van {guestWeddingResponse?.guest?.firstName}{' '}
                 {guestWeddingResponse?.guest?.lastName}{' '}
@@ -85,6 +84,9 @@ const WeddingInvitationResponseConnectModalCheckPanel = ({
                                     guestWeddingResponse?.guest?.weddingId,
                                 weddingInvitationResponseId:
                                     weddingInvitationResponse.id,
+                                landingPageId:
+                                    weddingInvitationResponse?.weddingRsvpLandingPageId ??
+                                    '',
                             })}
                         >
                             hier
@@ -160,7 +162,7 @@ const WeddingInvitationResponseConnectModalCheckPanel = ({
                     </Button>
                 </ButtonGroup>
             </Flex>
-        </Box>
+        </>
     );
 };
 

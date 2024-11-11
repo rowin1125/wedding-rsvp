@@ -9,9 +9,9 @@ export const schema = gql`
         updatedAt: DateTime!
         weddingInvitationResponse: WeddingInvitationResponse
         weddingInvitationResponseId: String
+        weddingRsvpLandingPage: WeddingRsvpLandingPage
+        weddingRsvpLandingPageId: String
     }
-
-    # type Query {    }
 
     input CreateGuestWeddingResponseInput {
         remarks: String
@@ -32,5 +32,8 @@ export const schema = gql`
         dayPartsPresent: [ExternalUpdateGuestDayPartPresentInput!]!
     }
 
-    # type Mutation {}
+    type Mutation {
+        deleteGuestWeddingResponse(id: String!): GuestWeddingResponse
+            @requireAuth
+    }
 `;

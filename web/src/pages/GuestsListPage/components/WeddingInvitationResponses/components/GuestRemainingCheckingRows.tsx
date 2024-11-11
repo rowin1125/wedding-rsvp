@@ -67,28 +67,32 @@ const GuestRemainingCheckingRows = ({
                         {guestWeddingResponse?.guest?.weddingId && (
                             <Alert status="info" mb={4} variant="left-accent">
                                 <AlertIcon />
-                                <Text>
-                                    Hieronder vind je het adres van de gast en
-                                    het adres van de RSVP. Als deze niet
-                                    overeenkomen, kun je het adres van de gast
-                                    aanpassen in het RSVP-formulier:
-                                    <ChakraLink
-                                        ml={1}
-                                        as={Link}
-                                        textDecor={'underline'}
-                                        to={routes.updateWeddingInvitationResponse(
-                                            {
-                                                weddingId:
-                                                    guestWeddingResponse?.guest
-                                                        ?.weddingId,
-                                                weddingInvitationResponseId:
-                                                    weddingInvitationResponse.id,
-                                            }
-                                        )}
-                                    >
-                                        Formulier
-                                    </ChakraLink>{' '}
-                                </Text>
+                                {weddingInvitationResponse?.weddingRsvpLandingPageId && (
+                                    <Text>
+                                        Hieronder vind je het adres van de gast
+                                        en het adres van de RSVP. Als deze niet
+                                        overeenkomen, kun je het adres van de
+                                        gast aanpassen in het RSVP-formulier:
+                                        <ChakraLink
+                                            ml={1}
+                                            as={Link}
+                                            textDecor={'underline'}
+                                            to={routes.updateWeddingInvitationResponse(
+                                                {
+                                                    weddingId:
+                                                        guestWeddingResponse
+                                                            ?.guest?.weddingId,
+                                                    weddingInvitationResponseId:
+                                                        weddingInvitationResponse.id,
+                                                    landingPageId:
+                                                        weddingInvitationResponse?.weddingRsvpLandingPageId,
+                                                }
+                                            )}
+                                        >
+                                            Formulier
+                                        </ChakraLink>{' '}
+                                    </Text>
+                                )}
                             </Alert>
                         )}
                     </GridItem>

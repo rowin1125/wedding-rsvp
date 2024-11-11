@@ -27,7 +27,7 @@ const OnboardingPage = () => {
     return (
         <>
             <Metadata title="Onboarding" description="Onboarding page" />
-            <Hero h="300px" />
+            <Hero color="white" h="300px" />
             <Container>
                 <AppContentWrapper>
                     <Heading>

@@ -7,6 +7,8 @@ export const schema = gql`
         updatedAt: DateTime!
         wedding: Wedding!
         weddingId: String!
+        weddingRsvpLandingPage: WeddingRsvpLandingPage
+        weddingRsvpLandingPageId: String
     }
 
     type Query {
@@ -26,6 +28,7 @@ export const schema = gql`
         weddingId: String!
         guestWeddingResponses: [CreateGuestWeddingResponseInput!]!
         address: CreateAddressInput!
+        weddingRsvpLandingPageId: String!
     }
 
     input UpdateWeddingInvitationResponseInput {

@@ -20,8 +20,6 @@ export const schema = gql`
         assetReferences: [AssetReference]
     }
 
-    # type Query {}
-
     input CreateAssetInput {
         gcloudStoragePath: String!
         fileType: String!
@@ -41,7 +39,10 @@ export const schema = gql`
     }
 
     type Mutation {
-        requestSigningUrl(gcloudStoragePath: String!): String! @skipAuth
+        requestSigningUrl(
+            gcloudStoragePath: String!
+            weddingId: String!
+        ): String! @skipAuth
         createAssets(
             input: [CreateAssetInput!]!
             weddingId: String!

@@ -1,9 +1,14 @@
 import { createId } from '@paralleldrive/cuid2';
 import { Prisma } from '@prisma/client';
 import QRCode from 'qrcode';
-import type { QueryResolvers, MutationResolvers } from 'types/graphql';
+import type {
+    QueryResolvers,
+    MutationResolvers,
+    QrCodeResolvers,
+} from 'types/graphql';
 
 import { removeNulls } from '@redwoodjs/api';
+import { UserInputError } from '@redwoodjs/graphql-server';
 
 import { db } from 'src/lib/db';
 import Sentry from 'src/lib/sentry';
@@ -67,6 +72,11 @@ export const createQrCode: MutationResolvers['createQrCode'] = async ({
             usageCount: 0,
             metadata: metadata as Prisma.JsonObject,
             id,
+            wedding: {
+                connect: {
+                    id: context.currentUser?.weddingId ?? '',
+                },
+            },
         },
     });
 
@@ -85,23 +95,54 @@ export const updateQrCode: MutationResolvers['updateQrCode'] = ({
 
 export const deleteQrCode: MutationResolvers['deleteQrCode'] = async ({
     id,
+    variant,
 }) => {
-    const deleteQrCodePromise = db.qrCode.delete({
-        where: { id },
-    });
+    if (variant === 'GALLERY') {
+        const deleteQrCodePromise = db.qrCode.delete({
+            where: { id },
+        });
 
-    const deleteQrCodeFromGalleryPromise = db.gallery.updateMany({
-        where: { qrCodeId: id },
-        data: {
-            qrCodeId: null,
-            qrCode: null,
-        },
-    });
+        const deleteQrCodeFromGalleryPromise = db.gallery.updateMany({
+            where: { qrCodeId: id },
+            data: {
+                qrCodeId: null,
+                qrCode: null,
+            },
+        });
 
-    const [deleteQrCodeResponse] = await db.$transaction([
-        deleteQrCodePromise,
-        deleteQrCodeFromGalleryPromise,
-    ]);
+        const [deleteQrCodeResponse] = await db.$transaction([
+            deleteQrCodePromise,
+            deleteQrCodeFromGalleryPromise,
+        ]);
 
-    return deleteQrCodeResponse;
+        return deleteQrCodeResponse;
+    } else if (variant === 'RSVP') {
+        const deleteQrCodePromise = db.qrCode.delete({
+            where: { id },
+        });
+
+        const deleteQrCodeFromWeddingRsvpLandingPagePromise =
+            db.weddingRsvpLandingPage.updateMany({
+                where: { qrCodeId: id },
+                data: {
+                    qrCodeId: null,
+                    qrCode: null,
+                },
+            });
+
+        const [deleteQrCodeResponse] = await db.$transaction([
+            deleteQrCodePromise,
+            deleteQrCodeFromWeddingRsvpLandingPagePromise,
+        ]);
+
+        return deleteQrCodeResponse;
+    }
+
+    throw new UserInputError(`Invalid variant, ${variant} is not supported`);
+};
+
+export const QrCode: QrCodeResolvers = {
+    wedding: (_obj, { root }) => {
+        return db.qrCode.findUnique({ where: { id: root.id } }).wedding();
+    },
 };

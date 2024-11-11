@@ -5,10 +5,13 @@ export const schema = gql`
         startTime: DateTime!
         endTime: DateTime!
         description: String
+        guestDayPartsPresents: [GuestDayPartPresent!]!
+        totalGuests: Int!
         wedding: Wedding!
         weddingId: String!
         createdAt: DateTime!
         updatedAt: DateTime!
+        weddingRsvpLandingPages: [WeddingRsvpLandingPage!]!
     }
 
     type Query {

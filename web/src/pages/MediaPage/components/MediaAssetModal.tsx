@@ -15,8 +15,13 @@ import {
     GridItem,
     useToast,
     Tooltip,
+    Icon,
+    useClipboard,
+    ButtonGroup,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
+import { MdContentCopy } from 'react-icons/md';
+import { TbCheck } from 'react-icons/tb';
 
 import { useAuth } from 'src/auth';
 import ResolveAssetType from 'src/components/ImageGallery/components/ResolveAssetType';
@@ -40,6 +45,7 @@ const MediaAssetModal = ({
 }: MediaAssetModalProps) => {
     const { currentUser } = useAuth();
     const toast = useToast();
+    const { hasCopied, onCopy } = useClipboard(currentAsset?.previewUrl ?? '');
 
     const { deleteAssets, loading } = useDeleteAssets({
         id: currentUser?.wedding?.mediaLibrary?.id as string,
@@ -73,6 +79,14 @@ const MediaAssetModal = ({
         onClose();
     };
 
+    const handleCopy = () => {
+        onCopy();
+        toast({
+            title: 'Link gekopieerd naar klembord',
+            status: 'success',
+        });
+    };
+
     if (!currentAsset) return null;
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="6xl">
@@ -83,7 +97,6 @@ const MediaAssetModal = ({
                         <ModalHeader color="secondary.900">
                             {currentAsset.title}
                         </ModalHeader>
-                        <Box as="hr" />
                         <ModalCloseButton mt={2} />
                         <ModalBody mt={4}>
                             <Grid
@@ -150,24 +163,63 @@ const MediaAssetModal = ({
                             </Grid>
                         </ModalBody>
                         <Box as="hr" mt={4} />
-                        <ModalFooter justifyContent={'space-between'}>
-                            <Tooltip
-                                isDisabled={!hasReferences}
-                                label="Verwijderen is niet mogelijk als er referenties zijn"
+                        <ModalFooter
+                            justifyContent={'space-between'}
+                            flexDirection={{
+                                base: 'column',
+                                lg: 'row',
+                            }}
+                        >
+                            <ButtonGroup
+                                flexDir={{
+                                    base: 'column',
+                                    lg: 'row',
+                                }}
                             >
-                                <Button
-                                    colorScheme="red"
-                                    variant="ghost"
-                                    mr={3}
-                                    isLoading={loading}
-                                    isDisabled={hasReferences}
-                                    onClick={handleDelete}
+                                <Tooltip
+                                    isDisabled={!hasReferences}
+                                    label="Verwijderen is niet mogelijk als er referenties zijn"
                                 >
-                                    Verwijderen
+                                    <Button
+                                        w={{
+                                            base: 'full',
+                                            lg: 'auto',
+                                        }}
+                                        colorScheme="red"
+                                        variant="ghost"
+                                        mr={3}
+                                        isLoading={loading}
+                                        isDisabled={hasReferences}
+                                        onClick={handleDelete}
+                                    >
+                                        Verwijderen
+                                    </Button>
+                                </Tooltip>
+                                <Button
+                                    w={{
+                                        base: 'full',
+                                        lg: 'auto',
+                                    }}
+                                    onClick={handleCopy}
+                                    ml={2}
+                                    variant="ghost"
+                                    display="flex"
+                                    alignItems="center"
+                                >
+                                    Kopieer
+                                    {hasCopied ? (
+                                        <Icon ml={2} as={TbCheck} />
+                                    ) : (
+                                        <Icon ml={2} as={MdContentCopy} />
+                                    )}
                                 </Button>
-                            </Tooltip>
+                            </ButtonGroup>
                             <Box>
                                 <Button
+                                    w={{
+                                        base: 'full',
+                                        lg: 'auto',
+                                    }}
                                     variant="ghost"
                                     mr={4}
                                     onClick={onClose}
@@ -175,6 +227,10 @@ const MediaAssetModal = ({
                                     Sluiten
                                 </Button>
                                 <Button
+                                    w={{
+                                        base: 'full',
+                                        lg: 'auto',
+                                    }}
                                     colorScheme="green"
                                     type="submit"
                                     isLoading={updateLoading}

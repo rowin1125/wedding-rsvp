@@ -62,6 +62,8 @@ const MediaAssetModalAssetInformation = ({
                                 !!reference?.galleryReferences?.id;
                             const hasWeddingReference =
                                 !!reference?.weddingReferences?.id;
+                            const hasRsvpWeddingReference =
+                                !!reference?.weddingRsvpLandingPage?.id;
 
                             return (
                                 <ListItem
@@ -82,6 +84,15 @@ const MediaAssetModalAssetInformation = ({
                                                               ?.galleryReferences
                                                               ?.id,
                                                       tab: 'settings',
+                                                  })
+                                                : hasRsvpWeddingReference
+                                                ? routes.rsvpLandingPageStudio({
+                                                      landingPageId: reference
+                                                          .weddingRsvpLandingPage
+                                                          ?.id as string,
+                                                      weddingId: currentAsset
+                                                          .mediaLibrary
+                                                          ?.weddingId as string,
                                                   })
                                                 : routes.weddingSettings()
                                         }
@@ -133,6 +144,35 @@ const MediaAssetModalAssetInformation = ({
                                                         {
                                                             reference
                                                                 ?.weddingReferences
+                                                                ?.name
+                                                        }
+                                                    </Text>
+                                                </Flex>
+                                                <Icon
+                                                    as={RiExternalLinkLine}
+                                                    color="secondary.900"
+                                                    fontSize="xl"
+                                                />
+                                            </Flex>
+                                        )}
+                                        {hasRsvpWeddingReference && (
+                                            <Flex
+                                                alignItems="center"
+                                                justifyContent="space-between"
+                                            >
+                                                <Flex alignItems="center">
+                                                    <Icon
+                                                        as={GiDiamondRing}
+                                                        mr={4}
+                                                        fontSize="xl"
+                                                    />
+                                                    <Text>
+                                                        <strong>
+                                                            Rsvp landingspagina:
+                                                        </strong>{' '}
+                                                        {
+                                                            reference
+                                                                ?.weddingRsvpLandingPage
                                                                 ?.name
                                                         }
                                                     </Text>

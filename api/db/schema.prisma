@@ -45,19 +45,43 @@ model Wedding {
     guestGroups                GuestGroup[]
     weddingInvitationResponses WeddingInvitationResponse[]
     guests                     Guest[]
+    weddingRsvpLandingPages    WeddingRsvpLandingPage[]
+    qrCodes                    QrCode[]
+    addresses                  Address[]
 }
 
 model WeddingDayPart {
-    id                    String                @id @default(cuid())
-    name                  String
-    startTime             DateTime
-    endTime               DateTime
-    description           String?
-    wedding               Wedding               @relation(fields: [weddingId], references: [id], onDelete: Cascade)
-    weddingId             String
-    guestDayPartsPresents GuestDayPartPresent[]
-    createdAt             DateTime              @default(now())
-    updatedAt             DateTime              @updatedAt
+    id                      String                   @id @default(cuid())
+    name                    String
+    startTime               DateTime
+    endTime                 DateTime
+    description             String?
+    wedding                 Wedding                  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId               String
+    guestDayPartsPresents   GuestDayPartPresent[]
+    createdAt               DateTime                 @default(now())
+    updatedAt               DateTime                 @updatedAt
+    weddingRsvpLandingPages WeddingRsvpLandingPage[]
+}
+
+model WeddingRsvpLandingPage {
+    id                         String                      @id @default(cuid())
+    name                       String
+    password                   String?
+    isActive                   Boolean                     @default(false)
+    pageBuilderData            Json                        @default("{}")
+    sidebarData                Json                        @default("{}")
+    wedding                    Wedding                     @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId                  String
+    weddingDayParts            WeddingDayPart[]
+    weddingInvitationResponses WeddingInvitationResponse[]
+    assetReferences            AssetReference[]
+    qrCode                     String?                     @unique @db.Text
+    qrCodeId                   String?
+    createdAt                  DateTime                    @default(now())
+    updatedAt                  DateTime                    @updatedAt
+    guestWeddingResponse       GuestWeddingResponse[]
+    guestDayPartsPresent       GuestDayPartPresent[]
 }
 
 enum Gender {
@@ -113,11 +137,13 @@ model Address {
     livesAbroad                 Boolean                    @default(false)
     createdAt                   DateTime                   @default(now())
     updatedAt                   DateTime                   @updatedAt
-    guestGroup                  GuestGroup?                @relation(fields: [guestGroupId], references: [id], onDelete: Cascade)
+    guestGroup                  GuestGroup?                @relation(fields: [guestGroupId], references: [id])
     guestGroupId                String?                    @unique
     guests                      Guest[]
     weddingInvitationResponse   WeddingInvitationResponse? @relation(fields: [weddingInvitationResponseId], references: [id])
     weddingInvitationResponseId String?                    @unique
+    wedding                     Wedding?                   @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId                   String
 }
 
 enum GuestOrigin {
@@ -149,26 +175,30 @@ model Guest {
 }
 
 model WeddingInvitationResponse {
-    id                    String                 @id @default(cuid())
-    guestWeddingResponses GuestWeddingResponse[]
-    address               Address?
-    addressId             String?                @unique
-    createdAt             DateTime               @default(now())
-    updatedAt             DateTime               @updatedAt
-    wedding               Wedding                @relation(fields: [weddingId], references: [id], onDelete: Cascade)
-    weddingId             String
+    id                       String                  @id @default(cuid())
+    guestWeddingResponses    GuestWeddingResponse[]
+    address                  Address?
+    addressId                String?                 @unique
+    createdAt                DateTime                @default(now())
+    updatedAt                DateTime                @updatedAt
+    wedding                  Wedding                 @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId                String
+    weddingRsvpLandingPage   WeddingRsvpLandingPage? @relation(fields: [weddingRsvpLandingPageId], references: [id])
+    weddingRsvpLandingPageId String?
 }
 
 model GuestWeddingResponse {
     id                          String                     @id @default(cuid())
     dayPartsPresent             GuestDayPartPresent[]
     remarks                     String?
-    guest                       Guest                      @relation(fields: [guestId], references: [id])
+    guest                       Guest                      @relation(fields: [guestId], references: [id], onDelete: Cascade)
     guestId                     String                     @unique
     createdAt                   DateTime                   @default(now())
     updatedAt                   DateTime                   @updatedAt
     weddingInvitationResponse   WeddingInvitationResponse? @relation(fields: [weddingInvitationResponseId], references: [id], onDelete: Cascade)
     weddingInvitationResponseId String?
+    weddingRsvpLandingPage      WeddingRsvpLandingPage?    @relation(fields: [weddingRsvpLandingPageId], references: [id])
+    weddingRsvpLandingPageId    String?
 }
 
 model GuestDayPartPresent {
@@ -180,6 +210,8 @@ model GuestDayPartPresent {
     weddingDayPartId           String
     guest                      Guest?                     @relation(fields: [guestId], references: [id])
     guestId                    String?
+    weddingRsvpLandingPage     WeddingRsvpLandingPage?    @relation(fields: [weddingRsvpLandingPageId], references: [id])
+    weddingRsvpLandingPageId   String?
     createdAt                  DateTime                   @default(now())
     updatedAt                  DateTime                   @updatedAt
 }
@@ -188,6 +220,7 @@ enum GuestWeddingResponseStatus {
     UNKNOWN
     ACCEPTED
     DECLINED
+    UNINVITED
 }
 
 enum Role {
@@ -277,15 +310,19 @@ model Asset {
 // Workaround for Prisma not supporting Polymorphic Associations
 // https://github.com/prisma/prisma/issues/1644
 model AssetReference {
-    id                String   @id @default(cuid())
-    asset             Asset    @relation(fields: [assetId], references: [id])
-    assetId           String
-    createdAt         DateTime @default(now())
-    updatedAt         DateTime @updatedAt
-    galleryReferences Gallery? @relation("galleryReferences")
-    weddingReferences Wedding? @relation("weddingReferences")
+    id                       String                  @id @default(cuid())
+    asset                    Asset                   @relation(fields: [assetId], references: [id])
+    assetId                  String
+    // This is an foreign reference to for example a BannerBlock in the PuckStudio
+    objectReference          String?
+    createdAt                DateTime                @default(now())
+    updatedAt                DateTime                @updatedAt
+    galleryReferences        Gallery?                @relation("galleryReferences")
+    weddingReferences        Wedding?                @relation("weddingReferences")
+    weddingRsvpLandingPage   WeddingRsvpLandingPage? @relation(fields: [weddingRsvpLandingPageId], references: [id], onDelete: Cascade)
+    weddingRsvpLandingPageId String?
     /// [AssetReferenceMetadata]
-    metadata          Json
+    metadata                 Json
 }
 
 model QrCode {
@@ -296,6 +333,8 @@ model QrCode {
     redirectUrl String
     isActive    Boolean   @default(true)
     usageCount  Int       @default(0)
+    wedding     Wedding?  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+    weddingId   String?
     /// [QRCodeMetadata]
     metadata    Json
     expiresAt   DateTime?

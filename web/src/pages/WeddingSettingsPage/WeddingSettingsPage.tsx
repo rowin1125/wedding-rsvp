@@ -74,6 +74,7 @@ const WeddingSettingsPage = () => {
             />
             <Hero
                 url={wedding?.bannerImage?.asset.url}
+                color="white"
                 previewUrl={wedding?.bannerImage?.asset.previewUrl}
                 fileType={wedding?.bannerImage?.asset.fileType || 'image'}
                 imageProps={{

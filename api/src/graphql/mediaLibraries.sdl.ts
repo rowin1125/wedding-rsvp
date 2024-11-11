@@ -8,6 +8,7 @@ export const schema = gql`
             sortField: AssetSortField
             sortOrder: SortOrder
             query: String
+            fileTypes: [String!]
         ): PaginatedAssets!
         maxAllowedAssets: Int!
         wedding: Wedding!

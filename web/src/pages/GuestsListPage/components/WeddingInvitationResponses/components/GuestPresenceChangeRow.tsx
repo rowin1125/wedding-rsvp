@@ -5,6 +5,7 @@ import { FaCheck } from 'react-icons/fa6';
 import { HiOutlineArrowLeft, HiOutlineArrowUp } from 'react-icons/hi';
 import { IoMdClose } from 'react-icons/io';
 import { MdOutlineQuestionMark } from 'react-icons/md';
+import { TbMailX } from 'react-icons/tb';
 import { GetGuests, GetWeddingInvitationResponses } from 'types/graphql';
 
 import PresenceButton from 'src/components/react-hook-form/components/PresenceControl/PresenceControl';
@@ -22,6 +23,29 @@ const GuestPresenceChangeRow = ({
     label,
     guest,
 }: GuestPresenceChangeRowProps) => {
+    const guestWeddingResponseSortedOnEndDate = guestWeddingResponse
+        ?.slice()
+        .sort((a, b) => {
+            if (!a?.weddingDayPart || !b?.weddingDayPart) {
+                return 0;
+            }
+            const endDateA = new Date(a?.weddingDayPart.endTime).getTime();
+            const endDateB = new Date(b?.weddingDayPart.endTime).getTime();
+
+            return endDateA - endDateB;
+        });
+
+    const guestDayPartsPresentSortedOnEndDate = guest?.guestDayPartsPresents
+        ?.slice()
+        .sort((a, b) => {
+            if (!a?.weddingDayPart || !b?.weddingDayPart) {
+                return 0;
+            }
+
+            const endDateA = new Date(a?.weddingDayPart.endTime).getTime();
+            const endDateB = new Date(b?.weddingDayPart.endTime).getTime();
+            return endDateA - endDateB;
+        });
     return (
         <>
             <GridItem
@@ -66,7 +90,7 @@ const GuestPresenceChangeRow = ({
                         rounded="full"
                         p={2}
                     />
-                    {guest?.guestDayPartsPresents?.map(
+                    {guestDayPartsPresentSortedOnEndDate?.map(
                         (guestDayPartsPresent) => (
                             <Box key={guestDayPartsPresent?.id} mb={4}>
                                 <Text
@@ -143,6 +167,26 @@ const GuestPresenceChangeRow = ({
                                             />
                                         </Tooltip>
                                     </PresenceButton>
+                                    <PresenceButton
+                                        size="xs"
+                                        variant={
+                                            guestDayPartsPresent?.guestWeddingResponseStatus ===
+                                            'UNINVITED'
+                                                ? 'solid'
+                                                : 'outline'
+                                        }
+                                        value={
+                                            guestDayPartsPresent?.guestWeddingResponseStatus
+                                        }
+                                        colorScheme="gray"
+                                    >
+                                        <Tooltip
+                                            label="De gast is niet uitgenodigd voor dit dagdeel"
+                                            shouldWrapChildren
+                                        >
+                                            <Icon as={TbMailX} fontSize="sm" />
+                                        </Tooltip>
+                                    </PresenceButton>
                                 </Flex>
                             </Box>
                         )
@@ -181,7 +225,7 @@ const GuestPresenceChangeRow = ({
                     {label}
                 </Text>
                 <Box position="relative">
-                    {guestWeddingResponse?.map((dayPart) => (
+                    {guestWeddingResponseSortedOnEndDate?.map((dayPart) => (
                         <Box key={dayPart?.id} mb={4}>
                             <Text fontWeight="semibold" mb={2} fontSize="sm">
                                 {dayPart?.weddingDayPart.name}
@@ -242,6 +286,24 @@ const GuestPresenceChangeRow = ({
                                         shouldWrapChildren
                                     >
                                         <Icon as={IoMdClose} fontSize="sm" />
+                                    </Tooltip>
+                                </PresenceButton>
+                                <PresenceButton
+                                    size="xs"
+                                    variant={
+                                        dayPart?.guestWeddingResponseStatus ===
+                                        'UNINVITED'
+                                            ? 'solid'
+                                            : 'outline'
+                                    }
+                                    value="UNINVITED"
+                                    colorScheme="gray"
+                                >
+                                    <Tooltip
+                                        label="De gast is niet uitgenodigd voor dit dagdeel"
+                                        shouldWrapChildren
+                                    >
+                                        <Icon as={TbMailX} fontSize="sm" />
                                     </Tooltip>
                                 </PresenceButton>
                             </Flex>

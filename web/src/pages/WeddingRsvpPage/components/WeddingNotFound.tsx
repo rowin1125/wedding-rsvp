@@ -15,6 +15,7 @@ const WeddingNotFound = () => {
             />
             <Hero
                 title="Geen bruiloft gevonden"
+                color="white"
                 subtitle="Deze bruiloft bestaat niet"
                 height={{
                     base: '30vh',

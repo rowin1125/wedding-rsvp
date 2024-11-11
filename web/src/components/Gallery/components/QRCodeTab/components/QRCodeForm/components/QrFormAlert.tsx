@@ -22,7 +22,8 @@ const QrFormAlert = ({ formType, qrCode }: QrFormAlertProps) => {
             {formType === 'create' && (
                 <Alert status="warning" mb={4}>
                     <AlertIcon />
-                    Maak een QR code aan om gasten fotos te laten uploaden.
+                    Maak een QR code aan om de link naar de pagina te delen met
+                    gasten op bijv. een uitnodiging.
                 </Alert>
             )}
             {formType === 'update' && qrCodeIsActive === true && (
@@ -52,7 +53,7 @@ const QrFormAlert = ({ formType, qrCode }: QrFormAlertProps) => {
                             <AlertIcon />
                             Deze QR code verloopt binnenkort. Verleng de QR code
                             indien nodig. Indien je dit niet doet, kunnen gasten
-                            geen fotos meer uploaden.
+                            geen de pagina niet meer bezoeken.
                         </Alert>
                     )}
                 </Box>

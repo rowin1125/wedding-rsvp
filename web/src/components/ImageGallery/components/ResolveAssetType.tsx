@@ -33,7 +33,9 @@ const ResolveAssetType = ({
     customVideo: CustomVideo,
     hideIcon,
 }: ResolveAssetTypeProps) => {
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | null | undefined>(
+        imageProps?.src
+    );
 
     useEffect(() => {
         const fetchImageData = async () => {
@@ -63,7 +65,7 @@ const ResolveAssetType = ({
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fileType, imageProps?.src]);
+    }, [fileType, imageProps]);
 
     if (fileType.includes('image')) {
         if (!imageUrl) return null;

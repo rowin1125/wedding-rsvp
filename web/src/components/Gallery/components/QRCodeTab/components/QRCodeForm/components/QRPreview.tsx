@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Box, Flex, Heading, Image } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
-import { FindGalleryQuery } from 'types/graphql';
+import { QrCodeVariants } from 'types/graphql';
 import { InferType } from 'yup';
 
 import CustomChakraFade from 'src/components/CustomChakraFade';
@@ -10,17 +10,25 @@ import Loader from 'src/components/Loader';
 
 import ControlQrCode from '../../ControlQrCode/ControlQrCode';
 import { useQRCodePreview } from '../hooks/useQRCodePreview';
-import { validationSchema } from '../QRCodeForm';
+import { QRValidationSchema } from '../QRCodeForm';
 
 type QRPreviewProps = {
     loading: boolean;
     formType: 'create' | 'update';
-    gallery?: FindGalleryQuery['gallery'];
+    name?: string;
+    qrCodeId?: string | null;
+    variant: QrCodeVariants;
 };
 
-const QRPreview = ({ loading, formType, gallery }: QRPreviewProps) => {
+const QRPreview = ({
+    loading,
+    formType,
+    name,
+    qrCodeId,
+    variant,
+}: QRPreviewProps) => {
     const { watch, formState } =
-        useFormContext<InferType<typeof validationSchema>>();
+        useFormContext<InferType<typeof QRValidationSchema>>();
     const values = watch();
     const isDirty = formState.isDirty;
     const { qrCode } = useQRCodePreview(values);
@@ -48,13 +56,18 @@ const QRPreview = ({ loading, formType, gallery }: QRPreviewProps) => {
                             mt={10}
                             shadow="xl"
                             src={qrCode}
-                            alt={`QR code - Album - ${gallery?.name}.png`}
-                            title={`QR code - Album - ${gallery?.name}.png`}
+                            alt={`QR code - Album - ${name}.png`}
+                            title={`QR code - Album - ${name}.png`}
                         />
                     )}
                 </CustomChakraFade>
             </Box>
-            <ControlQrCode gallery={gallery} qrPreview={qrCode} />
+            <ControlQrCode
+                name={name}
+                qrPreview={qrCode}
+                qrCodeId={qrCodeId}
+                variant={variant}
+            />
         </Flex>
     );
 };

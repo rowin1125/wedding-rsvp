@@ -19,22 +19,24 @@ const QrCodePage = () => {
         );
 
     if (qrCode && !loading) {
-        const isAppUrl = qrCode.redirectUrl.includes(
-            process.env.REDWOOD_ENV_VERCEL_URL
-        );
-
-        if (isAppUrl) {
-            navigate(
-                qrCode.redirectUrl.replace(
-                    process.env.REDWOOD_ENV_VERCEL_URL,
-                    ''
-                ),
-                { replace: true }
+        if (qrCode.isActive) {
+            const isAppUrl = qrCode.redirectUrl.includes(
+                process.env.REDWOOD_ENV_VERCEL_URL
             );
-        }
 
-        window.location.href = qrCode.redirectUrl;
-        return null;
+            if (isAppUrl) {
+                navigate(
+                    qrCode.redirectUrl.replace(
+                        process.env.REDWOOD_ENV_VERCEL_URL,
+                        ''
+                    ),
+                    { replace: true }
+                );
+            }
+
+            window.location.href = qrCode.redirectUrl;
+            return null;
+        }
     }
 
     return (

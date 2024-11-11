@@ -8,6 +8,8 @@ export const schema = gql`
         weddingDayPartId: String!
         guest: Guest
         guestId: String
+        weddingRsvpLandingPage: WeddingRsvpLandingPage
+        weddingRsvpLandingPageId: String
         createdAt: DateTime!
         updatedAt: DateTime!
     }
@@ -16,6 +18,7 @@ export const schema = gql`
         UNKNOWN
         ACCEPTED
         DECLINED
+        UNINVITED
     }
 
     type Query {
@@ -33,6 +36,7 @@ export const schema = gql`
         guestWeddingResponseStatus: GuestWeddingResponseStatus!
         guestWeddingResponseId: String
         guestId: String
+        weddingRsvpLandingPageId: String
     }
 
     input UpdateGuestDayPartPresentInput {
@@ -40,9 +44,13 @@ export const schema = gql`
         guestWeddingResponseId: String
         guestWeddingResponseStatus: GuestWeddingResponseStatus
         guestId: String
+        weddingRsvpLandingPageId: String
     }
 
     type Mutation {
+        createGuestDayPartPresent(
+            input: CreateGuestDayPartPresentInput!
+        ): GuestDayPartPresent! @requireAuth
         updateGuestDayPartPresent(
             id: String!
             input: UpdateGuestDayPartPresentInput!

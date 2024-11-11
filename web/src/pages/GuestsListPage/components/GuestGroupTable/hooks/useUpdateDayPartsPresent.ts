@@ -1,5 +1,6 @@
 import { useToast } from '@chakra-ui/react';
 import {
+    GuestWeddingResponseStatus,
     UpdateDayPartsPresent,
     UpdateDayPartsPresentVariables,
 } from 'types/graphql';
@@ -54,10 +55,49 @@ export const useUpdateDayPartsPresent = () => {
                 isClosable: true,
             });
         },
+        onCompleted: () => {
+            toast({
+                title: 'Aanwezigheid aangepast',
+                description: 'De aanwezigheid van de gast is geüpdatet',
+                status: 'success',
+                duration: 2000,
+            });
+        },
     });
 
+    const handleUpdateDayPartPresent = async ({
+        dayPartPresentId,
+        status,
+        guestId,
+    }: {
+        dayPartPresentId: string;
+        status: GuestWeddingResponseStatus;
+        guestId?: string;
+    }) => {
+        if (!guestId) {
+            toast({
+                title: 'Error updating day parts present',
+                description: 'Guest id not found',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        await updateDayPartsPresent({
+            variables: {
+                id: dayPartPresentId,
+                input: {
+                    guestWeddingResponseStatus: status,
+                    guestId,
+                },
+            },
+        });
+    };
+
     return {
-        updateDayPartsPresent,
+        updateDayPartsPresent: handleUpdateDayPartPresent,
         ...mutationMeta,
     };
 };

@@ -16,8 +16,11 @@ import { ONE_DAY_TIME } from 'src/lib/gcloudBackgroundDownloader';
 import Sentry from 'src/lib/sentry';
 
 export const galleries: QueryResolvers['galleries'] = ({ weddingId }) => {
-    if (weddingId !== context.currentUser?.weddingId)
-        throw new UserInputError('Unauthorized');
+    isUserAssignedToWeddingValidator({
+        requestWeddingId: weddingId,
+        message: 'You are not allowed to view galleries',
+    });
+
     return db.gallery.findMany({
         where: { weddingId },
         include: { bannerImage: true },
