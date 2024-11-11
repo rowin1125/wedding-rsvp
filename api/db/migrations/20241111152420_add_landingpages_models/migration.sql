@@ -1,9 +1,3 @@
-/*
-  Warnings:
-
-  - Added the required column `weddingId` to the `Address` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- AlterEnum
 ALTER TYPE "GuestWeddingResponseStatus" ADD VALUE 'UNINVITED';
 
@@ -14,7 +8,7 @@ ALTER TABLE "Address" DROP CONSTRAINT "Address_guestGroupId_fkey";
 ALTER TABLE "GuestWeddingResponse" DROP CONSTRAINT "GuestWeddingResponse_guestId_fkey";
 
 -- AlterTable
-ALTER TABLE "Address" ADD COLUMN     "weddingId" TEXT NOT NULL;
+ALTER TABLE "Address" ADD COLUMN     "weddingId" TEXT;
 
 -- AlterTable
 ALTER TABLE "AssetReference" ADD COLUMN     "objectReference" TEXT,
