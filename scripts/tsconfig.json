@@ -3,10 +3,10 @@
     "noEmit": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "target": "esnext",
+    "target": "ES2023",
     "strict": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "baseUrl": "./",
     "paths": {
       "$api/*": [

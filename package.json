@@ -9,10 +9,10 @@
     ]
   },
   "devDependencies": {
-    "@redwoodjs/auth-dbauth-setup": "7.7.3",
-    "@redwoodjs/cli-data-migrate": "7.7.3",
-    "@redwoodjs/core": "7.7.3",
-    "@redwoodjs/realtime": "7.7.3",
+    "@redwoodjs/auth-dbauth-setup": "8.4.0",
+    "@redwoodjs/cli-data-migrate": "8.4.0",
+    "@redwoodjs/core": "8.4.0",
+    "@redwoodjs/realtime": "8.4.0",
     "@redwoodjs/studio": "11"
   },
   "eslintConfig": {
@@ -31,5 +31,5 @@
   "prisma": {
     "seed": "yarn rw exec seed"
   },
-  "packageManager": "yarn@3.6.1"
+  "packageManager": "yarn@4.4.0"
 }

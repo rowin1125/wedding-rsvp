@@ -1,7 +1,7 @@
 import { FindQrCodeById, FindQrCodeByIdVariables } from 'types/graphql';
 
 import { useQuery } from '@redwoodjs/web';
-import { registerFragment } from '@redwoodjs/web/dist/apollo';
+import { registerFragment } from '@redwoodjs/web/apollo';
 
 export const QR_CODE_FRAGMENT = gql`
     fragment QRCodeFragment on QrCode {

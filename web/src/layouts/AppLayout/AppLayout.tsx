@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Box, Flex, useToast } from '@chakra-ui/react';
 
 import { navigate, routes, useLocation } from '@redwoodjs/router';
-import { Toaster } from '@redwoodjs/web/dist/toast';
+import { Toaster } from '@redwoodjs/web/toast';
 
 import { useAuth } from 'src/auth';
 import Footer from 'src/components/Footer/Footer';

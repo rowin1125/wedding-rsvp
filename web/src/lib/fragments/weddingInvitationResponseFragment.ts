@@ -1,4 +1,4 @@
-import { registerFragment } from '@redwoodjs/web/dist/apollo';
+import { registerFragment } from '@redwoodjs/web/apollo';
 
 import { AddressBody } from './addressFragment';
 import { GuestWeddingResponseBody } from './guestWeddingResponseFragment';

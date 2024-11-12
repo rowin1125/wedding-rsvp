@@ -3,10 +3,10 @@
     "noEmit": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ES2023",
+    "module": "Node16",
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node16",
     "skipLibCheck": false,
     "baseUrl": "./",
     "rootDirs": [
