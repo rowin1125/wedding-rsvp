@@ -53,6 +53,7 @@ const RsvpLandingPageItem = ({
                     as={Link}
                     to={routes.rsvpLandingPageStudio({
                         landingPageId: rsvpLandingPage.id,
+                        studioTab: 'settings',
                     })}
                     role="button"
                     aria-label={`Bekijk ${rsvpLandingPage.name}`}

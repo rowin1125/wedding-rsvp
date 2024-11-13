@@ -1,6 +1,12 @@
 import React from 'react';
 
 import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
     Button,
     ButtonGroup,
     Icon,
@@ -11,7 +17,7 @@ import {
 import { BiWorld } from 'react-icons/bi';
 import { FaSave } from 'react-icons/fa';
 
-import { routes, useParams } from '@redwoodjs/router';
+import { routes, useBlocker, useParams } from '@redwoodjs/router';
 
 import { useAuth } from 'src/auth';
 
@@ -65,8 +71,44 @@ const PuckHeader = ({ isActive }: PuckHeaderProps) => {
         await onPublish?.(puck.appState.data);
     };
 
+    const blocker = useBlocker({ when: dataUpdated });
+    const cancelRef = React.useRef(null);
+
     return (
         <>
+            <AlertDialog
+                isOpen={blocker.state === 'BLOCKED'}
+                leastDestructiveRef={cancelRef}
+                onClose={blocker.abort}
+            >
+                <AlertDialogOverlay>
+                    <AlertDialogContent>
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                            Let op 🚨!
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>
+                            Je hebt wijzigingen aangebracht die nog niet zijn
+                            opgeslagen. Weet je zeker dat je de pagina wilt
+                            verlaten?
+                        </AlertDialogBody>
+
+                        <AlertDialogFooter>
+                            <Button ref={cancelRef} onClick={blocker.abort}>
+                                Annuleren
+                            </Button>
+                            <Button
+                                colorScheme="secondary"
+                                onClick={blocker.confirm}
+                                ml={3}
+                                variant="ghost"
+                            >
+                                Verder
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
             <ButtonGroup>
                 <Button
                     isLoading={isLoading}

@@ -21,7 +21,7 @@ const Routes = () => {
                     <Route path="/app/media" page={MediaPage} name="media" />
                     <Route path="/app/gasten/guests-list" page={GuestsListPage} name="guestsList" />
                     <Route path="/app/gasten/rsvp-landings" page={RsvpLandingsPage} name="rsvpLandings" />
-                    <Route path="/app/gasten/rsvp-landings/{landingPageId}/studio" page={RsvpLandingPageStudioPage} name="rsvpLandingPageStudio" />
+                    <Route path="/app/gasten/rsvp-landings/{landingPageId}/studio/{studioTab}" page={RsvpLandingPageStudioPage} name="rsvpLandingPageStudio" />
                     <Route path="/app/galerij/{galleryId}" page={GalleryPage} name="gallery" />
                     <Route path="/app/galerijen" page={GalleriesPage} name="galleries" />
                 </PrivateSet>

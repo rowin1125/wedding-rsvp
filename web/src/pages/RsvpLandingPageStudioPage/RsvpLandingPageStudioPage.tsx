@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import {
     Tabs,
@@ -20,6 +20,7 @@ import Hero from 'src/components/Hero';
 import { useControlHero } from 'src/components/Hero/hooks/useControlHero';
 import PuckStudio from 'src/components/PuckStudio/PuckStudio';
 import { generateURL } from 'src/helpers/generateURL/generateURL';
+import { capitalizeText } from 'src/helpers/textHelpers/capitalizeText/capitalizeText';
 import { useIsDevice } from 'src/hooks/useIsDevice';
 import AppContentWrapper from 'src/layouts/AppLayout/components/AppContentWrapper';
 
@@ -34,49 +35,16 @@ const RsvpLandingPageStudioPage = () => {
     const { onSubmit, loading: updateLoading } =
         useUpdateWeddingRsvpStudioData();
     const toast = useToast();
-    const { tab } = useParams();
 
-    const { landingPageId } = useParams();
+    const { landingPageId, studioTab } = useParams();
     const { weddingRsvpLandingPage, loading } = useGetWeddingRsvpLandingPage();
 
     const tabs = {
-        Settings: 'Settings',
-        Studio: 'Studio',
-        Preview: 'Preview',
-        QrCode: 'Qr Code',
+        settings: 'settings',
+        studio: 'studio',
+        preview: 'preview',
+        qrcode: 'qrcode',
     };
-
-    const { tabIndex, handleTabChange } = useControlledTabs({
-        tabs: Object.values(tabs),
-        navigationCallback: (tab) => {
-            if (!landingPageId) return;
-            const urlInfo = generateURL(location.pathname, location.search);
-            const queryParams = urlInfo.queryParams;
-
-            if (tab !== tabs.Studio) {
-                Object.keys(queryParams).forEach((key) => {
-                    if (key !== 'tab') {
-                        delete queryParams[key];
-                    }
-                });
-            }
-
-            navigate(
-                routes.rsvpLandingPageStudio({
-                    landingPageId,
-                    tab,
-                })
-            );
-        },
-    });
-
-    useEffect(() => {
-        if (!tab) return;
-
-        const newIndex: number = Object.values(tabs).indexOf(tab);
-        handleTabChange(newIndex);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tab]);
 
     const { heroData, setHeroData } = useControlHero({
         initialValues: {
@@ -99,11 +67,28 @@ const RsvpLandingPageStudioPage = () => {
         }
     }, [weddingRsvpLandingPage, loading, toast]);
 
-    const shouldShowHero = tabIndex === 0 || tabIndex === 3;
+    const shouldShowHero = studioTab === 'settings' || studioTab === 'qrcode';
+    const currentIndex = useMemo(() => {
+        return Object.values(tabs).findIndex((tab) => tab === studioTab);
+    }, [studioTab])
     const pageBuilderData =
         weddingRsvpLandingPage?.pageBuilderData as Partial<Data>;
     const hasWeddingRsvpLandingPageBuilderData =
         !!pageBuilderData?.content && pageBuilderData.content?.length > 0;
+
+    const handleTabChange = (index: number) => {
+        if (!landingPageId) return;
+        const tab = Object.values(tabs)[index];
+
+
+        navigate(
+            routes.rsvpLandingPageStudio({
+                landingPageId,
+                studioTab: tab,
+            }),
+
+        );
+    }
 
     return (
         <>
@@ -117,8 +102,7 @@ const RsvpLandingPageStudioPage = () => {
 
             <AppContentWrapper pt={0} setHeroData={setHeroData}>
                 <Tabs
-                    onChange={handleTabChange}
-                    index={tabIndex}
+                    index={currentIndex}
                     position="relative"
                     colorScheme="body"
                     defaultIndex={0}
@@ -126,8 +110,8 @@ const RsvpLandingPageStudioPage = () => {
                     {...(!isDesktop ? { isFitted: true } : {})}
                 >
                     <TabList py={0} position="sticky" top={0} zIndex={2}>
-                        {Object.values(tabs).map((tab) => {
-                            const isPreviewTab = tab === tabs.Preview;
+                        {Object.values(tabs).map((tab, index) => {
+                            const isPreviewTab = tab === tabs.preview;
 
                             return (
                                 <Tooltip
@@ -144,11 +128,12 @@ const RsvpLandingPageStudioPage = () => {
                                         }}
                                         key={tab}
                                         isDisabled={
-                                            tab == tabs.Preview &&
+                                            tab == tabs.preview &&
                                             !hasWeddingRsvpLandingPageBuilderData
                                         }
+                                        onClick={() => handleTabChange(index)}
                                     >
-                                        {tab}
+                                        {capitalizeText(tab)}
                                     </Tab>
                                 </Tooltip>
                             );
